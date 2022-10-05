@@ -3,7 +3,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputCreateUserDto } from 'src/users/dto/CreateUser.dto';
 
-import { UserService } from 'src/users/user.service';
+import { UserService } from '../../../../user.service';
 
 @Controller()
 export class UserGrpcServerController {
