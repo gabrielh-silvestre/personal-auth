@@ -23,7 +23,13 @@ describe('Integration test for gRPC server User controller', () => {
 
     const module = await Test.createTestingModule({
       controllers: [UserGrpcServerController],
-      providers: [UserService, UserInMemoryRepository],
+      providers: [
+        UserService,
+        {
+          provide: 'USER_REPO',
+          useClass: UserInMemoryRepository,
+        },
+      ],
     }).compile();
 
     userController = module.get<UserGrpcServerController>(
