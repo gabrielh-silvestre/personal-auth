@@ -7,7 +7,7 @@ import {
   validateSync,
 } from 'class-validator';
 
-import type { IValidator } from 'src/shared/validator/validator.interface';
+import type { IValidator } from 'src/shared/domain/validator/validator.interface';
 import type { IUser } from '../entity/user.interface';
 
 export class UserClassValidator implements IValidator<IUser> {

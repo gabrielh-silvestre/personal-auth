@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid';
-
-import type { IUserRepository } from './domain/repository/user.repository.interface';
+import { Test } from '@nestjs/testing';
 
 import { User } from './domain/entity/User';
 import { UserService } from './user.service';
@@ -14,13 +13,20 @@ const USERS_MOCK: User[] = [
 
 describe('Integration test for User service', () => {
   let userService: UserService;
-  let userRepository: IUserRepository;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
-    userRepository = new UserInMemoryRepository();
-    userService = new UserService(userRepository);
+    const module = await Test.createTestingModule({
+      imports: [UserInMemoryRepository],
+      controllers: [],
+      providers: [
+        UserService,
+        { provide: 'USER_REPO', useClass: UserInMemoryRepository },
+      ],
+    }).compile();
+
+    userService = module.get<UserService>(UserService);
   });
 
   describe('create', () => {

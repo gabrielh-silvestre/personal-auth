@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type {
   InputCreateUserDto,
   OutputCreateUserDto,
 } from './dto/CreateUser.dto';
+import type { IUserRepository } from './domain/repository/user.repository.interface';
 
 import { UserFactory } from './domain/factory/User.factory';
-import { UserInMemoryRepository } from './infra/repository/memory/User.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserInMemoryRepository) {}
+  constructor(
+    @Inject('USER_REPO') private readonly userRepository: IUserRepository,
+  ) {}
 
   private async emailAlreadyTaken(email: string): Promise<boolean> {
     return this.userRepository.existsByEmail(email);
