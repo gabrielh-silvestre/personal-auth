@@ -20,7 +20,7 @@ export class UserFactory {
     }
 
     const newUser = new User(uuid(), username, email);
-    newUser.changePassword(new Password(newUser.id, password));
+    newUser.changePassword(new Password(password));
 
     return newUser;
   }

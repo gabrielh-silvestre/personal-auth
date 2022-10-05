@@ -29,7 +29,7 @@ describe('Unit test domain User entity', () => {
   it('should change password', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
 
-    user.changePassword(new Password(user.id, 'newPassword'));
+    user.changePassword(new Password('newPassword'));
     expect(user.password.isEqual('newPassword')).toBeTruthy();
   });
 
@@ -78,12 +78,12 @@ describe('Unit test domain User entity', () => {
   it('should throw error when change to a invalid password', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
 
-    expect(() => user.changePassword(new Password(user.id, 'p'))).toThrowError(
+    expect(() => user.changePassword(new Password('p'))).toThrowError(
       'Password must be at least 8 characters long',
     );
 
     expect(() =>
-      user.changePassword(new Password(user.id, 'password'.repeat(20))),
+      user.changePassword(new Password('password'.repeat(20))),
     ).toThrowError('Password must be at most 16 characters long');
   });
 });

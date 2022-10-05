@@ -1,4 +1,4 @@
-import { hashSync, compareSync } from 'bcrypt';
+import { hashSync, compareSync, genSaltSync } from 'bcrypt';
 
 import type { IPassword } from './password.interface';
 
@@ -8,10 +8,11 @@ export class Password implements IPassword {
 
   private _password: string;
 
-  constructor(userId: string, password: string) {
+  constructor(password: string) {
     this.validate(password);
 
-    this._password = hashSync(password, 8);
+    const salt = genSaltSync(10);
+    this._password = hashSync(password, salt);
   }
 
   private validate(password: string): void | never {
