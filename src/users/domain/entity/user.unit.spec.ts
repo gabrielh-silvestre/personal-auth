@@ -9,7 +9,11 @@ const VALID_EMAIL = 'email@email.com';
 describe('Unit test domain User entity', () => {
   it('should create a new user', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
+
     expect(user).toBeDefined();
+    expect(user.updatedAt).toBeDefined();
+    expect(user.createdAt).toBeDefined();
+    expect(user.updatedAt).toEqual(user.createdAt);
   });
 
   it('should change username', () => {
@@ -77,6 +81,10 @@ describe('Unit test domain User entity', () => {
 
   it('should throw error when change to a invalid password', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
+
+    expect(() => user.changePassword(new Password(''))).toThrowError(
+      'Password is required',
+    );
 
     expect(() => user.changePassword(new Password('p'))).toThrowError(
       'Password must be at least 8 characters long',
