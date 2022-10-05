@@ -29,6 +29,8 @@ describe('Integration test for User service', () => {
         username: 'Joe',
         email: 'joe@email.com',
         confirmEmail: 'joe@email.com',
+        password: 'password',
+        confirmPassword: 'password',
       });
 
       expect(newUser).not.toBeNull();
@@ -40,8 +42,22 @@ describe('Integration test for User service', () => {
       await expect(
         userService.create({
           username: 'Joe',
-          email: 'joe@email',
-          confirmEmail: 'joe@otheremail',
+          email: 'joe@email.com',
+          confirmEmail: 'joe@otheremail.com',
+          password: 'password',
+          confirmPassword: 'password',
+        }),
+      ).rejects.toThrowError();
+    });
+
+    it('should throw an error if the password is not confirmed', async () => {
+      await expect(
+        userService.create({
+          username: 'Joe',
+          email: 'joe@email.com',
+          confirmEmail: 'joe@otheremail.com',
+          password: 'password',
+          confirmPassword: 'otherpassword',
         }),
       ).rejects.toThrowError();
     });
@@ -52,6 +68,8 @@ describe('Integration test for User service', () => {
           username: 'Joe',
           email: 'doe@email.com',
           confirmEmail: 'doe@email.com',
+          password: 'password',
+          confirmPassword: 'password',
         }),
       ).rejects.toThrowError();
     });

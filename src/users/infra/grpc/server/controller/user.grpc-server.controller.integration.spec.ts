@@ -37,6 +37,8 @@ describe('Integration test for gRPC server User controller', () => {
         username: 'Joe',
         email: 'joe@email.com',
         confirmEmail: 'joe@email.com',
+        password: 'password',
+        confirmPassword: 'password',
       })) as ReponseCreateUserDto;
 
       expect(newUser).not.toBeNull();
@@ -49,6 +51,8 @@ describe('Integration test for gRPC server User controller', () => {
         username: 'Joe',
         email: 'joe@email.com',
         confirmEmail: 'doe@email.com',
+        password: 'password',
+        confirmPassword: 'password',
       })) as GrpcErrorResponse;
 
       expect(newUser).not.toBeNull();

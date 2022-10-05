@@ -20,8 +20,17 @@ export class UserService {
     username,
     email,
     confirmEmail,
+    password,
+    confirmPassword,
   }: InputCreateUserDto): Promise<OutputCreateUserDto | never> {
-    const newUser = UserFactory.create(username, email, confirmEmail);
+    const newUser = UserFactory.create(
+      username,
+      email,
+      confirmEmail,
+      password,
+      confirmPassword,
+    );
+
     const emailAlreadyRegistered = await this.emailAlreadyTaken(email);
 
     if (emailAlreadyRegistered) {
