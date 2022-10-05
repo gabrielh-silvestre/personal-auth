@@ -1,5 +1,3 @@
-import { GrpcErrorResponse } from 'src/shared/dto/GrpcReponse.interface';
-
 export interface InputCreateUserDto {
   username: string;
   email: string;
@@ -11,6 +9,6 @@ export interface OutputCreateUserDto {
   username: string;
 }
 
-export type GrpcCreateUserDto =
-  | { user: OutputCreateUserDto }
-  | GrpcErrorResponse;
+export interface ReponseCreateUserDto {
+  user: OutputCreateUserDto;
+}

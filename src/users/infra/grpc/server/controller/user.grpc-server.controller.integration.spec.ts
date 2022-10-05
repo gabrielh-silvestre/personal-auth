@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { Test } from '@nestjs/testing';
 
-import type { OutputCreateUserDto } from 'src/users/dto/CreateUser.dto';
+import type { ReponseCreateUserDto } from 'src/users/dto/CreateUser.dto';
 import type { GrpcErrorResponse } from 'src/shared/dto/GrpcReponse.interface';
 
 import { User } from '../../../../domain/entity/User';
@@ -37,7 +37,7 @@ describe('Integration test for gRPC server User controller', () => {
         username: 'Joe',
         email: 'joe@email.com',
         confirmEmail: 'joe@email.com',
-      })) as { user: OutputCreateUserDto };
+      })) as ReponseCreateUserDto;
 
       expect(newUser).not.toBeNull();
       expect(newUser.user.id).toBeDefined();

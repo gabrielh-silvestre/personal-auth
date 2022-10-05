@@ -5,3 +5,5 @@ export interface GrpcErrorResponse {
     status: number;
   };
 }
+
+export type GrpcReponse<T> = T | GrpcErrorResponse;
