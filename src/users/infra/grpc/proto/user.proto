@@ -5,21 +5,27 @@ package proto.users;
 message User {
     string id = 1;
     string username = 2;
-    string email = 3;
-    string password = 4;
-    string updated_at = 5;
-    string created_at = 6;
+}
+
+message ErrorResponse {
+    int64 code = 1;
+    string message = 2;
+    int64 status = 3;
 }
 
 message CreateUserRequest {
     string username = 1;
     string email = 2;
     string confirm_email = 3;
+    string password = 4;
+    string confirm_password = 5;
 }
 
 message CreateUserResponse {
-    string id = 1;
-    string username = 2;
+    oneof response {
+        User user = 1;
+        ErrorResponse error = 2;
+    }
 }
 
 service UserService {

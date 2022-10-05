@@ -1,4 +1,5 @@
 import type { IUser } from './user.interface';
+import type { IPassword } from '../value-object/Password/password.interface';
 
 import { UserValidatorFactory } from '../factory/User.validator.factory';
 
@@ -6,6 +7,7 @@ export class User implements IUser {
   private _id: string;
   private _username: string;
   private _email: string;
+  private _password: IPassword;
   private _updatedAt: Date;
   private _createdAt: Date;
 
@@ -37,12 +39,23 @@ export class User implements IUser {
     this.validate();
   }
 
+  changePassword(password: IPassword): void {
+    this._password = password;
+    this._updatedAt = new Date();
+
+    this.validate();
+  }
+
   get id(): string {
     return this._id;
   }
 
   get username(): string {
     return this._username;
+  }
+
+  get password(): IPassword {
+    return this._password;
   }
 
   get email(): string {

@@ -12,12 +12,30 @@ import { UserInMemoryRepository } from './infra/repository/memory/User.repositor
 export class UserService {
   constructor(private readonly userRepository: UserInMemoryRepository) {}
 
+  private async emailAlreadyTaken(email: string): Promise<boolean> {
+    return this.userRepository.existsByEmail(email);
+  }
+
   async create({
     username,
     email,
     confirmEmail,
-  }: InputCreateUserDto): Promise<OutputCreateUserDto> {
-    const newUser = UserFactory.create(username, email, confirmEmail);
+    password,
+    confirmPassword,
+  }: InputCreateUserDto): Promise<OutputCreateUserDto | never> {
+    const newUser = UserFactory.create(
+      username,
+      email,
+      confirmEmail,
+      password,
+      confirmPassword,
+    );
+
+    const emailAlreadyRegistered = await this.emailAlreadyTaken(email);
+
+    if (emailAlreadyRegistered) {
+      throw new Error('Email already registered');
+    }
 
     await this.userRepository.create(newUser);
 
