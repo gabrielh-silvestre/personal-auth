@@ -9,7 +9,7 @@ const USERS_MOCK: User[] = [
   new User(uuid(), 'Jane', 'jane@email.com'),
 ];
 
-describe('Test Infra in memory user repository', () => {
+describe('Unit test infra in memory User repository', () => {
   beforeEach(() => {
     UserInMemoryRepository.reset(USERS_MOCK);
   });
