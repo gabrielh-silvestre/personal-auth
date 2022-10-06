@@ -2,11 +2,6 @@ syntax = "proto3";
 
 package proto.users;
 
-message User {
-    string id = 1;
-    string username = 2;
-}
-
 message ErrorResponse {
     int64 code = 1;
     string message = 2;
@@ -22,10 +17,8 @@ message CreateUserRequest {
 }
 
 message CreateUserResponse {
-    oneof response {
-        User user = 1;
-        ErrorResponse error = 2;
-    }
+    string id = 1;
+    string username = 2;
 }
 
 service UserService {
