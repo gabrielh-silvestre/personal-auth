@@ -1,5 +1,4 @@
-import { status } from '@grpc/grpc-js';
-import { Controller } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { GrpcReponse } from 'src/shared/dto/GrpcReponse.interface';
@@ -9,8 +8,10 @@ import type {
 } from 'src/users/dto/CreateUser.dto';
 
 import { UserService } from '../../../../user.service';
+import { ExceptionFilterRpc } from 'src/shared/infra/exception-filter/ExceptionFilter.grpc';
 
 @Controller()
+@UseFilters(new ExceptionFilterRpc())
 export class UserGrpcServerController {
   constructor(private readonly userService: UserService) {}
 
@@ -18,17 +19,7 @@ export class UserGrpcServerController {
   async createUser(
     data: InputCreateUserDto,
   ): Promise<GrpcReponse<ReponseCreateUserDto>> {
-    try {
-      const { id, username } = await this.userService.create(data);
-      return { user: { id, username } };
-    } catch (error) {
-      return {
-        error: {
-          code: 500,
-          message: error.message,
-          status: status.INTERNAL,
-        },
-      };
-    }
+    const { id, username } = await this.userService.create(data);
+    return { user: { id, username } };
   }
 }

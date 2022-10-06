@@ -7,6 +7,7 @@ import type {
 import type { IUserRepository } from './domain/repository/user.repository.interface';
 
 import { UserFactory } from './domain/factory/User.factory';
+import { ExceptionRpcFactory } from 'src/exceptions/factory/Exception.rpc.factory';
 
 @Injectable()
 export class UserService {
@@ -36,7 +37,7 @@ export class UserService {
     const emailAlreadyRegistered = await this.emailAlreadyTaken(email);
 
     if (emailAlreadyRegistered) {
-      throw new Error('Email already registered');
+      throw ExceptionRpcFactory.conflict('Email already registered');
     }
 
     await this.userRepository.create(newUser);
