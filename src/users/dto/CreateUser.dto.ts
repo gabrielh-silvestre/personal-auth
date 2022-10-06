@@ -10,7 +10,3 @@ export interface OutputCreateUserDto {
   id: string;
   username: string;
 }
-
-export interface ReponseCreateUserDto {
-  user: OutputCreateUserDto;
-}

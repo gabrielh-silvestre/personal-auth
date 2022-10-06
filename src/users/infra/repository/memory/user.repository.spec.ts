@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
-import { User } from '../../../domain/entity/User';
+import { User } from '@users/domain/entity/User';
 import { UserInMemoryRepository } from './User.repository';
 
 const USERS_MOCK: User[] = [
