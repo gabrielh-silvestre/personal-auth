@@ -3,7 +3,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 
 import type {
   InputCreateUserDto,
-  ReponseCreateUserDto,
+  OutputCreateUserDto,
 } from 'src/users/dto/CreateUser.dto';
 
 import { UserService } from '@users/user.service';
@@ -15,8 +15,8 @@ export class UserGrpcServerController {
   constructor(private readonly userService: UserService) {}
 
   @GrpcMethod('UserService')
-  async createUser(data: InputCreateUserDto): Promise<ReponseCreateUserDto> {
+  async createUser(data: InputCreateUserDto): Promise<OutputCreateUserDto> {
     const { id, username } = await this.userService.create(data);
-    return { user: { id, username } };
+    return { id, username };
   }
 }
