@@ -20,7 +20,7 @@
     "paths": {
       "@users/*": ["./src/users/*"],
       "@exceptions/*": ["./src/exceptions/*"],
-      "@shared/*": ["./src/shared/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   }
 }
