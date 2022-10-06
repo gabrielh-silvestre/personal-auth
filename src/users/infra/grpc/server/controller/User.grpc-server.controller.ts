@@ -6,8 +6,8 @@ import type {
   ReponseCreateUserDto,
 } from 'src/users/dto/CreateUser.dto';
 
-import { UserService } from '../../../../user.service';
-import { ExceptionFilterRpc } from '../../../../../shared/infra/exception-filter/ExceptionFilter.grpc';
+import { UserService } from '@users/user.service';
+import { ExceptionFilterRpc } from '@shared/infra/exception-filter/ExceptionFilter.grpc';
 
 @Controller()
 @UseFilters(new ExceptionFilterRpc())

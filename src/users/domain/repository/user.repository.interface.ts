@@ -1,4 +1,4 @@
-import type { IRepository } from 'src/shared/domain/repository/repository.interface';
+import type { IRepository } from '@shared/domain/repository/repository.interface';
 
 import { User } from '../entity/User';
 
