@@ -1,7 +1,6 @@
-import { RpcException } from '@nestjs/microservices';
-import { IException } from './exception.interface';
+import type { IException } from './exception.interface';
 
-export class ExceptionRpc extends RpcException implements IException {
+export class Exception extends Error implements IException {
   private _code: number;
   private _status: number;
 

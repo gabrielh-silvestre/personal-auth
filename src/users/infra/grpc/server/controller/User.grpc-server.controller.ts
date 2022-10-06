@@ -7,7 +7,7 @@ import type {
 } from 'src/users/dto/CreateUser.dto';
 
 import { UserService } from '@users/user.service';
-import { ExceptionFilterRpc } from '@shared/infra/exception-filter/ExceptionFilter.grpc';
+import { ExceptionFilterRpc } from '../filter/ExceptionFilter.grpc';
 
 @Controller()
 @UseFilters(new ExceptionFilterRpc())
