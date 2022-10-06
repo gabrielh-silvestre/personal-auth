@@ -7,7 +7,7 @@ import type {
 import type { IUserRepository } from './domain/repository/user.repository.interface';
 
 import { UserFactory } from './domain/factory/User.factory';
-import { ExceptionRpcFactory } from '../exceptions/factory/Exception.rpc.factory';
+import { ExceptionRpcFactory } from '@exceptions/factory/Exception.rpc.factory';
 
 @Injectable()
 export class UserService {

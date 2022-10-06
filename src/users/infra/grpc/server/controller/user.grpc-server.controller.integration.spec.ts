@@ -1,12 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import { Test } from '@nestjs/testing';
 
-import type { ReponseCreateUserDto } from 'src/users/dto/CreateUser.dto';
-
-import { User } from '../../../../domain/entity/User';
+import { User } from '@users/domain/entity/User';
 import { UserGrpcServerController } from './User.grpc-server.controller';
-import { UserService } from '../../../../user.service';
-import { UserInMemoryRepository } from '../../../repository/memory/User.repository';
+import { UserService } from '@users/user.service';
+import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
 const USERS_MOCK: User[] = [
   new User(uuid(), 'John', 'john@email.com'),
@@ -38,17 +36,17 @@ describe('Integration test for gRPC server User controller', () => {
 
   describe('create', () => {
     it('should create a user', async () => {
-      const newUser = (await userController.createUser({
+      const newUser = await userController.createUser({
         username: 'Joe',
         email: 'joe@email.com',
         confirmEmail: 'joe@email.com',
         password: 'password',
         confirmPassword: 'password',
-      })) as ReponseCreateUserDto;
+      });
 
       expect(newUser).not.toBeNull();
-      expect(newUser.user.id).toBeDefined();
-      expect(newUser.user.username).toBe('Joe');
+      expect(newUser.id).toBeDefined();
+      expect(newUser.username).toBe('Joe');
     });
   });
 });
