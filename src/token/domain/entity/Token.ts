@@ -9,17 +9,11 @@ export class Token implements IToken {
   private _expires: Date;
   private _revoked: boolean;
 
-  constructor(
-    id: string,
-    userId: string,
-    lastRefresh: Date,
-    expires: Date,
-    revoked: boolean,
-  ) {
+  constructor(id: string, userId: string, lastRefresh: Date, revoked: boolean) {
     this._id = id;
     this._userId = userId;
     this._lastRefresh = lastRefresh;
-    this._expires = expires;
+    this._expires = new Date(lastRefresh.getTime() + Token.EXPIRE_TIME);
     this._revoked = revoked;
   }
 
@@ -29,7 +23,7 @@ export class Token implements IToken {
 
   refresh(): void {
     this._lastRefresh = new Date();
-    this._expires = new Date(new Date().getTime() + Token.EXPIRE_TIME);
+    this._expires = new Date(this._lastRefresh.getTime() + Token.EXPIRE_TIME);
   }
 
   revoke(): void {
