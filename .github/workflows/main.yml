@@ -44,5 +44,5 @@ jobs:
         if: success() || failure()
         with:
           name: JEST Tests
-          path: coverage/coverage-final.json
+          path: coverage/clover.xml
           reporter: jest-junit
