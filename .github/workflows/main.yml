@@ -34,15 +34,15 @@ jobs:
         env:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/database'
 
-      - name: Generate Report
-        run: npm run test:cov
-        env:
-          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/database'
-
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
+  Coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        id: coverage
         with:
-          name: JEST Tests
-          path: coverage/clover.xml
-          reporter: jest-junit
+          output: report-markdown
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: ${{ steps.coverage.outputs.report }}
+          test-script: npm run test
