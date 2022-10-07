@@ -6,7 +6,6 @@ import {
   tokenSchema,
   TokenSchema,
 } from './infra/repository/mongoose/Token.schema';
-import { TokenRestController } from './infra/rest/Token.rest.controller';
 import { TokenService } from './token.service';
 
 @Module({
@@ -15,7 +14,6 @@ import { TokenService } from './token.service';
       { name: TokenSchema.name, schema: tokenSchema },
     ]),
   ],
-  controllers: [TokenRestController],
   providers: [
     {
       provide: 'TOKEN_REPO',
