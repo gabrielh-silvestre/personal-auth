@@ -29,4 +29,12 @@ export class ExceptionFactory {
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
+
+  static unauthorized(message: string): IException {
+    return new Exception(
+      message,
+      status.UNAUTHENTICATED,
+      HttpStatus.UNAUTHORIZED,
+    );
+  }
 }
