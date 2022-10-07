@@ -13,14 +13,6 @@ export class UserPrismaRepository implements IUserRepository {
     this.prismaClient = new PrismaClient();
   }
 
-  async existsByEmail(email: string): Promise<boolean> {
-    const foundUser = await this.prismaClient.user.findUnique({
-      where: { email },
-    });
-
-    return !!foundUser;
-  }
-
   async create(entity: User): Promise<void> {
     await this.prismaClient.user.create({
       data: {
@@ -56,5 +48,23 @@ export class UserPrismaRepository implements IUserRepository {
     return foundUser
       ? new User(foundUser.id, foundUser.username, foundUser.email)
       : null;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const foundUser = await this.prismaClient.user.findUnique({
+      where: { email },
+    });
+
+    return foundUser
+      ? new User(foundUser.id, foundUser.username, foundUser.email)
+      : null;
+  }
+
+  async existsByEmail(email: string): Promise<boolean> {
+    const foundUser = await this.prismaClient.user.findUnique({
+      where: { email },
+    });
+
+    return !!foundUser;
   }
 }

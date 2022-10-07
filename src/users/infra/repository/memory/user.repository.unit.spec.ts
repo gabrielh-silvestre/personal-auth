@@ -52,6 +52,15 @@ describe('Unit test infra in memory User repository', () => {
     expect(foundUser).not.toBeNull();
   });
 
+  it('should find a user by email', async () => {
+    const userRepository = new UserInMemoryRepository();
+    const [userToFind] = USERS_MOCK;
+
+    const foundUser = await userRepository.findByEmail(userToFind.email);
+
+    expect(foundUser).not.toBeNull();
+  });
+
   it('should check if a user exists by email', async () => {
     const userRepository = new UserInMemoryRepository();
     const [userToFind] = USERS_MOCK;
