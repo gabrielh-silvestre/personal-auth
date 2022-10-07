@@ -1,6 +1,6 @@
+import { Controller, Post, UseGuards } from '@nestjs/common';
+
 import { AuthService } from '@auth/auth.service';
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
 import { ValidateUserGuard } from '../guard/ValidateUser.guard';
 
 @Controller('/auth')
@@ -9,9 +9,7 @@ export class AuthRestController {
 
   @UseGuards(ValidateUserGuard)
   @Post('/login')
-  async login(@Req() req: Request) {
-    console.log({ req });
-
+  async login() {
     return { message: 'Login successful' };
   }
 }
