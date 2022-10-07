@@ -8,6 +8,7 @@ import type { IUserRepository } from './domain/repository/user.repository.interf
 
 import { UserFactory } from './domain/factory/User.factory';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { User } from './domain/entity/User';
 
 @Injectable()
 export class UserService {
@@ -46,5 +47,9 @@ export class UserService {
       id: newUser.id,
       username: newUser.username,
     };
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmail(email);
   }
 }

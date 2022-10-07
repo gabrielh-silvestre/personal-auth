@@ -80,4 +80,12 @@ describe('Integration test for User service', () => {
       ).rejects.toThrowError();
     });
   });
+
+  describe('findByEmail', () => {
+    it('should return the user', async () => {
+      const user = await userService.findByEmail('doe@email.com');
+
+      expect(user).not.toBeNull();
+    });
+  });
 });
