@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
 import { User } from '@users/domain/entity/User';
+import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 @Injectable()
 export class UserPrismaRepository implements IUserRepository {
@@ -45,9 +46,14 @@ export class UserPrismaRepository implements IUserRepository {
       where: { id },
     });
 
-    return foundUser
-      ? new User(foundUser.id, foundUser.username, foundUser.email)
-      : null;
+    if (!foundUser) {
+      return null;
+    }
+
+    const user = new User(foundUser.id, foundUser.username, foundUser.email);
+    user.changePassword(PasswordFactory.createFromHash(foundUser.password));
+
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -55,9 +61,14 @@ export class UserPrismaRepository implements IUserRepository {
       where: { email },
     });
 
-    return foundUser
-      ? new User(foundUser.id, foundUser.username, foundUser.email)
-      : null;
+    if (!foundUser) {
+      return null;
+    }
+
+    const user = new User(foundUser.id, foundUser.username, foundUser.email);
+    user.changePassword(PasswordFactory.createFromHash(foundUser.password));
+
+    return user;
   }
 
   async existsByEmail(email: string): Promise<boolean> {
