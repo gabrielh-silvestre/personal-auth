@@ -10,6 +10,7 @@ import {
 import { TokenService } from './token.service';
 
 const SECRET = process.env.JWT_SECRET || 'secret';
+const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 
 @Module({
   imports: [
@@ -18,8 +19,8 @@ const SECRET = process.env.JWT_SECRET || 'secret';
     ]),
     JwtModule.register({
       secret: SECRET,
-      verifyOptions: { maxAge: '3m' },
-      signOptions: { expiresIn: '3m' },
+      verifyOptions: { maxAge: EXPIRES_IN },
+      signOptions: { expiresIn: EXPIRES_IN },
     }),
   ],
   providers: [
