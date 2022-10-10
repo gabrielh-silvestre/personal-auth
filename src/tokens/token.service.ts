@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import type {
   InputCreateTokenDto,
+  JwtTokenPayload,
   OutputCreateTokenDto,
 } from './dto/CreateToken.dto';
 import type { ITokenRepository } from './domain/repository/token.repository.interface';
@@ -29,5 +30,15 @@ export class TokenService {
     });
 
     return { token: jwtToken };
+  }
+
+  async validateToken(token: string): Promise<boolean> {
+    const { tokenId } = await this.jwtService.verifyAsync<JwtTokenPayload>(
+      token,
+    );
+
+    const foundToken = await this.tokenRepository.find(tokenId);
+
+    return foundToken ? foundToken.isValid() : false;
   }
 }
