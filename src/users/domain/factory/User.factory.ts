@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
 import { User } from '../entity/User';
-import { Password } from '../value-object/Password';
+import { PasswordFactory } from './Password.factory';
 
 export class UserFactory {
   public static create(
@@ -20,7 +20,7 @@ export class UserFactory {
     }
 
     const newUser = new User(uuid(), username, email);
-    newUser.changePassword(new Password(password));
+    newUser.changePassword(PasswordFactory.createNew(password));
 
     return newUser;
   }

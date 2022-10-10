@@ -1,16 +1,10 @@
-import { v4 as uuid } from 'uuid';
 import { Test } from '@nestjs/testing';
 
-import { User } from '@users/domain/entity/User';
 import { UserGrpcServerController } from './User.grpc-server.controller';
 import { UserService } from '@users/user.service';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
-const USERS_MOCK: User[] = [
-  new User(uuid(), 'John', 'john@email.com'),
-  new User(uuid(), 'Doe', 'doe@email.com'),
-  new User(uuid(), 'Jane', 'jane@email.com'),
-];
+import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test for gRPC server User controller', () => {
   let userController: UserGrpcServerController;

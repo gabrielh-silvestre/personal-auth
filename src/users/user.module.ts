@@ -8,6 +8,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [],
+  exports: [UserService],
   controllers: [UserGrpcServerController, UserRestController],
   providers: [
     UserService,

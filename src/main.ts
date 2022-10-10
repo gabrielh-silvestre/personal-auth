@@ -15,7 +15,7 @@ async function bootstrap() {
     options: {
       url: GRPC_URL,
       package: 'proto.users',
-      protoPath: join(__dirname, 'users/infra/grpc/proto/user.proto'),
+      protoPath: 'src/users/infra/grpc/proto/user.proto',
     },
   });
 

@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
-import { Password } from '../value-object/Password';
 import { User } from './User';
+import { PasswordFactory } from '../factory/Password.factory';
 
 const VALID_USERNAME = 'username';
 const VALID_EMAIL = 'email@email.com';
@@ -33,7 +33,7 @@ describe('Unit test domain User entity', () => {
   it('should change password', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
 
-    user.changePassword(new Password('newPassword'));
+    user.changePassword(PasswordFactory.createNew('newPassword'));
     expect(user.password.isEqual('newPassword')).toBeTruthy();
   });
 
@@ -82,16 +82,16 @@ describe('Unit test domain User entity', () => {
   it('should throw error when change to a invalid password', () => {
     const user = new User(uuid(), VALID_USERNAME, VALID_EMAIL);
 
-    expect(() => user.changePassword(new Password(''))).toThrowError(
-      'Password is required',
-    );
-
-    expect(() => user.changePassword(new Password('p'))).toThrowError(
-      'Password must be at least 8 characters long',
-    );
+    expect(() =>
+      user.changePassword(PasswordFactory.createNew('')),
+    ).toThrowError('Password is required');
 
     expect(() =>
-      user.changePassword(new Password('password'.repeat(20))),
+      user.changePassword(PasswordFactory.createNew('p')),
+    ).toThrowError('Password must be at least 8 characters long');
+
+    expect(() =>
+      user.changePassword(PasswordFactory.createNew('password'.repeat(20))),
     ).toThrowError('Password must be at most 16 characters long');
   });
 });
