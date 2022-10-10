@@ -21,14 +21,12 @@ import { TokenService } from '@tokens/token.service';
 import { UserService } from '@users/user.service';
 
 import { RecoverUserPipe } from '../pipe/RecoverUser.pipe';
-import { ExceptionRestFilter } from '../filter/ExceptionRest.filter';
 import { ParseHalJsonInterceptor } from '../interceptor/Parse.hal-json.interceptor';
 
 import { ValidateUserGuard } from '@auth/infra/rest/guard/ValidateUser.guard';
 import { ValidateTokenGuard } from '@auth/infra/rest/guard/ValidateToken.guard';
 
 @Controller('/users')
-@UseFilters(new ExceptionRestFilter())
 export class UserRestController {
   constructor(
     private readonly userService: UserService,
