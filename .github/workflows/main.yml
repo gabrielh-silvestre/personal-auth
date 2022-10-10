@@ -41,7 +41,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test
+        run: npm run test:all
         env:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/database'
           MONGO_URI: 'mongodb://localhost:27017/database'
@@ -58,4 +58,4 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: ${{ steps.coverage.outputs.report }}
-          test-script: npm run test
+          test-script: npm run test:all
