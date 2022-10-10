@@ -3,7 +3,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import type {
   InputRecoverUserDto,
   OutputRecoverUserDto,
-} from '@auth/dto/RecoverUser.dto';
+} from '@users/dto/RecoverUser.dto';
 
 import { UserService } from '@users/user.service';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';

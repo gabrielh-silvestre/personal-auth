@@ -1,23 +1,48 @@
-import { Body, Controller, Post, UseFilters, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import type {
   InputCreateUserDto,
   OutputCreateUserDto,
 } from '@users/dto/CreateUser.dto';
+import type { OutputRecoverUserDto } from '@users/dto/RecoverUser.dto';
+import type { OutputLoginUserDto } from '@users/dto/LoginUser.dto';
 
+import { TokenService } from '@tokens/token.service';
 import { UserService } from '@users/user.service';
+
+import { RecoverUserPipe } from '../pipe/RecoverUser.pipe';
 import { ExceptionRestFilter } from '../filter/ExceptionRest.filter';
 import { ParseHalJsonInterceptor } from '../interceptor/Parse.hal-json.interceptor';
+import { ValidateUserGuard } from '@auth/infra/rest/guard/ValidateUser.guard';
 
 @Controller('/users')
 @UseFilters(new ExceptionRestFilter())
 export class UserRestController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Post()
   @UseInterceptors(new ParseHalJsonInterceptor<OutputCreateUserDto>())
   async create(@Body() data: InputCreateUserDto): Promise<OutputCreateUserDto> {
     const { id, username } = await this.userService.create(data);
     return { id, username };
+  }
+
+  @UseGuards(ValidateUserGuard)
+  @Post('/login')
+  @UseInterceptors(new ParseHalJsonInterceptor<OutputRecoverUserDto>())
+  async login(
+    @Body(RecoverUserPipe) { id }: OutputRecoverUserDto,
+  ): Promise<OutputLoginUserDto> {
+    return this.tokenService.createToken({ userId: id });
   }
 }
