@@ -8,11 +8,18 @@ export class Password implements IPassword {
 
   private _password: string;
 
-  constructor(password: string) {
-    this.validate(password);
+  constructor(password: string, hash = false) {
+    this._password = password;
 
+    if (hash) {
+      this.validate(password);
+      this.hash();
+    }
+  }
+
+  private hash(): void {
     const salt = genSaltSync(10);
-    this._password = hashSync(password, salt);
+    this._password = hashSync(this._password, salt);
   }
 
   private validate(password: string): void | never {

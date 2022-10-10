@@ -1,15 +1,9 @@
-import { v4 as uuid } from 'uuid';
 import { Test } from '@nestjs/testing';
 
-import { User } from './domain/entity/User';
 import { UserService } from './user.service';
 import { UserInMemoryRepository } from './infra/repository/memory/User.repository';
 
-const USERS_MOCK: User[] = [
-  new User(uuid(), 'John', 'john@email.com'),
-  new User(uuid(), 'Doe', 'doe@email.com'),
-  new User(uuid(), 'Jane', 'jane@email.com'),
-];
+import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test for User service', () => {
   let userService: UserService;
@@ -78,6 +72,39 @@ describe('Integration test for User service', () => {
           confirmPassword: 'password',
         }),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('findByEmail', () => {
+    it('should return the user', async () => {
+      const user = await userService.findByEmail('doe@email.com');
+
+      expect(user).not.toBeNull();
+    });
+
+    it('should return null if the user does not exist', async () => {
+      const user = await userService.findByEmail('not@emai.com');
+
+      expect(user).toBeNull();
+    });
+  });
+
+  describe('getUser', () => {
+    it('should return the user', async () => {
+      const [{ id: userId }] = USERS_MOCK;
+      const user = await userService.getUser(userId);
+
+      expect(user).not.toBeNull();
+      expect(user).toStrictEqual({
+        id: expect.any(String),
+        username: expect.any(String),
+      });
+    });
+
+    it('should return null if the user does not exist', async () => {
+      const user = await userService.getUser('non-existing-id');
+
+      expect(user).toBeNull();
     });
   });
 });

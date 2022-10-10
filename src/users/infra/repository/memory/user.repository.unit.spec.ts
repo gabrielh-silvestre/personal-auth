@@ -3,13 +3,9 @@ import { v4 as uuid } from 'uuid';
 import { User } from '@users/domain/entity/User';
 import { UserInMemoryRepository } from './User.repository';
 
-const USERS_MOCK: User[] = [
-  new User(uuid(), 'John', 'john@email.com'),
-  new User(uuid(), 'Doe', 'doe@email.com'),
-  new User(uuid(), 'Jane', 'jane@email.com'),
-];
+import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
-describe('Test Infra in memory user repository', () => {
+describe('Unit test infra in memory User repository', () => {
   beforeEach(() => {
     UserInMemoryRepository.reset(USERS_MOCK);
   });
@@ -48,6 +44,15 @@ describe('Test Infra in memory user repository', () => {
     const [userToFind] = USERS_MOCK;
 
     const foundUser = await userRepository.find(userToFind.id);
+
+    expect(foundUser).not.toBeNull();
+  });
+
+  it('should find a user by email', async () => {
+    const userRepository = new UserInMemoryRepository();
+    const [userToFind] = USERS_MOCK;
+
+    const foundUser = await userRepository.findByEmail(userToFind.email);
 
     expect(foundUser).not.toBeNull();
   });

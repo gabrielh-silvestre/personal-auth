@@ -3,23 +3,19 @@ import { HttpStatus } from '@nestjs/common';
 
 import type { IException } from '../entity/exception.interface';
 
-import { ExceptionRpc } from '../entity/Exceptions-rpc';
+import { Exception } from '../entity/Exception';
 
-export class ExceptionRpcFactory {
+export class ExceptionFactory {
   static notFound(message: string): IException {
-    return new ExceptionRpc(message, status.NOT_FOUND, HttpStatus.NOT_FOUND);
+    return new Exception(message, status.NOT_FOUND, HttpStatus.NOT_FOUND);
   }
 
   static conflict(message: string): IException {
-    return new ExceptionRpc(
-      message,
-      status.ALREADY_EXISTS,
-      HttpStatus.CONFLICT,
-    );
+    return new Exception(message, status.ALREADY_EXISTS, HttpStatus.CONFLICT);
   }
 
   static invalidArgument(message: string): IException {
-    return new ExceptionRpc(
+    return new Exception(
       message,
       status.INVALID_ARGUMENT,
       HttpStatus.BAD_REQUEST,
@@ -27,10 +23,18 @@ export class ExceptionRpcFactory {
   }
 
   static internal(message: string): IException {
-    return new ExceptionRpc(
+    return new Exception(
       message,
       status.INTERNAL,
       HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  static unauthorized(message: string): IException {
+    return new Exception(
+      message,
+      status.UNAUTHENTICATED,
+      HttpStatus.UNAUTHORIZED,
     );
   }
 }

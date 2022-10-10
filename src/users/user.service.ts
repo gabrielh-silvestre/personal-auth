@@ -5,9 +5,11 @@ import type {
   OutputCreateUserDto,
 } from './dto/CreateUser.dto';
 import type { IUserRepository } from './domain/repository/user.repository.interface';
+import type { OutputGetUserDto } from './dto/GetUser.dto';
 
+import { User } from './domain/entity/User';
 import { UserFactory } from './domain/factory/User.factory';
-import { ExceptionRpcFactory } from '@exceptions/factory/Exception.rpc.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class UserService {
@@ -37,7 +39,7 @@ export class UserService {
     const emailAlreadyRegistered = await this.emailAlreadyTaken(email);
 
     if (emailAlreadyRegistered) {
-      throw ExceptionRpcFactory.conflict('Email already registered');
+      throw ExceptionFactory.conflict('Email already registered');
     }
 
     await this.userRepository.create(newUser);
@@ -46,5 +48,22 @@ export class UserService {
       id: newUser.id,
       username: newUser.username,
     };
+  }
+
+  async getUser(id: string): Promise<OutputGetUserDto | null> {
+    const foundUser = await this.userRepository.find(id);
+
+    if (!foundUser) {
+      return null;
+    }
+
+    return {
+      id: foundUser.id,
+      username: foundUser.username,
+    };
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmail(email);
   }
 }

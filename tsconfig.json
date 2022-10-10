@@ -19,8 +19,10 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@users/*": ["./src/users/*"],
+      "@tokens/*": ["./src/tokens/*"],
       "@exceptions/*": ["./src/exceptions/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@auth/*": ["./src/auth/*"]
     }
   }
 }
