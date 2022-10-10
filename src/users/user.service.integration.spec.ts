@@ -81,5 +81,30 @@ describe('Integration test for User service', () => {
 
       expect(user).not.toBeNull();
     });
+
+    it('should return null if the user does not exist', async () => {
+      const user = await userService.findByEmail('not@emai.com');
+
+      expect(user).toBeNull();
+    });
+  });
+
+  describe('getUser', () => {
+    it('should return the user', async () => {
+      const [{ id: userId }] = USERS_MOCK;
+      const user = await userService.getUser(userId);
+
+      expect(user).not.toBeNull();
+      expect(user).toStrictEqual({
+        id: expect.any(String),
+        username: expect.any(String),
+      });
+    });
+
+    it('should return null if the user does not exist', async () => {
+      const user = await userService.getUser('non-existing-id');
+
+      expect(user).toBeNull();
+    });
   });
 });

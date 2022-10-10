@@ -1,22 +1,23 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { AuthService } from '@auth/auth.service';
+import { UserService } from '@users/user.service';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class ValidateUserGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { email, password } = request.body;
 
-    const user = await this.authService.validateUser({ email, password });
+    const user = await this.userService.findByEmail(email);
+    const isUserCredentialsValid = user && user.password.isEqual(password);
 
-    if (user) {
-      request.body.user = user;
-      return true;
+    if (!isUserCredentialsValid) {
+      throw ExceptionFactory.unauthorized('Invalid credentials');
     }
 
-    return false;
+    return true;
   }
 }

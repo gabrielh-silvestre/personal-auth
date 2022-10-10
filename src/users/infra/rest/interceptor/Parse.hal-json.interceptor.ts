@@ -12,12 +12,14 @@ export class ParseHalJsonInterceptor<T>
   ):
     | Observable<RestResponseCreateUser<T>>
     | Promise<Observable<RestResponseCreateUser<T>>> {
+    const request = context.switchToHttp().getRequest();
+
     return next.handle().pipe(
       map((data) => {
         return {
           _links: {
             self: {
-              href: '/users',
+              href: request.url,
             },
           },
           data,
