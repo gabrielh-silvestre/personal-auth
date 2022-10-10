@@ -1,6 +1,4 @@
 export interface InputLoginDto {
-  user: {
-    id: string;
-    username: string;
-  };
+  id: string;
+  username: string;
 }

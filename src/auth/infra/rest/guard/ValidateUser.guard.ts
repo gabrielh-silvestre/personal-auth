@@ -10,13 +10,8 @@ export class ValidateUserGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { email, password } = request.body;
 
-    const user = await this.authService.validateUser({ email, password });
+    await this.authService.validateUser({ email, password });
 
-    if (user) {
-      request.body.user = user;
-      return true;
-    }
-
-    return false;
+    return true;
   }
 }

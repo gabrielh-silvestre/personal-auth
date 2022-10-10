@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import type {
-  InputValidateUserDto,
-  OutputValidateUserDto,
-} from './dto/ValidateUser.dto';
+import type { InputValidateUserDto } from './dto/ValidateUser.dto';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
@@ -20,17 +17,12 @@ export class AuthService {
   async validateUser({
     email,
     password,
-  }: InputValidateUserDto): Promise<OutputValidateUserDto | null> {
+  }: InputValidateUserDto): Promise<void | never> {
     const user = await this.userService.findByEmail(email);
 
     if (!user || !user.password.isEqual(password)) {
       throw ExceptionFactory.unauthorized('Invalid credentials');
     }
-
-    return {
-      id: user.id,
-      username: user.username,
-    };
   }
 
   async validateToken(token: string): Promise<void | never> {
