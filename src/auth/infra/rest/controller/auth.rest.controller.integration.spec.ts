@@ -44,10 +44,8 @@ describe('Integration test for REST Auth controller', () => {
   describe('login', () => {
     it('should login a user', async () => {
       const token = await authController.login({
-        user: {
-          id: '1',
-          username: 'John',
-        },
+        id: '1',
+        username: 'test',
       });
 
       expect(token).not.toBeNull();
