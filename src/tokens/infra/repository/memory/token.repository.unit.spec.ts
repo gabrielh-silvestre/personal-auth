@@ -1,15 +1,9 @@
 import { v4 as uuid } from 'uuid';
 
 import { TokenFactory } from '@tokens/domain/factory/Token.factory';
-import { Token } from '@tokens/domain/entity/Token';
 
 import { TokenInMemoryRepository } from './Token.repository';
-
-const TOKENS_MOCK: Token[] = [
-  TokenFactory.create(uuid()),
-  TokenFactory.create(uuid()),
-  TokenFactory.create(uuid()),
-];
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Unit test infra in memory Task repository', () => {
   beforeEach(() => {
