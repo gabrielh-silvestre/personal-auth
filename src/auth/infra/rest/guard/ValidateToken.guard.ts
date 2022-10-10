@@ -11,7 +11,9 @@ export class ValidateTokenGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
 
-    const token = (authorization as string).replace(/^Bearer\s/, '');
+    const token = authorization
+      ? (authorization as string).replace(/^Bearer\s/, '')
+      : request.params.token;
 
     try {
       const isTokenValid = await this.tokenService.validateToken(token);
