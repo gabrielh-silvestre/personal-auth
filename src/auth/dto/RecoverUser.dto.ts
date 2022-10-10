@@ -1,9 +1,9 @@
-export interface InputRecoversUserDto {
+export interface InputRecoverUserDto {
   email: string;
   password: string;
 }
 
-export interface OutputRecoversUserDto {
+export interface OutputRecoverUserDto {
   id: string;
   username: string;
 }

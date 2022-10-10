@@ -1,24 +1,23 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 
 import type {
-  InputRecoversUserDto,
-  OutputRecoversUserDto,
+  InputRecoverUserDto,
+  OutputRecoverUserDto,
 } from '@auth/dto/RecoverUser.dto';
 
 import { UserService } from '@users/user.service';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
-export class RecoverUserByEmailPipe
-  implements
-    PipeTransform<InputRecoversUserDto, Promise<OutputRecoversUserDto>>
+export class RecoverUserPipe
+  implements PipeTransform<InputRecoverUserDto, Promise<OutputRecoverUserDto>>
 {
   constructor(private readonly userService: UserService) {}
 
   async transform(
-    value: InputRecoversUserDto,
-    metadata: ArgumentMetadata,
-  ): Promise<OutputRecoversUserDto> {
+    value: InputRecoverUserDto,
+    _metadata: ArgumentMetadata,
+  ): Promise<OutputRecoverUserDto> {
     const foundUser = await this.userService.findByEmail(value.email);
 
     if (!foundUser || !foundUser.password.isEqual(value.password)) {
