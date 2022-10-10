@@ -1,5 +1,7 @@
-import type { Request as IRequest } from 'express';
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+
+import type { OutputCreateTokenDto } from '@tokens/dto/CreateToken.dto';
+import type { InputLoginDto } from '@auth/dto/Login.dto';
 
 import { TokenService } from '@tokens/token.service';
 import { ValidateUserGuard } from '../guard/ValidateUser.guard';
@@ -10,9 +12,9 @@ export class AuthRestController {
 
   @UseGuards(ValidateUserGuard)
   @Post('/login')
-  async login(@Request() req: IRequest) {
+  async login(@Body() { user }: InputLoginDto): Promise<OutputCreateTokenDto> {
     return this.tokenService.createToken({
-      userId: req.user.id,
+      userId: user.id,
     });
   }
 }

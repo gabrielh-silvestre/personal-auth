@@ -13,7 +13,7 @@ export class ValidateUserGuard implements CanActivate {
     const user = await this.authService.validateUser({ email, password });
 
     if (user) {
-      request.user = user;
+      request.body.user = user;
       return true;
     }
 
