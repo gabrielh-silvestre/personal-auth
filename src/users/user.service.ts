@@ -5,10 +5,11 @@ import type {
   OutputCreateUserDto,
 } from './dto/CreateUser.dto';
 import type { IUserRepository } from './domain/repository/user.repository.interface';
+import type { OutputGetUserDto } from './dto/GetUser.dto';
 
+import { User } from './domain/entity/User';
 import { UserFactory } from './domain/factory/User.factory';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
-import { User } from './domain/entity/User';
 
 @Injectable()
 export class UserService {
@@ -46,6 +47,19 @@ export class UserService {
     return {
       id: newUser.id,
       username: newUser.username,
+    };
+  }
+
+  async getUser(id: string): Promise<OutputGetUserDto | null> {
+    const foundUser = await this.userRepository.find(id);
+
+    if (!foundUser) {
+      return null;
+    }
+
+    return {
+      id: foundUser.id,
+      username: foundUser.username,
     };
   }
 

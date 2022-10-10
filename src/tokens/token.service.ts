@@ -41,4 +41,8 @@ export class TokenService {
 
     return foundToken ? foundToken.isValid() : false;
   }
+
+  async recoverTokenPayload(token: string): Promise<JwtTokenPayload> {
+    return this.jwtService.verifyAsync<JwtTokenPayload>(token);
+  }
 }
