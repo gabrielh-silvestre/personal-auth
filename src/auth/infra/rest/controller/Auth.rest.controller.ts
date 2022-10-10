@@ -1,15 +1,18 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import type { Request as IRequest } from 'express';
+import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 
-import { AuthService } from '@auth/auth.service';
+import { TokenService } from '@tokens/token.service';
 import { ValidateUserGuard } from '../guard/ValidateUser.guard';
 
 @Controller('/auth')
 export class AuthRestController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly tokenService: TokenService) {}
 
   @UseGuards(ValidateUserGuard)
   @Post('/login')
-  async login() {
-    return { message: 'Login successful' };
+  async login(@Request() req: IRequest) {
+    return this.tokenService.createToken({
+      userId: req.user.id,
+    });
   }
 }

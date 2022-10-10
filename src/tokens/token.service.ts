@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import type {
   InputCreateTokenDto,
@@ -12,6 +13,7 @@ import { TokenFactory } from './domain/factory/Token.factory';
 export class TokenService {
   constructor(
     @Inject('TOKEN_REPO') private readonly tokenRepository: ITokenRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createToken({
@@ -21,6 +23,11 @@ export class TokenService {
 
     await this.tokenRepository.create(newToken);
 
-    return { token: newToken.id };
+    const jwtToken = await this.jwtService.signAsync({
+      tokenId: newToken.id,
+      userId: newToken.userId,
+    });
+
+    return { token: jwtToken };
   }
 }
