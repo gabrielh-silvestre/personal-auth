@@ -1,3 +1,4 @@
+import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 
 import { UserGrpcServerController } from './User.grpc-server.controller';
@@ -8,7 +9,6 @@ import { TokenService } from '@tokens/token.service';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { JwtModule } from '@nestjs/jwt';
 
 const VALID_NEW_USER = {
   username: 'Joe',
