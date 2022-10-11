@@ -9,6 +9,7 @@ import { TokenService } from '@tokens/token.service';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -26,11 +27,7 @@ describe('Integration test for REST User controller', () => {
 
     const module = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          secret: 'secret',
-          verifyOptions: { maxAge: '1m' },
-          signOptions: { expiresIn: '1m' },
-        }),
+        JwtModule.register(JWT_OPTIONS_MOCK),
       ],
       controllers: [UserRestController],
       providers: [
