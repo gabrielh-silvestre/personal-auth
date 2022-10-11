@@ -67,4 +67,24 @@ describe('Integration test for Token service', () => {
       expect(typeof tokenPayload.userId).toBe('string');
     });
   });
+
+  describe('revoke token', () => {
+    it('should revoke a token', async () => {
+      const newToken = await tokenService.createToken({ userId: '1' });
+      const isTokenRevoked = await tokenService.revokeToken(newToken.token);
+
+      expect(isTokenRevoked).toBe(true);
+    });
+
+    it('should not revoke a invalid token', async () => {
+      await expect(tokenService.revokeToken('invalid')).rejects.toThrowError();
+
+      const newToken = await tokenService.createToken({ userId: '1' });
+      await tokenService.revokeToken(newToken.token);
+
+      await expect(
+        tokenService.revokeToken(newToken.token),
+      ).rejects.toThrowError();
+    });
+  });
 });
