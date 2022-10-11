@@ -1,4 +1,4 @@
-import { Controller, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, UseFilters, UseGuards } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type {
