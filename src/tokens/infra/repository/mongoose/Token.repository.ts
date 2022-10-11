@@ -36,13 +36,12 @@ export class TokenMongooseRepository implements ITokenRepository {
   }
 
   async update(entity: Token): Promise<void> {
-    this.tokenModel.findOneAndUpdate(
+    await this.tokenModel.updateMany(
       {
         $or: [{ id: entity.id }, { userId: entity.userId }],
       },
       {
-        $setOnInsert: {
-          id: entity.id,
+        $set: {
           userId: entity.userId,
           lastRefresh: entity.lastRefresh,
           expires: entity.expires,
