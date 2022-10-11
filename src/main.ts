@@ -16,8 +16,11 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       url: GRPC_URL,
-      package: 'proto.users',
-      protoPath: 'src/users/infra/grpc/proto/user.proto',
+      package: ['proto.users', 'proto.tokens'],
+      protoPath: [
+        'src/users/infra/grpc/proto/user.proto',
+        'src/tokens/infra/grpc/proto/token.proto',
+      ],
     },
   });
 

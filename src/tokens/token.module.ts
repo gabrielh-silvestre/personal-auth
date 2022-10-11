@@ -7,7 +7,9 @@ import {
   tokenSchema,
   TokenSchema,
 } from './infra/repository/mongoose/Token.schema';
+
 import { TokenService } from './token.service';
+import { TokenGrpcServerController } from './infra/grpc/controller/Token.grpc-server.controller';
 
 const SECRET = process.env.JWT_SECRET || 'secret';
 const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
@@ -23,12 +25,13 @@ const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
       signOptions: { expiresIn: EXPIRES_IN },
     }),
   ],
+  controllers: [TokenGrpcServerController],
   providers: [
+    TokenService,
     {
       provide: 'TOKEN_REPO',
       useClass: TokenMongooseRepository,
     },
-    TokenService,
   ],
   exports: [TokenService],
 })

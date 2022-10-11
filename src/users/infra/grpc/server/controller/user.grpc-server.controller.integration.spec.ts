@@ -1,3 +1,4 @@
+import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 
 import { UserGrpcServerController } from './User.grpc-server.controller';
@@ -8,7 +9,7 @@ import { TokenService } from '@tokens/token.service';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { JwtModule } from '@nestjs/jwt';
+import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -31,11 +32,7 @@ describe('Integration test for gRPC server User controller', () => {
 
     const module = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          secret: 'secret',
-          verifyOptions: { maxAge: '1m' },
-          signOptions: { expiresIn: '1m' },
-        }),
+        JwtModule.register(JWT_OPTIONS_MOCK),
       ],
       controllers: [UserGrpcServerController],
       providers: [
