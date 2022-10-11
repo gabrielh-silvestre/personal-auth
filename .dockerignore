@@ -1,0 +1,22 @@
+# directories
+node_modules/
+.github/
+.vscode/
+.git/
+coverage/
+
+# config
+.prettierrc
+.eslintrc*
+.env*
+jest*
+
+# test files
+**/test/**
+**/*.spec.*
+
+# build files
+**/dist/**
+
+# misc
+.gitingore
