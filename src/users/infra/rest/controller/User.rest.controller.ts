@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Post,
-  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,8 +22,8 @@ import { UserService } from '@users/user.service';
 import { RecoverUserPipe } from '../pipe/RecoverUser.pipe';
 import { ParseHalJsonInterceptor } from '../interceptor/Parse.hal-json.interceptor';
 
-import { ValidateUserGuard } from '@auth/infra/rest/guard/ValidateUser.guard';
-import { ValidateTokenGuard } from '@auth/infra/rest/guard/ValidateToken.guard';
+import { ValidateUserGuard } from '@auth/infra/guard/ValidateUser.guard';
+import { ValidateTokenGuard } from '@auth/infra/guard/ValidateToken.guard';
 
 @Controller('/users')
 export class UserRestController {
