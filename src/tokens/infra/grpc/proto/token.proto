@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto.tokens;
+
+message Token {
+    string token = 1;
+}
+
+message RevokeResponse {
+    bool success = 1;
+}
+
+service TokenService {
+    rpc RevokeToken(Token) returns (RevokeResponse);
+}
