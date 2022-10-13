@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common/decorators';
+import { Injectable } from '@nestjs/common';
 import { Token } from '@tokens/domain/entity/Token';
 
 import { ITokenRepository } from '@tokens/domain/repository/token.repository.interface';
