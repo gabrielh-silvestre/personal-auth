@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators';
 import { User } from '@users/domain/entity/User';
 
 import { IUserRepository } from '@users/domain/repository/user.repository.interface';

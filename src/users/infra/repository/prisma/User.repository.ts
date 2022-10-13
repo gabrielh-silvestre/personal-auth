@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators';
 import { PrismaClient } from '@prisma/client';
 
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
