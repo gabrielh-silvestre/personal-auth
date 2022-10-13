@@ -1,6 +1,6 @@
-import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import type { ITokenRepository } from '@tokens/domain/repository/token.repository.interface';
 

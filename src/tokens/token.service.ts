@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common/decorators';
 import { JwtService } from '@nestjs/jwt';
 
 import type {

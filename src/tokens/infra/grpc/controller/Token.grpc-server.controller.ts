@@ -1,4 +1,4 @@
-import { Controller, UseFilters } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common/decorators';
 import { GrpcMethod } from '@nestjs/microservices';
 
 import { TokenService } from '@tokens/token.service';

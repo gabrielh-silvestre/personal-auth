@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
+} from '@nestjs/common/decorators';
 
 import type {
   InputCreateUserDto,
