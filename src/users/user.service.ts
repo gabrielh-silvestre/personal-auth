@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common/decorators';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import type {
   InputCreateUserDto,
@@ -9,12 +10,14 @@ import type { OutputGetUserDto } from './dto/GetUser.dto';
 
 import { User } from './domain/entity/User';
 import { UserFactory } from './domain/factory/User.factory';
+import { UserCreatedEvent } from './domain/event/user-created.event';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USER_REPO') private readonly userRepository: IUserRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private async emailAlreadyTaken(email: string): Promise<boolean> {
@@ -43,6 +46,7 @@ export class UserService {
     }
 
     await this.userRepository.create(newUser);
+    this.eventEmitter.emitAsync('user.created', new UserCreatedEvent(newUser));
 
     return {
       id: newUser.id,
