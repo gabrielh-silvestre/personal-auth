@@ -3,13 +3,15 @@ import { v4 as uuid } from 'uuid';
 import { Mail } from '../entity/Mail';
 
 export class MailFactory {
+  private static readonly SENDER: 'S1 Personal-Auth <personal-auth@email.com>';
+
   public static createRecoverPasswordMail(
     recipient: string,
     token: string,
   ): Mail {
     return new Mail(
       uuid(),
-      'recover@email.com',
+      MailFactory.SENDER,
       recipient,
       [],
       'Recover password',
@@ -18,15 +20,18 @@ export class MailFactory {
     );
   }
 
-  public static createWelcomeMail(recipient: string): Mail {
+  public static createWelcomeMail(
+    recipientName: string,
+    recipientEmail: string,
+  ): Mail {
     return new Mail(
       uuid(),
-      'recover@email.com',
-      recipient,
+      MailFactory.SENDER,
+      recipientEmail,
       [],
       'Welcome',
-      'Welcome to our platform',
-      '<h1>Welcome to our platform</h1>',
+      `Welcome to S1 Personal-Auth, ${recipientName}!`,
+      `<h1>Welcome to S1 Personal-Auth, ${recipientName}!</h1>`,
     );
   }
 }

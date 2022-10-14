@@ -27,18 +27,6 @@ describe('Unit test domain Mail entity', () => {
     expect(() => {
       new Mail(
         uuid(),
-        'from@com',
-        'recipient@email.com',
-        ['sender@email.com'],
-        'Test email',
-        'This is a test email',
-        '<p>This is a test email</p>',
-      );
-    }).toThrowError('Sender must have a valid email address');
-
-    expect(() => {
-      new Mail(
-        uuid(),
         'sender@email.com',
         'to.com',
         ['sender@email.com'],

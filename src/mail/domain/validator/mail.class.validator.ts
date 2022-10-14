@@ -7,7 +7,6 @@ export class MailClassValidator implements IValidator<IMail> {
   @IsUUID(4, { message: 'Id must be a valid UUID v4' })
   private readonly id: string;
 
-  @IsEmail({}, { message: 'Sender must have a valid email address' })
   private readonly from: string;
 
   @IsEmail({}, { message: 'Recipient must have a valid email address' })
