@@ -11,6 +11,7 @@ export class MailService {
 
   async sendMail(mail: Mail) {
     this.mailerService.sendMail({
+      from: mail.from,
       to: mail.to,
       subject: mail.subject,
       text: mail.text,

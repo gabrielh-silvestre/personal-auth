@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { Mail } from '../entity/Mail';
 
 export class MailFactory {
-  private static readonly SENDER: 'S1 Personal-Auth <personal-auth@email.com>';
+  private static readonly SENDER = 'S1 Personal-Auth <personal-auth@email.com>';
 
   public static createRecoverPasswordMail(
     recipient: string,
