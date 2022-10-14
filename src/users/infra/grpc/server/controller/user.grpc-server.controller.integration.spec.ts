@@ -1,5 +1,6 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { UserGrpcServerController } from './User.grpc-server.controller';
 import { UserService } from '@users/user.service';
@@ -33,6 +34,7 @@ describe('Integration test for gRPC server User controller', () => {
     const module = await Test.createTestingModule({
       imports: [
         JwtModule.register(JWT_OPTIONS_MOCK),
+        EventEmitterModule.forRoot({ removeListener: true }),
       ],
       controllers: [UserGrpcServerController],
       providers: [

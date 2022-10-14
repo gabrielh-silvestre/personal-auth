@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { UserService } from './user.service';
 import { UserInMemoryRepository } from './infra/repository/memory/User.repository';
@@ -12,7 +13,10 @@ describe('Integration test for User service', () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [UserInMemoryRepository],
+      imports: [
+        UserInMemoryRepository,
+        EventEmitterModule.forRoot({ removeListener: true }),
+      ],
       controllers: [],
       providers: [
         UserService,
