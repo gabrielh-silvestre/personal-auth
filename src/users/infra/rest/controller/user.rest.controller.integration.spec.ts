@@ -1,5 +1,6 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { UserRestController } from './User.rest.controller';
 import { UserService } from '@users/user.service';
@@ -28,6 +29,7 @@ describe('Integration test for REST User controller', () => {
     const module = await Test.createTestingModule({
       imports: [
         JwtModule.register(JWT_OPTIONS_MOCK),
+        EventEmitterModule.forRoot({ removeListener: true }),
       ],
       controllers: [UserRestController],
       providers: [
