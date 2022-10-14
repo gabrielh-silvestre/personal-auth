@@ -2,10 +2,9 @@ syntax = "proto3";
 
 package proto.users;
 
-message ErrorResponse {
-    int64 code = 1;
-    string message = 2;
-    int64 status = 3;
+message UserResponse {
+    string id = 1;
+    string username = 2;
 }
 
 message CreateUserRequest {
@@ -16,11 +15,21 @@ message CreateUserRequest {
     string confirm_password = 5;
 }
 
-message CreateUserResponse {
-    string id = 1;
-    string username = 2;
+message LoginUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginUserResponse {
+    string token = 1;
+}
+
+message RecoverUserRequest {
+    string token = 1;
 }
 
 service UserService {
-    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc CreateUser(CreateUserRequest) returns (UserResponse);
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+    rpc RecoverUser(RecoverUserRequest) returns (UserResponse);
 }

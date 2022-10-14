@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common/decorators';
 import { JwtService } from '@nestjs/jwt';
 
 import type {
@@ -9,6 +9,7 @@ import type {
 import type { ITokenRepository } from './domain/repository/token.repository.interface';
 
 import { TokenFactory } from './domain/factory/Token.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class TokenService {
@@ -44,5 +45,21 @@ export class TokenService {
 
   async recoverTokenPayload(token: string): Promise<JwtTokenPayload> {
     return this.jwtService.verifyAsync<JwtTokenPayload>(token);
+  }
+
+  async revokeToken(token: string): Promise<boolean> {
+    const { tokenId } = await this.recoverTokenPayload(token);
+
+    const foundToken = await this.tokenRepository.find(tokenId);
+
+    if (!foundToken || !foundToken.isValid()) {
+      throw ExceptionFactory.invalidArgument('Invalid token');
+    }
+
+    foundToken.revoke();
+
+    await this.tokenRepository.update(foundToken);
+
+    return true;
   }
 }

@@ -5,6 +5,7 @@ import { TokenService } from './token.service';
 import { TokenInMemoryRepository } from './infra/repository/memory/Token.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
 describe('Integration test for Token service', () => {
   let tokenService: TokenService;
@@ -14,11 +15,7 @@ describe('Integration test for Token service', () => {
 
     const module = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          secret: 'secret',
-          verifyOptions: { maxAge: '1m' },
-          signOptions: { expiresIn: '1m' },
-        }),
+        JwtModule.register(JWT_OPTIONS_MOCK),
       ],
       providers: [
         TokenService,
@@ -65,6 +62,26 @@ describe('Integration test for Token service', () => {
 
       expect(tokenPayload).toBeDefined();
       expect(typeof tokenPayload.userId).toBe('string');
+    });
+  });
+
+  describe('revoke token', () => {
+    it('should revoke a token', async () => {
+      const newToken = await tokenService.createToken({ userId: '1' });
+      const isTokenRevoked = await tokenService.revokeToken(newToken.token);
+
+      expect(isTokenRevoked).toBe(true);
+    });
+
+    it('should not revoke a invalid token', async () => {
+      await expect(tokenService.revokeToken('invalid')).rejects.toThrowError();
+
+      const newToken = await tokenService.createToken({ userId: '1' });
+      await tokenService.revokeToken(newToken.token);
+
+      await expect(
+        tokenService.revokeToken(newToken.token),
+      ).rejects.toThrowError();
     });
   });
 });

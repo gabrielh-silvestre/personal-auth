@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 import { AppModule } from './app.module';
 import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
@@ -16,8 +17,11 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       url: GRPC_URL,
-      package: 'proto.users',
-      protoPath: 'src/users/infra/grpc/proto/user.proto',
+      package: ['proto.users', 'proto.tokens'],
+      protoPath: [
+        join(__dirname, '../users/infra/grpc/proto/user.proto'),
+        join(__dirname, '../tokens/infra/grpc/proto/token.proto'),
+      ],
     },
   });
 

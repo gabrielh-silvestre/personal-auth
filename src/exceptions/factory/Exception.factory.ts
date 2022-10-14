@@ -1,5 +1,5 @@
 import { status } from '@grpc/grpc-js';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common/enums';
 
 import type { IException } from '../entity/exception.interface';
 

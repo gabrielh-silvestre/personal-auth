@@ -9,6 +9,15 @@ import { TokenService } from '@tokens/token.service';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
+
+const VALID_NEW_USER = {
+  username: 'Joe',
+  email: 'joe@email.com',
+  confirmEmail: 'joe@email.com',
+  password: 'password',
+  confirmPassword: 'password',
+};
 
 describe('Integration test for REST User controller', () => {
   let userController: UserRestController;
@@ -18,11 +27,7 @@ describe('Integration test for REST User controller', () => {
 
     const module = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          secret: 'secret',
-          verifyOptions: { maxAge: '1m' },
-          signOptions: { expiresIn: '1m' },
-        }),
+        JwtModule.register(JWT_OPTIONS_MOCK),
       ],
       controllers: [UserRestController],
       providers: [
@@ -44,17 +49,39 @@ describe('Integration test for REST User controller', () => {
 
   describe('create', () => {
     it('should create a user', async () => {
-      const newUser = await userController.create({
-        username: 'Joe',
-        email: 'joe@email.com',
-        confirmEmail: 'joe@email.com',
-        password: 'password',
-        confirmPassword: 'password',
-      });
+      const newUser = await userController.create(VALID_NEW_USER);
 
       expect(newUser).not.toBeNull();
-      expect(newUser.id).toBeDefined();
-      expect(newUser.username).toBe('Joe');
+      expect(newUser).toStrictEqual({
+        id: expect.any(String),
+        username: expect.any(String),
+      });
+    });
+  });
+
+  describe('login', () => {
+    it('should login a user', async () => {
+      const newUser = await userController.create(VALID_NEW_USER);
+      const loginResponse = await userController.login(newUser);
+
+      expect(loginResponse).not.toBeNull();
+      expect(loginResponse).toStrictEqual({
+        token: expect.any(String),
+      });
+    });
+  });
+
+  describe('recover user', () => {
+    it('should recover a user', async () => {
+      const newUser = await userController.create(VALID_NEW_USER);
+      const { token } = await userController.login(newUser);
+      const recoverResponse = await userController.recover(token);
+
+      expect(recoverResponse).not.toBeNull();
+      expect(recoverResponse).toStrictEqual({
+        id: expect.any(String),
+        username: expect.any(String),
+      });
     });
   });
 });
