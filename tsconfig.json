@@ -22,7 +22,8 @@
       "@tokens/*": ["./src/tokens/*"],
       "@exceptions/*": ["./src/exceptions/*"],
       "@shared/*": ["./src/shared/*"],
-      "@auth/*": ["./src/auth/*"]
+      "@auth/*": ["./src/auth/*"],
+      "@mail/*": ["./src/mail/*"]
     }
   }
 }
