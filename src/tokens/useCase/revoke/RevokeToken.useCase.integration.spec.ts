@@ -4,6 +4,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { RevokeTokenUseCase } from './RevokeToken.useCase';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
+import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
+
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
@@ -19,6 +21,7 @@ describe('Integration tests for Revoke Token use case', () => {
       providers: [
         RevokeTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
+        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
       ],
     }).compile();
 
