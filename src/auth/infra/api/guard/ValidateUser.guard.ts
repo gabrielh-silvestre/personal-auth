@@ -1,23 +1,23 @@
 import type { Request } from 'express';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import type { InputLoginUserDto } from '@users/dto/LoginUser.dto';
+// import type { InputLoginUserDto } from '@users/dto/LoginUser.dto';
 
-import { UserService } from '@users/user.service';
+// import { UserService } from '@users/user.service';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class ValidateUserGuard implements CanActivate {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: any) {}
 
-  private recoverData(context: ExecutionContext): InputLoginUserDto {
+  private recoverData(context: ExecutionContext): any {
     const contextType = context.getType();
 
     switch (contextType) {
       case 'http':
         return context.switchToHttp().getRequest<Request>().body;
       case 'rpc':
-        return context.switchToRpc().getData<InputLoginUserDto>();
+        return context.switchToRpc().getData<any>();
       default:
         throw ExceptionFactory.internal(
           `Context type ${contextType} not supported`,

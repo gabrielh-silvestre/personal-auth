@@ -1,12 +1,12 @@
 import type { Request } from 'express';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { TokenService } from '@tokens/token.service';
+// import { TokenService } from '@tokens/token.service';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class ValidateTokenGuard implements CanActivate {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(private readonly tokenService: any) {}
 
   private recoverToken(context: ExecutionContext): string {
     const contextType = context.getType();
