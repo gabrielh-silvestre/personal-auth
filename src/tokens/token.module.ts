@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common/decorators';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 
+import { RevokeTokenController } from './infra/api/controller/RevokeToken.controller';
+import { RevokeTokenUseCase } from './useCase/revoke/RevokeToken.useCase';
+
 import { TokenMongooseRepository } from './infra/repository/mongoose/Token.repository';
 import {
   tokenSchema,
   TokenSchema,
 } from './infra/repository/mongoose/Token.schema';
-
-import { TokenService } from './token.service';
-import { TokenGrpcServerController } from './infra/grpc/controller/Token.grpc-server.controller';
 
 const SECRET = process.env.JWT_SECRET || 'secret';
 const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
@@ -25,14 +25,14 @@ const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
       signOptions: { expiresIn: EXPIRES_IN },
     }),
   ],
-  controllers: [TokenGrpcServerController],
+  controllers: [RevokeTokenController],
   providers: [
-    TokenService,
+    RevokeTokenUseCase,
     {
       provide: 'TOKEN_REPO',
       useClass: TokenMongooseRepository,
     },
   ],
-  exports: [TokenService],
+  exports: [],
 })
 export class TokenModule {}
