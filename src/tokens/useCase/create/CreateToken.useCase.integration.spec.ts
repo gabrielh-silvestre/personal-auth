@@ -4,6 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { CreateTokenUseCase } from './CreateToken.useCase';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
+import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
+
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
@@ -18,6 +20,7 @@ describe('Integration tests for Create Token use case', () => {
       providers: [
         CreateTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
+        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
       ],
     }).compile();
 

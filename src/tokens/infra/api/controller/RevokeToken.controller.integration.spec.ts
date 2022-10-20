@@ -5,6 +5,8 @@ import { RevokeTokenController } from './RevokeToken.controller';
 import { RevokeTokenUseCase } from '@tokens/useCase/revoke/RevokeToken.useCase';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
+import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
+
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
@@ -24,6 +26,7 @@ describe('Integration test for Revoke Token controller', () => {
           provide: 'TOKEN_REPO',
           useClass: TokenInMemoryRepository,
         },
+        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
       ],
     }).compile();
 

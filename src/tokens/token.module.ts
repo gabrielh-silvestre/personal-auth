@@ -8,6 +8,8 @@ import { RevokeTokenUseCase } from './useCase/revoke/RevokeToken.useCase';
 import { CreateTokenUseCase } from './useCase/create/CreateToken.useCase';
 import { ValidateTokenUseCase } from './useCase/validate/ValidateToken.useCase';
 
+import { JwtServiceAdaptor } from './infra/service/jwt/Jwt.service.adaptor';
+
 import { TokenMongooseRepository } from './infra/repository/mongoose/Token.repository';
 import {
   tokenSchema,
@@ -36,6 +38,10 @@ const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
     {
       provide: 'TOKEN_REPO',
       useClass: TokenMongooseRepository,
+    },
+    {
+      provide: 'JWT_SERVICE',
+      useClass: JwtServiceAdaptor,
     },
   ],
   exports: [CreateTokenUseCase, ValidateTokenUseCase],

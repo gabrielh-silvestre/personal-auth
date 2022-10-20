@@ -2,8 +2,10 @@ import { Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
 import { LoginUseCase } from './Login.useCase';
+
 import { TokenServiceAdaptor } from '@auth/infra/service/token/Token.service.adaptor';
 import { UserServiceAdaptor } from '@auth/infra/service/user/User.service.adaptor';
+import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
 
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
@@ -65,6 +67,7 @@ describe('Integration test for Login use case', () => {
           provide: 'USER_SERVICE',
           useClass: UserServiceAdaptor,
         },
+        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
       ],
     }).compile();
 
