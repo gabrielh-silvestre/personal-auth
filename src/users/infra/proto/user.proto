@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto.users;
+
+message UserResponse {
+    string id = 1;
+    string username = 2;
+}
+
+message CreateUserRequest {
+    string username = 1;
+    string email = 2;
+    string confirm_email = 3;
+    string password = 4;
+    string confirm_password = 5;
+}
+
+message RecoverUserRequest {
+    string token = 1;
+}
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (UserResponse);
+    rpc RecoverUser(RecoverUserRequest) returns (UserResponse);
+}

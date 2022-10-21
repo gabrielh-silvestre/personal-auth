@@ -22,10 +22,17 @@ services:
     environment:
       - PORT=${PORT}
       - GRPC_URL=backend:50051
+
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       - MONGO_URI=mongodb://mongo:27017/${DB_NAME}
+
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+
+      - MAILER_HOST=${MAILER_HOST}
+      - MAILER_PORT=${MAILER_PORT}
+      - MAILER_USER=${MAILER_USER}
+      - MAILER_PASS=${MAILER_PASS}
     healthcheck:
       test: ['CMD', 'lsof', '-t', '-i:3001'] # Caso utilize outra porta interna para o back, altere ela aqui também
       timeout: 10s
@@ -62,6 +69,7 @@ services:
       start_period: 40s
     cap_add:
       - SYS_NICE # Deve omitir alertas menores
+
 
   # redis:
   #   image: redis:7-alpine
