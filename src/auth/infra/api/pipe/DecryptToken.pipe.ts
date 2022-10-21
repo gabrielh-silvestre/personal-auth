@@ -21,9 +21,13 @@ export class DecryptTokenPipe
   ) {}
 
   transform(
-    value: string,
+    value: string | { token: string },
     _metadata: ArgumentMetadata,
   ): Promise<OutPutDecryptToken> {
-    return this.tokenService.verifyToken(value);
+    if (typeof value === 'string') {
+      return this.tokenService.verifyToken(value);
+    }
+
+    return this.tokenService.verifyToken(value.token);
   }
 }
