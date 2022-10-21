@@ -1,6 +1,11 @@
 import type { Response } from 'express';
 
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 
 import { Exception } from '@exceptions/entity/Exception';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
@@ -10,6 +15,10 @@ export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
   private normalizeError(error: Error) {
     if (error instanceof Exception) {
       return error;
+    }
+
+    if (error instanceof HttpException) {
+      return new Exception(error.message, 3, error.getStatus());
     }
 
     return ExceptionFactory.internal(error.message);
