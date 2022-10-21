@@ -114,43 +114,42 @@ describe('Rest API (e2e)', () => {
     });
   });
 
-  // TODO: Implement recover user data by token
-  describe('/users/:token/recover (GET)', () => {
-    // it('should recover a user', async () => {
-    //   await request(app.getHttpServer())
-    //     .post('/auth/login')
-    //     .send(VALID_LOGIN_USER)
-    //     .then((res) => {
-    //       token = res.body.data.token;
-    //     });
+  describe('/users/me/:token (GET)', () => {
+    it('should recover a user', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(VALID_LOGIN_USER)
+        .then((res) => {
+          token = res.body.data.token;
+        });
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(`/users/${token}/recover`)
-    //     .expect(200);
+      const response = await request(app.getHttpServer())
+        .get(`/users/me/${token}`)
+        .expect(200);
 
-    //   expect(response.body).toStrictEqual({
-    //     _links: {
-    //       self: {
-    //         href: expect.any(String),
-    //       },
-    //     },
-    //     data: {
-    //       id: expect.any(String),
-    //       username: expect.any(String),
-    //     },
-    //   });
-    // });
+      expect(response.body).toStrictEqual({
+        _links: {
+          self: {
+            href: expect.any(String),
+          },
+        },
+        data: {
+          id: expect.any(String),
+          username: expect.any(String),
+        },
+      });
+    });
 
-    // it('should return a 401 if the token is invalid', async () => {
-    //   const response = await request(app.getHttpServer())
-    //     .get('/users/123/recover')
-    //     .expect(401);
+    it('should return a 401 if the token is invalid', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users/me/123')
+        .expect(401);
 
-    //   expect(response.body).toStrictEqual({
-    //     statusCode: 401,
-    //     message: expect.any(String),
-    //     path: '/users/123/recover',
-    //   });
-    // });
+      expect(response.body).toStrictEqual({
+        statusCode: 401,
+        message: expect.any(String),
+        path: '/users/me/123',
+      });
+    });
   });
 });
