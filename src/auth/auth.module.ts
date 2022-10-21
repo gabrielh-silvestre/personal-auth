@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { TokenModule } from '@tokens/token.module';
 import { UserModule } from '@users/user.module';
@@ -10,7 +10,7 @@ import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor
 import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 
 @Module({
-  imports: [UserModule, TokenModule],
+  imports: [forwardRef(() => UserModule), TokenModule],
   controllers: [LoginController],
   providers: [
     LoginUseCase,
@@ -23,5 +23,6 @@ import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
       useClass: UserServiceAdaptor,
     },
   ],
+  exports: [{ provide: 'TOKEN_SERVICE', useClass: TokenServiceAdaptor }],
 })
 export class AuthModule {}

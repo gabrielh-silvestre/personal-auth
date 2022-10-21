@@ -19,7 +19,12 @@ message RecoverUserRequest {
     string token = 1;
 }
 
+message GetMeRequest {
+    string token = 1;
+}
+
 service UserService {
     rpc CreateUser(CreateUserRequest) returns (UserResponse);
     rpc RecoverUser(RecoverUserRequest) returns (UserResponse);
+    rpc GetMe(GetMeRequest) returns (UserResponse);
 }
