@@ -37,4 +37,12 @@ export class ExceptionFactory {
       HttpStatus.UNAUTHORIZED,
     );
   }
+
+  static nonAcceptable(message: string): IException {
+    return new Exception(
+      message,
+      status.FAILED_PRECONDITION,
+      HttpStatus.NOT_ACCEPTABLE,
+    );
+  }
 }
