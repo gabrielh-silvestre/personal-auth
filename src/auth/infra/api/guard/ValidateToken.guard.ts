@@ -21,7 +21,11 @@ export class ValidateTokenGuard implements CanActivate {
 
     switch (contextType) {
       case 'http':
-        return context.switchToHttp().getRequest<Request>().body.token;
+        const token =
+          context.switchToHttp().getRequest<Request>().body.token ||
+          context.switchToHttp().getRequest<Request>().params.token ||
+          context.switchToHttp().getRequest<Request>().query.token;
+        return token;
       case 'rpc':
         return context.switchToRpc().getData<{ token: string }>().token;
       default:
