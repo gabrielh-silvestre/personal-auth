@@ -1,24 +1,31 @@
 import type { Request } from 'express';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 
-// import { TokenService } from '@tokens/token.service';
+import type { ITokenService } from '@auth/infra/service/token/token.service.interface';
+
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class ValidateTokenGuard implements CanActivate {
-  constructor(private readonly tokenService: any) {}
+  constructor(
+    @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
+  ) {}
 
   private recoverToken(context: ExecutionContext): string {
     const contextType = context.getType();
 
     switch (contextType) {
       case 'http':
-        const httpRequest = context.switchToHttp().getRequest<Request>();
-        return httpRequest.headers.authorization || httpRequest.params.token;
+        return context.switchToHttp().getRequest<Request>().body.token;
       case 'rpc':
         return context.switchToRpc().getData<{ token: string }>().token;
       default:
-        throw ExceptionFactory.internal(
+        throw ExceptionFactory.nonAcceptable(
           `Context type ${contextType} not supported`,
         );
     }
@@ -26,17 +33,9 @@ export class ValidateTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const token = this.recoverToken(context);
-
-    try {
-      const isTokenValid = await this.tokenService.validateToken(token);
-
-      if (!isTokenValid) {
-        throw ExceptionFactory.unauthorized('Invalid token');
-      }
-
-      return true;
-    } catch (err) {
-      throw ExceptionFactory.unauthorized(err.message);
-    }
+    return this.tokenService
+      .verifyToken(token)
+      .then(() => true)
+      .catch(() => false);
   }
 }
