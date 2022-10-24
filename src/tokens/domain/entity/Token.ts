@@ -1,4 +1,4 @@
-import { IToken } from './token.interface';
+import { IToken, TokenType } from './token.interface';
 
 export class Token implements IToken {
   private static readonly EXPIRE_TIME = 1000 * 60 * 3; // expiration time: 3 minutes
@@ -8,13 +8,21 @@ export class Token implements IToken {
   private _lastRefresh: Date;
   private _expires: Date;
   private _revoked: boolean;
+  private _type: TokenType;
 
-  constructor(id: string, userId: string, lastRefresh: Date, revoked: boolean) {
+  constructor(
+    id: string,
+    userId: string,
+    lastRefresh: Date,
+    revoked: boolean,
+    type: TokenType,
+  ) {
     this._id = id;
     this._userId = userId;
     this._lastRefresh = lastRefresh;
     this._expires = new Date(lastRefresh.getTime() + Token.EXPIRE_TIME);
     this._revoked = revoked;
+    this._type = type;
   }
 
   isValid(): boolean {
@@ -22,6 +30,10 @@ export class Token implements IToken {
   }
 
   refresh(): void {
+    if (this._type !== TokenType.ACCESS) {
+      throw new Error('Only access tokens can be refreshed');
+    }
+
     this._lastRefresh = new Date();
     this._expires = new Date(this._lastRefresh.getTime() + Token.EXPIRE_TIME);
   }
@@ -52,5 +64,9 @@ export class Token implements IToken {
 
   get revoked(): boolean {
     return this._revoked;
+  }
+
+  get type(): TokenType {
+    return this._type;
   }
 }
