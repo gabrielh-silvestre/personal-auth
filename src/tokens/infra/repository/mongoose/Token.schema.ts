@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IToken } from '@tokens/domain/entity/token.interface';
 import { Types } from 'mongoose';
+
+import { IToken, TokenType } from '@tokens/domain/entity/token.interface';
 
 @Schema()
 export class TokenSchema implements IToken {
@@ -18,6 +19,9 @@ export class TokenSchema implements IToken {
 
   @Prop({ required: true, type: Boolean })
   revoked: boolean;
+
+  @Prop({ required: true, type: Number })
+  type: TokenType;
 }
 
 export type TokenDocument = TokenSchema & Document;
