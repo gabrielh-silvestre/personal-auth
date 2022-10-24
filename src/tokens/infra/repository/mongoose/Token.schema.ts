@@ -4,9 +4,9 @@ import { Types } from 'mongoose';
 import { IToken, TokenType } from '@tokens/domain/entity/token.interface';
 
 @Schema()
-export class TokenSchema implements IToken {
+export class TokenSchema implements Omit<IToken, 'id'> {
   @Prop({ required: true, index: true, unique: true, type: Types.ObjectId })
-  id: string;
+  _id: string;
 
   @Prop({ required: true, index: true, type: String })
   userId: string;
