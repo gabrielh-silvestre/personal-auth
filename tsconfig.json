@@ -20,7 +20,7 @@
     "paths": {
       "@users/*": ["./src/users/*"],
       "@tokens/*": ["./src/tokens/*"],
-      "@exceptions/*": ["./src/exceptions/*"],
+      "@exceptions/*": ["./src/shared/modules/exceptions/*"],
       "@shared/*": ["./src/shared/*"],
       "@auth/*": ["./src/auth/*"],
       "@mail/*": ["./src/mail/*"]

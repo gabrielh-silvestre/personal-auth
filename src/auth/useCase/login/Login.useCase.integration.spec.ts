@@ -80,8 +80,4 @@ describe('Integration test for Login use case', () => {
     expect(token).not.toBeNull();
     expect(typeof token).toBe('string');
   });
-
-  it('should throw an error if credentials are invalid', async () => {
-    await expect(loginUseCase.execute(INVALID_LOGIN)).rejects.toThrowError();
-  });
 });

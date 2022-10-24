@@ -1,39 +1,26 @@
 import { Test } from '@nestjs/testing';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 
-import { CreateUserController } from './CreateUser.controller';
-import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
+import { GetMeController } from './GetMe.controller';
+
+import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
 
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
-import { MailServiceAdaptor } from '@users/infra/service/mail/Mail.service.adaptor';
-
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
-const VALID_NEW_USER = {
-  username: 'Joe',
-  email: 'joe@email.com',
-  confirmEmail: 'joe@email.com',
-  password: 'password',
-  confirmPassword: 'password',
-};
-
-describe('Integration test for Create User controller', () => {
-  let userController: CreateUserController;
+describe('Integration tests for Get Me controller', () => {
+  let userController: GetMeController;
+  const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [EventEmitterModule.forRoot({ removeListener: true })],
+      imports: [],
       providers: [
-        CreateUserController,
-        CreateUserUseCase,
-        {
-          provide: 'MAIL_SERVICE',
-          useClass: MailServiceAdaptor,
-        },
+        GetMeController,
+        GetUserByIdUseCase,
         {
           provide: 'USER_REPO',
           useClass: UserInMemoryRepository,
@@ -42,15 +29,21 @@ describe('Integration test for Create User controller', () => {
           provide: 'TOKEN_REPO',
           useClass: TokenInMemoryRepository,
         },
+        {
+          provide: 'TOKEN_SERVICE',
+          useValue: {
+            verifyToken: jest.fn().mockResolvedValue({ userId }),
+          },
+        },
       ],
     }).compile();
 
-    userController = module.get<CreateUserController>(CreateUserController);
+    userController = module.get<GetMeController>(GetMeController);
   });
 
-  describe('should create a user', () => {
+  describe('should get a user', () => {
     it('with REST request', async () => {
-      const response = await userController.handleRest(VALID_NEW_USER);
+      const response = await userController.handleRest({ userId });
 
       expect(response).not.toBeNull();
       expect(response).toStrictEqual({
@@ -60,7 +53,7 @@ describe('Integration test for Create User controller', () => {
     });
 
     it('with gRPC request', async () => {
-      const newUser = await userController.handleGrpc(VALID_NEW_USER);
+      const newUser = await userController.handleGrpc({ userId });
 
       expect(newUser).not.toBeNull();
       expect(newUser).toStrictEqual({

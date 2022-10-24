@@ -27,6 +27,5 @@ const MAILER_PASS = process.env.MAILER_PASS;
       },
     },
   ],
-  exports: [MailService],
 })
 export class MailModule {}
