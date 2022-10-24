@@ -20,7 +20,7 @@ export class TokenMongooseRepository implements ITokenRepository {
     return foundToken.map(
       (token) =>
         new Token(
-          token._id,
+          token.id,
           token.userId,
           token.lastRefresh,
           token.revoked,
@@ -31,7 +31,7 @@ export class TokenMongooseRepository implements ITokenRepository {
 
   async create(entity: Token): Promise<void> {
     new this.tokenModel({
-      _id: entity.id,
+      id: entity.id,
       userId: entity.userId,
       lastRefresh: entity.lastRefresh,
       expires: entity.expires,
@@ -60,7 +60,7 @@ export class TokenMongooseRepository implements ITokenRepository {
     const foundToken = await this.tokenModel.findOne({ id });
 
     return new Token(
-      foundToken._id,
+      foundToken.id,
       foundToken.userId,
       foundToken.lastRefresh,
       foundToken.revoked,
