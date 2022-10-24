@@ -4,6 +4,8 @@ import { Test } from '@nestjs/testing';
 import { CreateUserUseCase } from './CreateUser.useCase';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
+import { MailServiceAdaptor } from '@users/infra/service/mail/Mail.service.adaptor';
+
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_NEW_USER = {
@@ -29,11 +31,13 @@ describe('Integration test for Create User use case', () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [
-        EventEmitterModule.forRoot({ removeListener: true }),
-      ],
+      imports: [EventEmitterModule.forRoot({ removeListener: true })],
       providers: [
         CreateUserUseCase,
+        {
+          provide: 'MAIL_SERVICE',
+          useClass: MailServiceAdaptor,
+        },
         {
           provide: 'USER_REPO',
           useClass: UserInMemoryRepository,

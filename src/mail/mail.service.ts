@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common/decorators';
+import { OnEvent } from '@nestjs/event-emitter';
 import { Transporter } from 'nodemailer';
+
+import type { IEvent } from '@shared/modules/event/entity/event.interface';
 
 import { Mail } from './domain/entity/Mail';
 
@@ -9,14 +12,17 @@ export class MailService {
     @Inject('MAILER_SERVICE') private readonly mailerService: Transporter,
   ) {}
 
-  async sendMail(mail: Mail) {
+  @OnEvent('user.mail.welcome')
+  async sendMail(mail: IEvent<Mail>) {
+    const { payload } = mail;
+
     this.mailerService.sendMail({
-      from: mail.from,
-      to: mail.to,
-      subject: mail.subject,
-      text: mail.text,
-      html: mail.html,
-      cc: mail.cc,
+      from: payload.from,
+      to: payload.to,
+      subject: payload.subject,
+      text: payload.text,
+      html: payload.html,
+      cc: payload.cc,
     });
   }
 }
