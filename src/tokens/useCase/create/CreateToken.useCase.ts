@@ -18,7 +18,7 @@ export class CreateTokenUseCase {
   ) {}
 
   async execute(id: string): Promise<string> {
-    const newToken = TokenFactory.create(id);
+    const newToken = TokenFactory.createAccessToken(id);
 
     const jwtToken = await this.jwtService.encrypt({
       tokenId: newToken.id,
