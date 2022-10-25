@@ -42,7 +42,7 @@ describe('Rest API (e2e)', () => {
     app.useGlobalFilters(new GlobalExceptionRestFilter());
 
     await app.init();
-  });
+  }, 15000);
 
   describe('/users (POST)', () => {
     it('should create a new user', async () => {
