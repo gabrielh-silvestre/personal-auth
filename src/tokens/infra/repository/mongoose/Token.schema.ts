@@ -19,7 +19,7 @@ export class TokenSchema implements IToken {
   @Prop({ required: true, type: Boolean })
   revoked: boolean;
 
-  @Prop({ required: true, type: Number })
+  @Prop({ required: true, type: String })
   type: TokenType;
 }
 
