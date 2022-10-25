@@ -10,7 +10,7 @@ import { ValidateUserRegisterGuard } from '../../guard/ValidateUserRegister.guar
 export class ForgotPasswordController {
   constructor(private readonly forgotPasswordUseCase: ForgotPasswordUseCase) {}
 
-  async handle(data: InputForgotPasswordDto): Promise<void | never> {
+  private async handle(data: InputForgotPasswordDto): Promise<void | never> {
     this.forgotPasswordUseCase.execute(data);
   }
 
