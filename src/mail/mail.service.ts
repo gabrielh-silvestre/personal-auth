@@ -12,8 +12,7 @@ export class MailService {
     @Inject('MAILER_SERVICE') private readonly mailerService: Transporter,
   ) {}
 
-  @OnEvent('user.mail.welcome')
-  async sendMail(mail: IEvent<Mail>) {
+  private async sendMail(mail: IEvent<Mail>) {
     const { payload } = mail;
 
     this.mailerService.sendMail({
@@ -24,5 +23,15 @@ export class MailService {
       html: payload.html,
       cc: payload.cc,
     });
+  }
+
+  @OnEvent('user.mail.welcome')
+  async welcomeEmail(mail: IEvent<Mail>) {
+    await this.sendMail(mail);
+  }
+
+  @OnEvent('user.mail.reset-password')
+  async resetPasswordEmail(mail: IEvent<Mail>) {
+    await this.sendMail(mail);
   }
 }

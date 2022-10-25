@@ -1,6 +1,6 @@
 export enum TokenType {
-  ACCESS,
-  RECOVER_PASSWORD,
+  ACCESS = 'ACCESS',
+  RECOVER_PASSWORD = 'RECOVER_PASSWORD',
 }
 
 export interface IToken {
