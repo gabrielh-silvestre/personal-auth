@@ -16,7 +16,11 @@ export class TokenServiceAdaptor implements ITokenService {
   ) {}
 
   async generateToken(userId: string): Promise<string> {
-    return this.createTokenUseCase.execute(userId);
+    return this.createTokenUseCase.execute(userId, 'ACCESS');
+  }
+
+  async generateRecoverPasswordToken(userId: string): Promise<string> {
+    return this.createTokenUseCase.execute(userId, 'RECOVER_PASSWORD');
   }
 
   async verifyToken(token: string): Promise<OutputCreateToken> {
