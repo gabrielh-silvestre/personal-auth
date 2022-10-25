@@ -1,13 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { JwtModule } from '@nestjs/jwt';
 
 import { CreateTokenUseCase } from './CreateToken.useCase';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
-import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
-
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
 describe('Integration tests for Create Token use case', () => {
   let tokenUseCase: CreateTokenUseCase;
@@ -16,11 +12,13 @@ describe('Integration tests for Create Token use case', () => {
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [JwtModule.register(JWT_OPTIONS_MOCK)],
       providers: [
         CreateTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
-        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
+        {
+          provide: 'JWT_SERVICE',
+          useValue: { encrypt: jest.fn().mockResolvedValue('2') },
+        },
       ],
     }).compile();
 
