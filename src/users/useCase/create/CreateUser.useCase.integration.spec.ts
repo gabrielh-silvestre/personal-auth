@@ -4,8 +4,6 @@ import { Test } from '@nestjs/testing';
 import { CreateUserUseCase } from './CreateUser.useCase';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
-import { MailServiceAdaptor } from '@users/infra/service/mail/Mail.service.adaptor';
-
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_NEW_USER = {
@@ -36,7 +34,9 @@ describe('Integration test for Create User use case', () => {
         CreateUserUseCase,
         {
           provide: 'MAIL_SERVICE',
-          useClass: MailServiceAdaptor,
+          useValue: {
+            welcomeMail: jest.fn(),
+          },
         },
         {
           provide: 'USER_REPO',

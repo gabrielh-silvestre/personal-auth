@@ -12,7 +12,7 @@ import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
 
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
-import { ValidateUserCredentialsGuard } from '../guard/ValidateUserCredentials.guard';
+import { ValidateUserCredentialsGuard } from '../../guard/ValidateUserCredentials.guard';
 import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
 import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
 

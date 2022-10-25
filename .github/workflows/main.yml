@@ -41,11 +41,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test:all
-        env:
-          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/database'
-          MONGO_URI: 'mongodb://localhost:27017/database'
-          JWT_SECRET: 'secret'
+        run: npm run test
 
   Coverage:
     runs-on: ubuntu-latest

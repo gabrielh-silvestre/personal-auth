@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IToken } from '@tokens/domain/entity/token.interface';
-import { Types } from 'mongoose';
+
+import { IToken, TokenType } from '@tokens/domain/entity/token.interface';
 
 @Schema()
 export class TokenSchema implements IToken {
-  @Prop({ required: true, index: true, unique: true, type: Types.ObjectId })
+  @Prop({ required: true, index: true, type: String })
   id: string;
 
   @Prop({ required: true, index: true, type: String })
@@ -18,6 +18,9 @@ export class TokenSchema implements IToken {
 
   @Prop({ required: true, type: Boolean })
   revoked: boolean;
+
+  @Prop({ required: true, type: String })
+  type: TokenType;
 }
 
 export type TokenDocument = TokenSchema & Document;

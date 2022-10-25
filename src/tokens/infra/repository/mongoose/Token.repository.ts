@@ -14,14 +14,18 @@ export class TokenMongooseRepository implements ITokenRepository {
     private readonly tokenModel: Model<TokenDocument>,
   ) {}
 
-  async findByUserId(userId: string): Promise<Token> {
-    const foundToken = await this.tokenModel.findOne({ userId });
+  async findByUserId(userId: string): Promise<Token[]> {
+    const foundToken = await this.tokenModel.find({ userId });
 
-    return new Token(
-      foundToken.id,
-      foundToken.userId,
-      foundToken.lastRefresh,
-      foundToken.revoked,
+    return foundToken.map(
+      (token) =>
+        new Token(
+          token.id,
+          token.userId,
+          token.lastRefresh,
+          token.revoked,
+          token.type,
+        ),
     );
   }
 
@@ -32,6 +36,7 @@ export class TokenMongooseRepository implements ITokenRepository {
       lastRefresh: entity.lastRefresh,
       expires: entity.expires,
       revoked: entity.revoked,
+      type: entity.type,
     }).save();
   }
 
@@ -59,6 +64,7 @@ export class TokenMongooseRepository implements ITokenRepository {
       foundToken.userId,
       foundToken.lastRefresh,
       foundToken.revoked,
+      foundToken.type,
     );
   }
 }
