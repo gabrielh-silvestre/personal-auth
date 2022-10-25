@@ -27,8 +27,16 @@ describe('Integration tests for Create Token use case', () => {
     tokenUseCase = module.get<CreateTokenUseCase>(CreateTokenUseCase);
   });
 
-  it('should create a token with success', async () => {
-    const newToken = await tokenUseCase.execute('1');
+  it('should create a access token with success', async () => {
+    const newToken = await tokenUseCase.execute('1', 'ACCESS');
+
+    expect(newToken).not.toBeNull();
+    expect(typeof newToken).toBe('string');
+    expect(newToken).not.toEqual('1');
+  });
+
+  it('should create a recover password token with success', async () => {
+    const newToken = await tokenUseCase.execute('1', 'RECOVER_PASSWORD');
 
     expect(newToken).not.toBeNull();
     expect(typeof newToken).toBe('string');
