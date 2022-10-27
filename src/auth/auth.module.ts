@@ -11,7 +11,6 @@ import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.u
 
 import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
 import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
-import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
 @Module({
   imports: [forwardRef(() => UserModule), TokenModule],
@@ -29,8 +28,10 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     },
     {
       provide: 'MAIL_SERVICE',
-      useClass: MailServiceAdaptor,
-    }
+      useValue: {
+        recoverPasswordMail: () => Promise.resolve(),
+      },
+    },
   ],
   exports: [{ provide: 'TOKEN_SERVICE', useClass: TokenServiceAdaptor }],
 })

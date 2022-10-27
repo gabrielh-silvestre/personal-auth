@@ -9,8 +9,6 @@ import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
-import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
-
 import { AuthModule } from '@auth/auth.module';
 
 @Module({
@@ -23,7 +21,9 @@ import { AuthModule } from '@auth/auth.module';
     GetUserByEmailUseCase,
     {
       provide: 'MAIL_SERVICE',
-      useClass: MailServiceAdaptor,
+      useValue: {
+        welcomeMail: () => Promise.resolve(),
+      },
     },
     {
       provide: 'USER_REPO',
