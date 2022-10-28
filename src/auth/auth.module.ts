@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 
 import { TokenModule } from '@tokens/token.module';
 import { UserModule } from '@users/user.module';
+import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
@@ -14,7 +15,11 @@ import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
 @Module({
-  imports: [forwardRef(() => UserModule), TokenModule],
+  imports: [
+    RmqModule.register('mail_queue'),
+    forwardRef(() => UserModule),
+    TokenModule,
+  ],
   controllers: [LoginController, ForgotPasswordController],
   providers: [
     LoginUseCase,
@@ -30,7 +35,7 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     {
       provide: 'MAIL_SERVICE',
       useClass: MailServiceAdaptor,
-    }
+    },
   ],
   exports: [{ provide: 'TOKEN_SERVICE', useClass: TokenServiceAdaptor }],
 })

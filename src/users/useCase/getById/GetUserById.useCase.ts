@@ -1,9 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from '@nestjs/common';
 
-import type { IUserRepository } from "@users/domain/repository/user.repository.interface";
-import type { OutputGetUserDto } from "../getByEmail/GetUserByEmail.dto";
+import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
+import type { OutputGetUserDto } from '../getByEmail/GetUserByEmail.dto';
 
-import { ExceptionFactory } from "@exceptions/factory/Exception.factory";
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
 export class GetUserByIdUseCase {

@@ -19,7 +19,9 @@ describe('Integration tests for Revoke Token use case', () => {
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
         {
           provide: 'JWT_SERVICE',
-          useValue: { decrypt: jest.fn().mockResolvedValue({ tokenId: token.id }) },
+          useValue: {
+            decrypt: jest.fn().mockResolvedValue({ tokenId: token.id }),
+          },
         },
       ],
     }).compile();

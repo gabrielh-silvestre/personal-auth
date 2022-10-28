@@ -1,24 +1,29 @@
-import { MailFactory } from '@mail/domain/factory/Mail.factory';
-import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 import type { IMailService, InputWelcomeMail } from './mail.service.interface';
 
-import { EventFactory } from '@shared/modules/event/factory/Event.factory';
+type MailDataDto = {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+};
 
 @Injectable()
 export class MailServiceAdaptor implements IMailService {
-  constructor(private readonly eventEmitter: EventEmitter2) {}
+  constructor(@Inject('mail_queue') private readonly client: ClientProxy) {}
+
+  private buildMailData({ email, username }: InputWelcomeMail): MailDataDto {
+    return {
+      to: email,
+      subject: 'Welcome to the S1 auth service!',
+      text: `Welcome to the S1 auth service, ${username}!`,
+      html: `<b>Welcome to the S1 auth service, ${username}!</b>`,
+    };
+  }
 
   async welcomeMail(data: InputWelcomeMail): Promise<void> {
-    const mail = MailFactory.create({
-      to: data.email,
-      subject: 'Welcome to S1 Personal-Auth',
-      text: `Welcome to S1 Personal-Auth, ${data.username}!`,
-      html: `<h1>Welcome to S1 Personal-Auth, ${data.username}!</h1>`,
-    });
-
-    const event = EventFactory.create('user.mail.welcome', mail);
-    this.eventEmitter.emit(event.name, event);
+    this.client.emit('send_welcome_mail', this.buildMailData(data));
   }
 }

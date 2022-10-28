@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common/decorators';
 
+import { AuthModule } from '@auth/auth.module';
+import { RmqModule } from '@shared/modules/rmq/rmq.module';
+
 import { UserPrismaRepository } from './infra/repository/prisma/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
@@ -11,10 +14,8 @@ import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCa
 
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
-import { AuthModule } from '@auth/auth.module';
-
 @Module({
-  imports: [AuthModule],
+  imports: [RmqModule.register('mail_queue'), AuthModule],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
   controllers: [CreateUserController, GetMeController],
   providers: [

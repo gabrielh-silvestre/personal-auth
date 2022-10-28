@@ -36,6 +36,15 @@ describe('Rest API (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [
+        {
+          provide: 'MAIL_SERVICE',
+          useValue: {
+            welcomeMail: jest.fn(),
+            recoverPasswordMail: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();

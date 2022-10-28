@@ -10,7 +10,8 @@ import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 export class ValidateTokenUseCase {
   constructor(
     @Inject('TOKEN_REPO') private readonly tokenRepository: ITokenRepository,
-    @Inject('JWT_SERVICE') private readonly jwtService: IJwtService<OutputValidateTokenDto>,
+    @Inject('JWT_SERVICE')
+    private readonly jwtService: IJwtService<OutputValidateTokenDto>,
   ) {}
 
   async execute(token: string): Promise<OutputValidateTokenDto | never> {
