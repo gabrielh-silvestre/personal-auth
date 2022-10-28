@@ -8,9 +8,9 @@ export class RevokeTokenController {
   constructor(private readonly revokeTokenUseCase: RevokeTokenUseCase) {}
 
   @GrpcMethod('TokenService', 'RevokeToken')
-  async handle(data: { token: string }): Promise<{ success: boolean }> {
+  async handle(data: { tokenId: string }): Promise<{ success: boolean }> {
     return this.revokeTokenUseCase
-      .execute(data.token)
+      .execute(data.tokenId)
       .then(() => ({ success: true }))
       .catch(() => ({ success: false }));
   }
