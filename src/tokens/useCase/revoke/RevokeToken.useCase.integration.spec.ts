@@ -17,12 +17,6 @@ describe('Integration tests for Revoke Token use case', () => {
       providers: [
         RevokeTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
-        {
-          provide: 'JWT_SERVICE',
-          useValue: {
-            decrypt: jest.fn().mockResolvedValue({ tokenId: token.id }),
-          },
-        },
       ],
     }).compile();
 
@@ -30,7 +24,7 @@ describe('Integration tests for Revoke Token use case', () => {
   });
 
   it('should revoke a token with success', async () => {
-    await expect(tokenUseCase.execute('fakeToken')).resolves.not.toThrow();
+    await expect(tokenUseCase.execute(token.id)).resolves.not.toThrow();
   });
 
   it('should throw an error if token is invalid', async () => {
@@ -39,7 +33,7 @@ describe('Integration tests for Revoke Token use case', () => {
 
   it('should throw an error if token is already revoked', async () => {
     token.revoke();
-    await expect(tokenUseCase.execute('fakeToken')).rejects.toThrow(
+    await expect(tokenUseCase.execute(token.id)).rejects.toThrow(
       'Invalid token',
     );
   });
