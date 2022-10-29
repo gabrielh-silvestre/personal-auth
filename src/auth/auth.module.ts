@@ -35,7 +35,7 @@ import { JWT_EXPIRES_IN, JWT_SECRET } from '@shared/utils/constants';
       }),
       inject: [ConfigService],
     }),
-    RmqModule.register('mail_queue'),
+    RmqModule.register('MAIL'),
     forwardRef(() => UserModule),
     TokenModule,
   ],
