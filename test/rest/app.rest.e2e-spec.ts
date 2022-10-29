@@ -117,7 +117,7 @@ describe('Rest API (e2e)', () => {
 
       expect(response.body).toStrictEqual({
         statusCode: 403,
-        message: 'Forbidden resource',
+        message: 'Invalid credentials',
         path: '/auth/login',
       });
     });
