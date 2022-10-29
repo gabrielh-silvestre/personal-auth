@@ -33,8 +33,8 @@ describe('Integration tests for Get User by id use case', () => {
   });
 
   it('should throw an error if user is not found', async () => {
-    await expect(getUserByEmailUseCase.execute('invalid-email')).rejects.toThrow(
-      'User not found',
-    );
+    await expect(
+      getUserByEmailUseCase.execute('invalid-email'),
+    ).rejects.toThrow('User not found');
   });
 });

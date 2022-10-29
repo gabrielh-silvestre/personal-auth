@@ -17,12 +17,6 @@ describe('Integration tests for Validate Token use case', () => {
       providers: [
         ValidateTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
-        {
-          provide: 'JWT_SERVICE',
-          useValue: {
-            decrypt: jest.fn().mockResolvedValue({ tokenId: token.id }),
-          },
-        },
       ],
     }).compile();
 
@@ -31,7 +25,7 @@ describe('Integration tests for Validate Token use case', () => {
   });
 
   it('should validate a token with success', async () => {
-    const tokenData = await validateTokenUseCase.execute('fakeToken');
+    const tokenData = await validateTokenUseCase.execute(token.id);
 
     expect(tokenData).not.toBeNull();
     expect(tokenData).toStrictEqual({
@@ -40,9 +34,15 @@ describe('Integration tests for Validate Token use case', () => {
     });
   });
 
+  it('should throw an error if token is invalid', async () => {
+    await expect(validateTokenUseCase.execute('invalid token')).rejects.toThrow(
+      'Invalid token',
+    );
+  });
+
   it('should throw an error if token is already revoked', async () => {
     token.revoke();
-    await expect(validateTokenUseCase.execute('fakeToken')).rejects.toThrow(
+    await expect(validateTokenUseCase.execute(token.id)).rejects.toThrow(
       'Invalid token',
     );
   });

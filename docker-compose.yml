@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: docker/Dockerfile.dev
+      dockerfile: .docker/Dockerfile.dev
     command: npm run start:dev
     restart: on-failure
     volumes:
@@ -17,8 +17,8 @@ services:
         condition: service_healthy
       mongo:
         condition: service_healthy
-      # redis:
-      #   condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - PORT=${PORT}
       - GRPC_URL=backend:50051
@@ -33,10 +33,14 @@ services:
       - MAILER_PORT=${MAILER_PORT}
       - MAILER_USER=${MAILER_USER}
       - MAILER_PASS=${MAILER_PASS}
-    healthcheck:
-      test: ['CMD', 'lsof', '-t', '-i:3001'] # Caso utilize outra porta interna para o back, altere ela aqui também
-      timeout: 10s
-      retries: 5
+
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:${RABBITMQ_PORT}
+    networks:
+      - personal-network
 
   postgres:
     image: postgres:14.3-alpine
@@ -55,6 +59,8 @@ services:
       start_period: 30s
     cap_add:
       - SYS_NICE # Deve omitir alertas menores
+    networks:
+      - personal-network
 
   mongo:
     image: mongo:5.0.7
@@ -69,18 +75,28 @@ services:
       start_period: 40s
     cap_add:
       - SYS_NICE # Deve omitir alertas menores
+    networks:
+      - personal-network
 
+  rabbitmq:
+    image: rabbitmq:3.9-management-alpine
+    ports:
+      - ${RABBITMQ_PORT}:5672
+      - ${RABBITMQ_MANAGEMENT_PORT}:15672
+    environment:
+      - AMQP_URL=amqp://rabbitmq?connection_attempts=5&retry_delay=5
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - personal-network
 
-  # redis:
-  #   image: redis:7-alpine
-  #   ports:
-  #     - 6379:6379
-  #   restart: 'always'
-  #   healthcheck:
-  #     test: ['CMD', 'redis-cli', 'ping']
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 10
-  #     start_period: 30s
-  #   cap_add:
-  #     - SYS_NICE # Deve omitir alertas menores
+networks:
+  personal-network:
+    name: personal-network
+    driver: bridge

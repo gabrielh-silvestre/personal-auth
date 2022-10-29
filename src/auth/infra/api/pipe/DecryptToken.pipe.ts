@@ -1,9 +1,4 @@
-import {
-  ArgumentMetadata,
-  Inject,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
+import { Inject, Injectable, PipeTransform } from '@nestjs/common';
 
 import type { ITokenService } from '@auth/infra/service/token/token.service.interface';
 
@@ -20,10 +15,7 @@ export class DecryptTokenPipe
     @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
   ) {}
 
-  transform(
-    value: string | { token: string },
-    _metadata: ArgumentMetadata,
-  ): Promise<OutPutDecryptToken> {
+  transform(value: string | { token: string }): Promise<OutPutDecryptToken> {
     if (typeof value === 'string') {
       return this.tokenService.verifyToken(value);
     }

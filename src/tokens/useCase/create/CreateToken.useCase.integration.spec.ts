@@ -15,10 +15,6 @@ describe('Integration tests for Create Token use case', () => {
       providers: [
         CreateTokenUseCase,
         { provide: 'TOKEN_REPO', useClass: TokenInMemoryRepository },
-        {
-          provide: 'JWT_SERVICE',
-          useValue: { encrypt: jest.fn().mockResolvedValue('2') },
-        },
       ],
     }).compile();
 
@@ -29,15 +25,19 @@ describe('Integration tests for Create Token use case', () => {
     const newToken = await tokenUseCase.execute('1', 'ACCESS');
 
     expect(newToken).not.toBeNull();
-    expect(typeof newToken).toBe('string');
-    expect(newToken).not.toEqual('1');
+
+    expect(newToken.id).not.toBeNull();
+    expect(newToken.userId).toBe('1');
+    expect(newToken.type).toBe('ACCESS');
   });
 
   it('should create a recover password token with success', async () => {
     const newToken = await tokenUseCase.execute('1', 'RECOVER_PASSWORD');
 
     expect(newToken).not.toBeNull();
-    expect(typeof newToken).toBe('string');
-    expect(newToken).not.toEqual('1');
+
+    expect(newToken.id).not.toBeNull();
+    expect(newToken.userId).toBe('1');
+    expect(newToken.type).toBe('RECOVER_PASSWORD');
   });
 });

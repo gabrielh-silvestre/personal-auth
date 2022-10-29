@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
 import { GetMeController } from './GetMe.controller';
@@ -43,7 +44,9 @@ describe('Integration tests for Get Me controller', () => {
 
   describe('should get a user', () => {
     it('with REST request', async () => {
-      const response = await userController.handleRest({ userId });
+      const response = await userController.handleRest({
+        user: { userId },
+      } as Request);
 
       expect(response).not.toBeNull();
       expect(response).toStrictEqual({
@@ -53,7 +56,9 @@ describe('Integration tests for Get Me controller', () => {
     });
 
     it('with gRPC request', async () => {
-      const newUser = await userController.handleGrpc({ userId });
+      const newUser = await userController.handleGrpc({
+        user: { userId },
+      } as Request);
 
       expect(newUser).not.toBeNull();
       expect(newUser).toStrictEqual({

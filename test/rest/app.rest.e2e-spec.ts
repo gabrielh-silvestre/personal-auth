@@ -36,6 +36,15 @@ describe('Rest API (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [
+        {
+          provide: 'MAIL_SERVICE',
+          useValue: {
+            welcomeMail: jest.fn(),
+            recoverPasswordMail: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -108,13 +117,13 @@ describe('Rest API (e2e)', () => {
 
       expect(response.body).toStrictEqual({
         statusCode: 403,
-        message: 'Forbidden resource',
+        message: 'Invalid credentials',
         path: '/auth/login',
       });
     });
   });
 
-  describe('/users/me/:token (GET)', () => {
+  describe('/users/me (GET)', () => {
     it('should recover a user', async () => {
       await request(app.getHttpServer())
         .post('/auth/login')
@@ -124,7 +133,8 @@ describe('Rest API (e2e)', () => {
         });
 
       const response = await request(app.getHttpServer())
-        .get(`/users/me/${token}`)
+        .get(`/users/me`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
       expect(response.body).toStrictEqual({
@@ -142,13 +152,14 @@ describe('Rest API (e2e)', () => {
 
     it('should return a 401 if the token is invalid', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users/me/123')
+        .get('/users/me')
+        .set('Authorization', `Bearer invalid-token`)
         .expect(403);
 
       expect(response.body).toStrictEqual({
         statusCode: 403,
         message: expect.any(String),
-        path: '/users/me/123',
+        path: '/users/me',
       });
     });
   });
