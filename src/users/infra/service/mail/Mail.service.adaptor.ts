@@ -12,7 +12,7 @@ type MailDataDto = {
 
 @Injectable()
 export class MailServiceAdaptor implements IMailService {
-  constructor(@Inject('mail_queue') private readonly client: ClientProxy) {}
+  constructor(@Inject('MAIL') private readonly client: ClientProxy) {}
 
   private buildMailData({ email, username }: InputWelcomeMail): MailDataDto {
     return {

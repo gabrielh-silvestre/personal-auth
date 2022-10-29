@@ -11,7 +11,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => (req as any).token,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET || 'secret',
     });
