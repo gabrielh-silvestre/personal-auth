@@ -35,6 +35,14 @@ describe('Unit test domain Exception factory', () => {
     expect(exception.status).toBe(500);
   });
 
+  it('should create a new Forbidden exception', () => {
+    const exception = ExceptionFactory.forbidden(VALID_MESSAGE);
+
+    expect(exception).toBeDefined();
+    expect(exception.code).toBe(7);
+    expect(exception.status).toBe(403);
+  });
+
   it('should create a new Unauthorized exception', () => {
     const exception = ExceptionFactory.unauthorized(VALID_MESSAGE);
 

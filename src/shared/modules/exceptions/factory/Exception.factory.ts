@@ -38,6 +38,14 @@ export class ExceptionFactory {
     );
   }
 
+  static forbidden(message: string): IException {
+    return new Exception(
+      message,
+      status.PERMISSION_DENIED,
+      HttpStatus.FORBIDDEN,
+    );
+  }
+
   static nonAcceptable(message: string): IException {
     return new Exception(
       message,
