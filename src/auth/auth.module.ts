@@ -12,6 +12,7 @@ import { ForgotPasswordController } from './infra/api/controller/forgotPassword/
 import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
 
 import { JwtStrategy } from './infra/strategy/Jwt.strategy';
+import { LocalStrategy } from './infra/strategy/Local.strategy';
 
 import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
 import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
@@ -35,6 +36,7 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     LoginUseCase,
     ForgotPasswordUseCase,
     JwtStrategy,
+    LocalStrategy,
     {
       provide: 'TOKEN_SERVICE',
       useClass: TokenServiceAdaptor,
