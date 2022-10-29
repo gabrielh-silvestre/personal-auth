@@ -56,7 +56,9 @@ describe('Integration tests for Get Me controller', () => {
     });
 
     it('with gRPC request', async () => {
-      const newUser = await userController.handleGrpc({ userId });
+      const newUser = await userController.handleGrpc({
+        user: { userId },
+      } as Request);
 
       expect(newUser).not.toBeNull();
       expect(newUser).toStrictEqual({
