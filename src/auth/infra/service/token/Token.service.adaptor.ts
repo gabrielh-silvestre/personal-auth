@@ -19,7 +19,7 @@ export class TokenServiceAdaptor implements ITokenService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async generateToken(userId: string): Promise<string> {
+  async generateAccessToken(userId: string): Promise<string> {
     const token = await this.createTokenUseCase.execute(userId, 'ACCESS');
 
     return this.jwtService.signAsync({
@@ -33,6 +33,15 @@ export class TokenServiceAdaptor implements ITokenService {
       userId,
       'RECOVER_PASSWORD',
     );
+
+    return this.jwtService.signAsync({
+      userId: token.userId,
+      tokenId: token.id,
+    });
+  }
+
+  async generateRefreshToken(userId: string): Promise<string> {
+    const token = await this.createTokenUseCase.execute(userId, 'REFRESH');
 
     return this.jwtService.signAsync({
       userId: token.userId,

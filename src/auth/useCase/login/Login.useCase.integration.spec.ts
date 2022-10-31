@@ -35,7 +35,7 @@ describe('Integration test for Login use case', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateToken: jest.fn().mockResolvedValue('token'),
+            generateAccessToken: jest.fn().mockResolvedValue('token'),
           },
         },
         {

@@ -13,6 +13,6 @@ export class LoginUseCase {
 
   async execute({ email }: InputLoginDto): Promise<string | never> {
     const foundUser = await this.userService.findByEmail(email);
-    return this.tokenService.generateToken(foundUser.id);
+    return this.tokenService.generateAccessToken(foundUser.id);
   }
 }
