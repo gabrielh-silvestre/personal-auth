@@ -55,6 +55,10 @@ export class Token implements IToken {
     return this._userId;
   }
 
+  get expireTime(): number {
+    return this._expireTime;
+  }
+
   get lastRefresh(): Date {
     return this._lastRefresh;
   }
