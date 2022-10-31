@@ -10,6 +10,9 @@ export class TokenSchema implements IToken {
   @Prop({ required: true, index: true, type: String })
   userId: string;
 
+  @Prop({ required: true, type: Number })
+  expireTime: number;
+
   @Prop({ required: true, type: Date })
   lastRefresh: Date;
 
