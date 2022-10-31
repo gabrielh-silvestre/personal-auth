@@ -18,5 +18,7 @@ export class RevokeTokenUseCase {
     }
 
     foundToken.revoke();
+
+    await this.tokenRepository.update(foundToken);
   }
 }

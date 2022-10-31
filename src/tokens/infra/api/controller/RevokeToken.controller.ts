@@ -15,7 +15,6 @@ export class RevokeTokenController {
   @UseFilters(new ExceptionFilterRpc())
   @GrpcMethod('TokenService', 'RevokeToken')
   async handle(data: Request): Promise<{ success: boolean }> {
-    console.log({ data });
     return this.revokeTokenUseCase
       .execute(data.user.tokenId)
       .then(() => ({ success: true }))
