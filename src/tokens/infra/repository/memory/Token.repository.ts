@@ -7,14 +7,6 @@ import { ITokenRepository } from '@tokens/domain/repository/token.repository.int
 export class TokenInMemoryRepository implements ITokenRepository {
   private static TOKENS: Token[] = [];
 
-  async findByUserId(userId: string): Promise<Token[]> {
-    const foundTokens = TokenInMemoryRepository.TOKENS.filter(
-      (token) => token.userId === userId,
-    );
-
-    return !foundTokens.length ? null : foundTokens;
-  }
-
   async create(entity: Token): Promise<void> {
     TokenInMemoryRepository.TOKENS.push(entity);
   }

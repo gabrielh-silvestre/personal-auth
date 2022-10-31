@@ -11,37 +11,41 @@ import { Token } from '@tokens/domain/entity/Token';
 export class TokenMongooseRepository implements ITokenRepository {
   constructor(
     @InjectModel(TokenSchema.name)
-    private readonly tokenModel: Model<TokenDocument>,
+    private readonly model: Model<TokenDocument>,
   ) {}
 
-  async findByUserId(userId: string): Promise<Token[]> {
-    const foundToken = await this.tokenModel.find({ userId });
-
-    return foundToken.map(
-      (token) =>
-        new Token(
-          token.id,
-          token.userId,
-          token.lastRefresh,
-          token.revoked,
-          token.type,
-        ),
-    );
-  }
-
   async create(entity: Token): Promise<void> {
-    new this.tokenModel({
-      id: entity.id,
+    const tokenAlreadyExists = await this.model.exists({
       userId: entity.userId,
-      lastRefresh: entity.lastRefresh,
-      expires: entity.expires,
-      revoked: entity.revoked,
       type: entity.type,
-    }).save();
+    });
+
+    if (tokenAlreadyExists) {
+      await this.model.findOneAndUpdate(
+        { userId: entity.userId },
+        {
+          $set: {
+            id: entity.id,
+            lastRefresh: entity.lastRefresh,
+            expires: entity.expires,
+            revoked: entity.revoked,
+          },
+        },
+      );
+    } else {
+      await new this.model({
+        id: entity.id,
+        userId: entity.userId,
+        lastRefresh: entity.lastRefresh,
+        expires: entity.expires,
+        revoked: entity.revoked,
+        type: entity.type,
+      }).save();
+    }
   }
 
   async update(entity: Token): Promise<void> {
-    await this.tokenModel.updateMany(
+    this.model.updateMany(
       {
         $or: [{ id: entity.id }, { userId: entity.userId }],
       },
@@ -57,7 +61,7 @@ export class TokenMongooseRepository implements ITokenRepository {
   }
 
   async find(id: string): Promise<Token> {
-    const foundToken = await this.tokenModel.findOne({ id });
+    const foundToken = await this.model.findOne({ id });
 
     return new Token(
       foundToken.id,
