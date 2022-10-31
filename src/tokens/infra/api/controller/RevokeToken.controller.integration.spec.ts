@@ -7,6 +7,7 @@ import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.r
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
+import { Request } from 'express';
 
 describe('Integration test for Revoke Token controller', () => {
   let tokenController: RevokeTokenController;
@@ -32,13 +33,17 @@ describe('Integration test for Revoke Token controller', () => {
   it('should revoke token with success', async () => {
     const [{ id }] = TOKENS_MOCK;
 
-    const response = await tokenController.handle({ tokenId: id });
+    const response = await tokenController.handle({
+      user: { tokenId: id },
+    } as Request);
 
     expect(response).toEqual({ success: true });
   });
 
   it('should inform if token cannot be revoked', async () => {
-    const response = await tokenController.handle({ tokenId: 'invalid token' });
+    const response = await tokenController.handle({
+      user: { tokenId: 'invalid' },
+    } as Request);
 
     expect(response).toEqual({ success: false });
   });
