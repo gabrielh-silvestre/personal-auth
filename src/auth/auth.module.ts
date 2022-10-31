@@ -12,7 +12,7 @@ import { LoginUseCase } from './useCase/login/Login.useCase';
 import { ForgotPasswordController } from './infra/api/controller/forgotPassword/ForgotPassword.controller';
 import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
 
-import { JwtStrategy } from './infra/strategy/Jwt.strategy';
+import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
 import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
@@ -43,7 +43,7 @@ import { JWT_EXPIRES_IN, JWT_SECRET } from '@shared/utils/constants';
   providers: [
     LoginUseCase,
     ForgotPasswordUseCase,
-    JwtStrategy,
+    JwtAccessTokenStrategy,
     LocalStrategy,
     {
       provide: 'TOKEN_SERVICE',

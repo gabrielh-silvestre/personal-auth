@@ -6,7 +6,7 @@ import type { TokenPayload } from '@auth/infra/service/token/Token.service.adapt
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Injectable()
-export class AuthenticateGuard extends AuthGuard('jwt') {
+export class AuthenticateGuard extends AuthGuard('access-token') {
   constructor() {
     super();
   }

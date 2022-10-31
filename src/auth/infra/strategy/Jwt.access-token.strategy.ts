@@ -6,7 +6,10 @@ import type { TokenPayload } from '../service/token/Token.service.adaptor';
 import type { ITokenService } from '../service/token/token.service.interface';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessTokenStrategy extends PassportStrategy(
+  Strategy,
+  'access-token',
+) {
   constructor(
     @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
   ) {
