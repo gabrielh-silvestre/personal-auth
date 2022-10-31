@@ -4,12 +4,14 @@ import { Token } from './Token';
 import { TokenType } from './token.interface';
 
 const LAST_REFRESH = new Date();
+const EXPIRE_TIME = 10000;
 
 describe('Unit test domain Token entity', () => {
   it('should create a new access token', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,
@@ -35,6 +37,7 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.RECOVER_PASSWORD,
@@ -60,24 +63,24 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      0,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,
     );
     const firstRefresh = token.expires;
 
-    await new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
-      token.refresh();
+    token.refresh();
 
-      expect(token.lastRefresh > LAST_REFRESH).toBeTruthy();
-      expect(token.expires > firstRefresh).toBeTruthy();
-    });
+    expect(token.lastRefresh > LAST_REFRESH).toBeTruthy();
+    expect(token.expires > firstRefresh).toBeTruthy();
   });
 
   it('should not refresh a password recover token', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.RECOVER_PASSWORD,
@@ -92,6 +95,7 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,
@@ -106,6 +110,7 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,
@@ -122,6 +127,7 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
+      EXPIRE_TIME,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,

@@ -1,10 +1,9 @@
 import { IToken, TokenType } from './token.interface';
 
 export class Token implements IToken {
-  private static readonly EXPIRE_TIME = 1000 * 60 * 3; // expiration time: 3 minutes
-
   private _id: string;
   private _userId: string;
+  private _expireTime: number;
   private _lastRefresh: Date;
   private _expires: Date;
   private _revoked: boolean;
@@ -13,14 +12,16 @@ export class Token implements IToken {
   constructor(
     id: string,
     userId: string,
+    expireTime: number,
     lastRefresh: Date,
     revoked: boolean,
     type: TokenType,
   ) {
     this._id = id;
     this._userId = userId;
+    this._expireTime = expireTime;
     this._lastRefresh = lastRefresh;
-    this._expires = new Date(lastRefresh.getTime() + Token.EXPIRE_TIME);
+    this._expires = new Date(lastRefresh.getTime() + expireTime);
     this._revoked = revoked;
     this._type = type;
   }
@@ -35,7 +36,7 @@ export class Token implements IToken {
     }
 
     this._lastRefresh = new Date();
-    this._expires = new Date(this._lastRefresh.getTime() + Token.EXPIRE_TIME);
+    this._expires = new Date(this._lastRefresh.getTime() + this._expireTime);
   }
 
   revoke(): void {
