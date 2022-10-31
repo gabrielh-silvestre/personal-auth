@@ -6,6 +6,7 @@ import type { ITokenRepository } from '@tokens/domain/repository/token.repositor
 
 import { TokenDocument, TokenSchema } from './Token.schema';
 import { Token } from '@tokens/domain/entity/Token';
+import { TokenFactory } from '@tokens/domain/factory/Token.factory';
 
 @Injectable()
 export class TokenMongooseRepository implements ITokenRepository {
@@ -63,12 +64,8 @@ export class TokenMongooseRepository implements ITokenRepository {
   async find(id: string): Promise<Token> {
     const foundToken = await this.model.findOne({ id });
 
-    return new Token(
-      foundToken.id,
-      foundToken.userId,
-      foundToken.lastRefresh,
-      foundToken.revoked,
-      foundToken.type,
-    );
+    return foundToken
+      ? TokenFactory.createTokenFromType(foundToken.type, foundToken.id)
+      : null;
   }
 }

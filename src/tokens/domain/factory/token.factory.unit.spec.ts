@@ -18,6 +18,14 @@ describe('Test domain Token factory', () => {
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
     expect(token.type).toBe(TokenType.ACCESS);
+
+    const accessToken = TokenFactory.createTokenFromType(
+      TokenType.ACCESS,
+      VALID_USER_ID,
+    );
+
+    expect(accessToken).toBeDefined();
+    expect(token.type).toBe(TokenType.ACCESS);
   });
 
   it('should create a new recover password token', () => {
@@ -34,6 +42,14 @@ describe('Test domain Token factory', () => {
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
     expect(token.type).toBe(TokenType.RECOVER_PASSWORD);
+
+    const recoverPasswordToken = TokenFactory.createTokenFromType(
+      TokenType.RECOVER_PASSWORD,
+      VALID_USER_ID,
+    );
+
+    expect(recoverPasswordToken).toBeDefined();
+    expect(recoverPasswordToken.type).toBe(TokenType.RECOVER_PASSWORD);
   });
 
   it('should create a new refresh token', () => {
@@ -50,5 +66,13 @@ describe('Test domain Token factory', () => {
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
     expect(token.type).toBe(TokenType.REFRESH);
+
+    const refreshToken = TokenFactory.createTokenFromType(
+      TokenType.REFRESH,
+      VALID_USER_ID,
+    );
+
+    expect(refreshToken).toBeDefined();
+    expect(refreshToken.type).toBe(TokenType.REFRESH);
   });
 });

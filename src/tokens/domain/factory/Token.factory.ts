@@ -52,4 +52,17 @@ export class TokenFactory {
       TokenType.REFRESH,
     );
   }
+
+  public static createTokenFromType(type: TokenType, userId: string): Token {
+    switch (type) {
+      case TokenType.ACCESS:
+        return TokenFactory.createAccessToken(userId);
+      case TokenType.RECOVER_PASSWORD:
+        return TokenFactory.createRecoverPasswordToken(userId);
+      case TokenType.REFRESH:
+        return TokenFactory.createRefreshToken(userId);
+      default:
+        throw new Error('Invalid token type');
+    }
+  }
 }
