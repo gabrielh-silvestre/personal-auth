@@ -6,6 +6,7 @@ import { RevokeTokenController } from './infra/api/controller/RevokeToken.contro
 import { RevokeTokenUseCase } from './useCase/revoke/RevokeToken.useCase';
 import { CreateTokenUseCase } from './useCase/create/CreateToken.useCase';
 import { ValidateTokenUseCase } from './useCase/validate/ValidateToken.useCase';
+import { RefreshTokenUseCase } from './useCase/refresh/RefreshToken.useCase';
 
 import { TokenMongooseRepository } from './infra/repository/mongoose/Token.repository';
 import {
@@ -23,6 +24,7 @@ import {
   providers: [
     RevokeTokenUseCase,
     CreateTokenUseCase,
+    RefreshTokenUseCase,
     ValidateTokenUseCase,
     {
       provide: 'TOKEN_REPO',
