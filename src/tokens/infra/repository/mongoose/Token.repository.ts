@@ -4,8 +4,10 @@ import { Model } from 'mongoose';
 
 import type { ITokenRepository } from '@tokens/domain/repository/token.repository.interface';
 
-import { TokenDocument, TokenSchema } from './Token.schema';
 import { Token } from '@tokens/domain/entity/Token';
+import { TokenType } from '@tokens/domain/entity/token.interface';
+
+import { TokenDocument, TokenSchema } from './Token.schema';
 
 @Injectable()
 export class TokenMongooseRepository implements ITokenRepository {
@@ -63,6 +65,24 @@ export class TokenMongooseRepository implements ITokenRepository {
 
   async find(id: string): Promise<Token> {
     const foundToken = await this.model.findOne({ id });
+
+    return foundToken
+      ? new Token(
+          foundToken.id,
+          foundToken.userId,
+          foundToken.expireTime,
+          foundToken.lastRefresh,
+          foundToken.revoked,
+          foundToken.type,
+        )
+      : null;
+  }
+
+  async findByUserIdAndType(
+    userId: string,
+    type: TokenType,
+  ): Promise<Token | null> {
+    const foundToken = await this.model.findOne({ userId, type });
 
     return foundToken
       ? new Token(
