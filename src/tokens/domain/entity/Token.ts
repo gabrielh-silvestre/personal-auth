@@ -31,8 +31,8 @@ export class Token implements IToken {
   }
 
   refresh(): void {
-    if (this._type !== TokenType.ACCESS) {
-      throw new Error('Only access tokens can be refreshed');
+    if (this._type !== TokenType.REFRESH) {
+      throw new Error('Only refresh tokens can be refreshed');
     }
 
     this._lastRefresh = new Date();

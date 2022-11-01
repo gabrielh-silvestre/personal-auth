@@ -66,7 +66,7 @@ describe('Unit test domain Token entity', () => {
       0,
       LAST_REFRESH,
       false,
-      TokenType.ACCESS,
+      TokenType.REFRESH,
     );
     const firstRefresh = token.expires;
 
@@ -87,7 +87,7 @@ describe('Unit test domain Token entity', () => {
     );
 
     expect(() => token.refresh()).toThrowError(
-      'Only access tokens can be refreshed',
+      'Only refresh tokens can be refreshed',
     );
   });
 
