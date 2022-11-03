@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import type { TokenPayload } from '../service/token/Token.service.adaptor';
 import type { ITokenService } from '../service/token/token.service.interface';
+
+import { TOKEN_SECRET } from '@shared/utils/constants';
 
 @Injectable()
 export class JwtAccessTokenStrategy extends PassportStrategy(
@@ -12,6 +15,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
+    private readonly configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -20,7 +24,10 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'secret',
+      secretOrKey: configService.get<string>(
+        TOKEN_SECRET('ACCESS_TOKEN'),
+        'secret',
+      ),
     });
   }
 

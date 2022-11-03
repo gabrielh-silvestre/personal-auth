@@ -1,10 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 
 import { TokenModule } from '@tokens/token.module';
 import { UserModule } from '@users/user.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
+import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
@@ -19,22 +18,10 @@ import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor
 import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
-import { JWT_EXPIRES_IN, JWT_SECRET } from '@shared/utils/constants';
-
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>(JWT_SECRET, 'secret'),
-        verifyOptions: {
-          maxAge: configService.get<string>(JWT_EXPIRES_IN, '1d'),
-        },
-        signOptions: {
-          expiresIn: configService.get<string>(JWT_EXPIRES_IN, '1d'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    CustomJwtModule.register({ name: 'ACCESS_TOKEN' }),
+    CustomJwtModule.register({ name: 'REFRESH_TOKEN' }),
     RmqModule.register('MAIL'),
     forwardRef(() => UserModule),
     TokenModule,
