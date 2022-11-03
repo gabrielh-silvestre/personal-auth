@@ -4,9 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
-import { TokenServiceAdaptor } from '@auth/infra/service/token/Token.service.adaptor';
-import { UserServiceAdaptor } from '@auth/infra/service/user/User.service.adaptor';
-
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
@@ -27,7 +24,7 @@ const VALID_LOGIN = {
   password: 'password',
 };
 
-describe('Integration test for Login use case', () => {
+describe('Integration test for Login controller', () => {
   let loginController: LoginController;
 
   beforeAll(() => {
@@ -57,11 +54,15 @@ describe('Integration test for Login use case', () => {
         },
         {
           provide: 'TOKEN_SERVICE',
-          useClass: TokenServiceAdaptor,
+          useValue: {
+            generateAccessToken: jest.fn().mockResolvedValue('token'),
+          },
         },
         {
           provide: 'USER_SERVICE',
-          useClass: UserServiceAdaptor,
+          useValue: {
+            findByEmail: jest.fn().mockResolvedValue(USERS_MOCK[0]),
+          },
         },
       ],
     }).compile();
