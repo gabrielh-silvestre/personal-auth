@@ -31,6 +31,6 @@ import {
       useClass: TokenMongooseRepository,
     },
   ],
-  exports: [CreateTokenUseCase, ValidateTokenUseCase],
+  exports: [CreateTokenUseCase, ValidateTokenUseCase, RefreshTokenUseCase],
 })
 export class TokenModule {}

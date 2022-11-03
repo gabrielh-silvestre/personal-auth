@@ -5,6 +5,7 @@ import type { ITokenService } from './token.service.interface';
 
 import { CreateTokenUseCase } from '@tokens/useCase/create/CreateToken.useCase';
 import { ValidateTokenUseCase } from '@tokens/useCase/validate/ValidateToken.useCase';
+import { RefreshTokenUseCase } from '@tokens/useCase/refresh/RefreshToken.useCase';
 
 export type TokenPayload = {
   userId: string;
@@ -15,6 +16,7 @@ export type TokenPayload = {
 export class TokenServiceAdaptor implements ITokenService {
   constructor(
     private readonly createTokenUseCase: CreateTokenUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
     private readonly validateTokenUseCase: ValidateTokenUseCase,
     private readonly jwtService: JwtService,
   ) {}
@@ -46,6 +48,15 @@ export class TokenServiceAdaptor implements ITokenService {
     return this.jwtService.signAsync({
       userId: token.userId,
       tokenId: token.id,
+    });
+  }
+
+  async refreshToken(tokenId: string): Promise<string> {
+    const token = await this.refreshTokenUseCase.execute(tokenId);
+
+    return this.jwtService.signAsync({
+      userId: token.userId,
+      tokenId: token.tokenId,
     });
   }
 
