@@ -9,6 +9,7 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
+import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
 
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
@@ -32,10 +33,17 @@ export class LoginController {
   ) {}
 
   async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
-    const token = await this.loginUseCase.execute(data);
+    const { accessTokenId, refreshTokenId, userId } =
+      await this.loginUseCase.execute(data);
 
-    const access = await this.accessTokenService.sign(token);
-    const refresh = await this.refreshTokenService.sign(token);
+    const access = await this.accessTokenService.sign<TokenPayload>({
+      tokenId: accessTokenId,
+      userId,
+    });
+    const refresh = await this.refreshTokenService.sign<TokenPayload>({
+      tokenId: refreshTokenId,
+      userId,
+    });
 
     return { access, refresh };
   }

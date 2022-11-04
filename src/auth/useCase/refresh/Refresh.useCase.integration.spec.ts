@@ -25,10 +25,7 @@ describe('Integration test for Refresh use case', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateRefreshToken: jest.fn().mockResolvedValue({
-              tokenId: 'token-id',
-              userId: 'user-id',
-            }),
+            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
         },
       ],

@@ -20,10 +20,9 @@ describe('Integration tests for Forgot Password use case', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateRecoverPasswordToken: jest.fn().mockResolvedValue({
-              tokenId: 'token-id',
-              userId: 'user-id',
-            }),
+            generateRecoverPasswordToken: jest
+              .fn()
+              .mockResolvedValue('token-id'),
           },
         },
         {

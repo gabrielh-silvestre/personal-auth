@@ -12,6 +12,8 @@ export class RefreshUseCase {
   async execute({
     userId,
   }: InputRefreshDto): Promise<OutputRefreshDto | never> {
-    return this.tokenService.generateRefreshToken(userId);
+    const tokenId = await this.tokenService.generateRefreshToken(userId);
+
+    return { tokenId, userId };
   }
 }

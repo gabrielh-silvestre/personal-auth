@@ -32,10 +32,7 @@ describe('Integration test for Refresh controller', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateRefreshToken: jest.fn().mockResolvedValue({
-              tokenId: 'token-id',
-              userId: 'user-id',
-            }),
+            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
         },
         {
