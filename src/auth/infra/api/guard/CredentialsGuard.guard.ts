@@ -14,9 +14,9 @@ export class CredentialsGuard extends AuthGuard('local') {
     context.switchToHttp().getRequest().body = { email, password };
   }
 
-  handleRequest<T = TokenPayload>(err: any, user: any): T {
+  handleRequest<T = TokenPayload>(err: any, user: any, info: any): T {
     if (err || !user) {
-      throw ExceptionFactory.forbidden('Invalid credentials');
+      throw ExceptionFactory.forbidden(err?.message || info?.message);
     }
 
     return user;
