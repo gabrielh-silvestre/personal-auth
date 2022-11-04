@@ -1,11 +1,14 @@
 import type { Request } from 'express';
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
+import type {
+  ITokenService,
+  TokenPayload,
+} from '@auth/infra/service/token/token.service.interface';
 
 import { TOKEN_SECRET } from '@shared/utils/constants';
 
@@ -14,7 +17,10 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'refresh-token',
 ) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    @Inject('TOKEN_SERVICE') private readonly tokenService: ITokenService,
+    private readonly configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req) => (req as any).token, // Recover token from gRPC request
@@ -29,6 +35,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(payload: TokenPayload): Promise<TokenPayload> {
-    return { userId: payload.userId, tokenId: payload.tokenId };
+    await this.tokenService.verifyToken(payload.tokenId);
+    return payload;
   }
 }
