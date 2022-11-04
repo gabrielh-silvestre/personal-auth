@@ -13,7 +13,11 @@ import { LoginUseCase } from './useCase/login/Login.useCase';
 import { ForgotPasswordController } from './infra/api/controller/forgotPassword/ForgotPassword.controller';
 import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
 
+import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
+import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
+
 import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
+import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
 import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
@@ -28,11 +32,13 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     forwardRef(() => UserModule),
     TokenModule,
   ],
-  controllers: [LoginController, ForgotPasswordController],
+  controllers: [LoginController, ForgotPasswordController, RefreshController],
   providers: [
     LoginUseCase,
     ForgotPasswordUseCase,
+    RefreshUseCase,
     JwtAccessTokenStrategy,
+    JwtRefreshTokenStrategy,
     LocalStrategy,
     {
       provide: 'TOKEN_SERVICE',
