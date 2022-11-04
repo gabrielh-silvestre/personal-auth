@@ -10,6 +10,8 @@ export class RefreshTokenGuard extends AuthGuard('refresh-token') {
   }
 
   handleRequest<T = any>(err: Error | null, user: T, info: any): T {
+    console.log({ err, user, info });
+
     if (info || err) {
       throw ExceptionFactory.forbidden('Invalid token');
     }
