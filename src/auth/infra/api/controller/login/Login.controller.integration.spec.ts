@@ -9,12 +9,6 @@ import { PasswordFactory } from '@users/domain/factory/Password.factory';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
-import { CreateTokenUseCase } from '@tokens/useCase/create/CreateToken.useCase';
-import { ValidateTokenUseCase } from '@tokens/useCase/validate/ValidateToken.useCase';
-
-import { GetUserByEmailUseCase } from '@users/useCase/getByEmail/GetUserByEmail.useCase';
-import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
-
 import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -40,10 +34,6 @@ describe('Integration test for Login controller', () => {
       providers: [
         LoginController,
         LoginUseCase,
-        CreateTokenUseCase,
-        ValidateTokenUseCase,
-        GetUserByIdUseCase,
-        GetUserByEmailUseCase,
         {
           provide: 'USER_REPO',
           useClass: UserInMemoryRepository,
@@ -55,7 +45,16 @@ describe('Integration test for Login controller', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token'),
+            generateAccessToken: jest.fn().mockResolvedValue({
+              tokenId: 'token-id',
+              userId: 'user-id',
+            }),
+          },
+        },
+        {
+          provide: 'ACCESS_TOKEN_SERVICE',
+          useValue: {
+            signAsync: jest.fn().mockResolvedValue('token'),
           },
         },
         {
