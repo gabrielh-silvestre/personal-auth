@@ -3,6 +3,8 @@ import { Test } from '@nestjs/testing';
 import { ForgotPasswordController } from './ForgotPassword.controller';
 import { ForgotPasswordUseCase } from '@auth/useCase/forgotPassword/ForgotPassword.useCase';
 
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_RECOVERY = {
@@ -24,12 +26,6 @@ describe('Integration tests for Forgot Password controller', () => {
       providers: [
         ForgotPasswordUseCase,
         {
-          provide: 'ACCESS_TOKEN_SERVICE',
-          useValue: {
-            signAsync: jest.fn().mockResolvedValue('token'),
-          },
-        },
-        {
           provide: 'USER_SERVICE',
           useValue: {
             findByEmail: jest.fn().mockResolvedValue(VALID_USER),
@@ -49,6 +45,10 @@ describe('Integration tests for Forgot Password controller', () => {
               userId: 'user-id',
             }),
           },
+        },
+        {
+          provide: JwtAccessService,
+          useValue: { sign: jest.fn().mockResolvedValue('token') },
         },
       ],
     }).compile();

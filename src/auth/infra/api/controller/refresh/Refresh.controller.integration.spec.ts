@@ -4,6 +4,8 @@ import { Test } from '@nestjs/testing';
 import { RefreshController } from './Refresh.controller';
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
@@ -37,10 +39,8 @@ describe('Integration test for Refresh controller', () => {
           },
         },
         {
-          provide: 'REFRESH_TOKEN_SERVICE',
-          useValue: {
-            signAsync: jest.fn().mockResolvedValue('token'),
-          },
+          provide: JwtRefreshService,
+          useValue: { sign: jest.fn().mockResolvedValue('token') },
         },
       ],
     }).compile();
