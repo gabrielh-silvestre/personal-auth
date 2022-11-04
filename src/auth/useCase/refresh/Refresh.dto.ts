@@ -3,6 +3,7 @@ export interface InputRefreshDto {
 }
 
 export interface OutputRefreshDto {
-  tokenId: string;
+  accessTokenId: string;
+  refreshTokenId: string;
   userId: string;
 }

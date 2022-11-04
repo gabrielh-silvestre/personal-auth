@@ -12,8 +12,9 @@ export class RefreshUseCase {
   async execute({
     userId,
   }: InputRefreshDto): Promise<OutputRefreshDto | never> {
-    const tokenId = await this.tokenService.generateRefreshToken(userId);
+    const accessTokenId = await this.tokenService.generateAccessToken(userId);
+    const refreshTokenId = await this.tokenService.generateRefreshToken(userId);
 
-    return { tokenId, userId };
+    return { accessTokenId, refreshTokenId, userId };
   }
 }
