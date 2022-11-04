@@ -14,11 +14,11 @@ export class JwtAccessService {
   public async sign<T = unknown>(data: T): Promise<string | never> {
     return this.jwtService.signAsync(data as object, {
       secret: this.configService.get<string>(
-        TOKEN_SECRET('REFRESH_TOKEN'),
+        TOKEN_SECRET('ACCESS_TOKEN'),
         'secret',
       ),
       expiresIn: this.configService.get<number>(
-        TOKEN_EXPIRES_IN('REFRESH_TOKEN'),
+        TOKEN_EXPIRES_IN('ACCESS_TOKEN'),
       ),
     });
   }
@@ -26,10 +26,10 @@ export class JwtAccessService {
   public async verify<T = unknown>(token: string): Promise<T | never> {
     return this.jwtService.verifyAsync(token, {
       secret: this.configService.get<string>(
-        TOKEN_SECRET('REFRESH_TOKEN'),
+        TOKEN_SECRET('ACCESS_TOKEN'),
         'secret',
       ),
-      maxAge: this.configService.get<number>(TOKEN_EXPIRES_IN('REFRESH_TOKEN')),
+      maxAge: this.configService.get<number>(TOKEN_EXPIRES_IN('ACCESS_TOKEN')),
     }) as T;
   }
 }

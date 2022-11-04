@@ -101,7 +101,8 @@ describe('Rest API (e2e)', () => {
           },
         },
         data: {
-          token: expect.any(String),
+          access: expect.any(String),
+          refresh: expect.any(String),
         },
       });
     });
@@ -129,7 +130,7 @@ describe('Rest API (e2e)', () => {
         .post('/auth/login')
         .send(VALID_LOGIN_USER)
         .then((res) => {
-          token = res.body.data.token;
+          token = res.body.data.access;
         });
 
       const response = await request(app.getHttpServer())

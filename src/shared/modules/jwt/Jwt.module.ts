@@ -5,7 +5,7 @@ import { JwtAccessService } from './JwtAccess.service';
 import { JwtRefreshService } from './JwtRefresh.service';
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [JwtModule],
   providers: [JwtAccessService, JwtRefreshService],
   exports: [JwtAccessService, JwtRefreshService],
 })
