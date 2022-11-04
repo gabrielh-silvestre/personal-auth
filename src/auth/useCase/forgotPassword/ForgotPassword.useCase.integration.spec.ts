@@ -20,19 +20,16 @@ describe('Integration tests for Forgot Password use case', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateRecoverPasswordToken: jest.fn().mockResolvedValue('token'),
+            generateRecoverPasswordToken: jest.fn().mockResolvedValue({
+              tokenId: 'token-id',
+              userId: 'user-id',
+            }),
           },
         },
         {
           provide: 'USER_SERVICE',
           useValue: {
             findByEmail: jest.fn().mockResolvedValue(VALID_USER),
-          },
-        },
-        {
-          provide: 'MAIL_SERVICE',
-          useValue: {
-            recoverPasswordMail: jest.fn(),
           },
         },
       ],
@@ -48,8 +45,12 @@ describe('Integration tests for Forgot Password use case', () => {
 
     const { email } = VALID_USER;
 
-    expect(
-      async () => await forgotPasswordUseCase.execute({ email }),
-    ).not.toThrow();
+    const token = await forgotPasswordUseCase.execute({ email });
+
+    expect(token).not.toBeNull();
+    expect(token).toStrictEqual({
+      tokenId: expect.any(String),
+      userId: expect.any(String),
+    });
   });
 });

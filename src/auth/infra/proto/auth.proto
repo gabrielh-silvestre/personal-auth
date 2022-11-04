@@ -11,6 +11,15 @@ message LoginUserResponse {
   string token = 1;
 }
 
+message RefreshTokenRequest {
+  string token = 1;
+}
+
+message RefreshTokenResponse {
+  string token = 1;
+}
+
 service AuthService {
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
 }

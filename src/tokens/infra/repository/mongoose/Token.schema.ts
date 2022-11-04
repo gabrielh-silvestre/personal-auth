@@ -4,11 +4,14 @@ import { IToken, TokenType } from '@tokens/domain/entity/token.interface';
 
 @Schema()
 export class TokenSchema implements IToken {
-  @Prop({ required: true, index: true, type: String })
+  @Prop({ required: true, index: true, type: String, unique: true })
   id: string;
 
   @Prop({ required: true, index: true, type: String })
   userId: string;
+
+  @Prop({ required: true, type: Number })
+  expireTime: number;
 
   @Prop({ required: true, type: Date })
   lastRefresh: Date;

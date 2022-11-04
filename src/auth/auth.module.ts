@@ -1,10 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 
 import { TokenModule } from '@tokens/token.module';
 import { UserModule } from '@users/user.module';
+
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
+import { JwtAccessModule } from '@shared/modules/jwt/JwtAccess.module';
+import { JwtRefreshModule } from '@shared/modules/jwt/JwtRefresh.module';
 
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
@@ -12,38 +13,32 @@ import { LoginUseCase } from './useCase/login/Login.useCase';
 import { ForgotPasswordController } from './infra/api/controller/forgotPassword/ForgotPassword.controller';
 import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
 
-import { JwtStrategy } from './infra/strategy/Jwt.strategy';
+import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
+import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
+
+import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
+import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
 import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
 import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
-import { JWT_EXPIRES_IN, JWT_SECRET } from '@shared/utils/constants';
-
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>(JWT_SECRET, 'secret'),
-        verifyOptions: {
-          maxAge: configService.get<string>(JWT_EXPIRES_IN, '1d'),
-        },
-        signOptions: {
-          expiresIn: configService.get<string>(JWT_EXPIRES_IN, '1d'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    JwtAccessModule,
+    JwtRefreshModule,
     RmqModule.register('MAIL'),
     forwardRef(() => UserModule),
     TokenModule,
   ],
-  controllers: [LoginController, ForgotPasswordController],
+  controllers: [LoginController, ForgotPasswordController, RefreshController],
   providers: [
     LoginUseCase,
     ForgotPasswordUseCase,
-    JwtStrategy,
+    RefreshUseCase,
+    JwtAccessTokenStrategy,
+    JwtRefreshTokenStrategy,
     LocalStrategy,
     {
       provide: 'TOKEN_SERVICE',

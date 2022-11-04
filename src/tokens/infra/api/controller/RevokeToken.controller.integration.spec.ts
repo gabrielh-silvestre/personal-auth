@@ -1,4 +1,4 @@
-import { JwtModule } from '@nestjs/jwt';
+import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
 import { RevokeTokenController } from './RevokeToken.controller';
@@ -6,7 +6,6 @@ import { RevokeTokenUseCase } from '@tokens/useCase/revoke/RevokeToken.useCase';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 
 describe('Integration test for Revoke Token controller', () => {
   let tokenController: RevokeTokenController;
@@ -15,7 +14,6 @@ describe('Integration test for Revoke Token controller', () => {
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [JwtModule.register(JWT_OPTIONS_MOCK)],
       controllers: [RevokeTokenController],
       providers: [
         RevokeTokenUseCase,
@@ -32,13 +30,17 @@ describe('Integration test for Revoke Token controller', () => {
   it('should revoke token with success', async () => {
     const [{ id }] = TOKENS_MOCK;
 
-    const response = await tokenController.handle({ tokenId: id });
+    const response = await tokenController.handle({
+      user: { tokenId: id },
+    } as Request);
 
     expect(response).toEqual({ success: true });
   });
 
   it('should inform if token cannot be revoked', async () => {
-    const response = await tokenController.handle({ tokenId: 'invalid token' });
+    const response = await tokenController.handle({
+      user: { tokenId: 'invalid' },
+    } as Request);
 
     expect(response).toEqual({ success: false });
   });

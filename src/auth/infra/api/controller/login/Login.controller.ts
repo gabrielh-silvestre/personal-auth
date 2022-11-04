@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Inject,
   Post,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
@@ -18,12 +20,17 @@ import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc
 
 @Controller('/auth')
 export class LoginController {
-  constructor(private readonly loginUseCase: LoginUseCase) {}
+  constructor(
+    @Inject('ACCESS_TOKEN_SERVICE')
+    private readonly accessTokenService: JwtService,
+    private readonly loginUseCase: LoginUseCase,
+  ) {}
 
   async handle(data: InputLoginDto): Promise<{ token: string } | never> {
-    return {
-      token: await this.loginUseCase.execute(data),
-    };
+    const token = await this.loginUseCase.execute(data);
+    const jwtToken = await this.accessTokenService.signAsync(token);
+
+    return { token: jwtToken };
   }
 
   @UseGuards(CredentialsGuard)

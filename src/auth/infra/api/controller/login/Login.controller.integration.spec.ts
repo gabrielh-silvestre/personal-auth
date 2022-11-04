@@ -1,25 +1,13 @@
 import { Test } from '@nestjs/testing';
-import { JwtModule } from '@nestjs/jwt';
 
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
-
-import { TokenServiceAdaptor } from '@auth/infra/service/token/Token.service.adaptor';
-import { UserServiceAdaptor } from '@auth/infra/service/user/User.service.adaptor';
-import { JwtServiceAdaptor } from '@tokens/infra/service/jwt/Jwt.service.adaptor';
 
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
-import { CreateTokenUseCase } from '@tokens/useCase/create/CreateToken.useCase';
-import { ValidateTokenUseCase } from '@tokens/useCase/validate/ValidateToken.useCase';
-
-import { GetUserByEmailUseCase } from '@users/useCase/getByEmail/GetUserByEmail.useCase';
-import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
-
-import { JWT_OPTIONS_MOCK } from '@shared/utils/mocks/jwtOptions.mock';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -28,7 +16,7 @@ const VALID_LOGIN = {
   password: 'password',
 };
 
-describe('Integration test for Login use case', () => {
+describe('Integration test for Login controller', () => {
   let loginController: LoginController;
 
   beforeAll(() => {
@@ -40,14 +28,9 @@ describe('Integration test for Login use case', () => {
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [JwtModule.register(JWT_OPTIONS_MOCK)],
       providers: [
         LoginController,
         LoginUseCase,
-        CreateTokenUseCase,
-        ValidateTokenUseCase,
-        GetUserByIdUseCase,
-        GetUserByEmailUseCase,
         {
           provide: 'USER_REPO',
           useClass: UserInMemoryRepository,
@@ -58,13 +41,25 @@ describe('Integration test for Login use case', () => {
         },
         {
           provide: 'TOKEN_SERVICE',
-          useClass: TokenServiceAdaptor,
+          useValue: {
+            generateAccessToken: jest.fn().mockResolvedValue({
+              tokenId: 'token-id',
+              userId: 'user-id',
+            }),
+          },
+        },
+        {
+          provide: 'ACCESS_TOKEN_SERVICE',
+          useValue: {
+            signAsync: jest.fn().mockResolvedValue('token'),
+          },
         },
         {
           provide: 'USER_SERVICE',
-          useClass: UserServiceAdaptor,
+          useValue: {
+            findByEmail: jest.fn().mockResolvedValue(USERS_MOCK[0]),
+          },
         },
-        { provide: 'JWT_SERVICE', useClass: JwtServiceAdaptor },
       ],
     }).compile();
 

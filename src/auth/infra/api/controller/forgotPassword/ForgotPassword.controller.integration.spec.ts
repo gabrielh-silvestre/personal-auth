@@ -24,9 +24,9 @@ describe('Integration tests for Forgot Password controller', () => {
       providers: [
         ForgotPasswordUseCase,
         {
-          provide: 'TOKEN_SERVICE',
+          provide: 'ACCESS_TOKEN_SERVICE',
           useValue: {
-            generateRecoverPasswordToken: jest.fn().mockResolvedValue('token'),
+            signAsync: jest.fn().mockResolvedValue('token'),
           },
         },
         {
@@ -39,6 +39,15 @@ describe('Integration tests for Forgot Password controller', () => {
           provide: 'MAIL_SERVICE',
           useValue: {
             recoverPasswordMail: jest.fn(),
+          },
+        },
+        {
+          provide: 'TOKEN_SERVICE',
+          useValue: {
+            generateRecoverPasswordToken: jest.fn().mockResolvedValue({
+              tokenId: 'token-id',
+              userId: 'user-id',
+            }),
           },
         },
       ],
