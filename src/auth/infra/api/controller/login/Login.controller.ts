@@ -32,9 +32,6 @@ export class LoginController {
   ) {}
 
   async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
-    console.log('access token service\n', this.accessTokenService);
-    console.log('refresh token service\n', this.refreshTokenService);
-
     const token = await this.loginUseCase.execute(data);
 
     const access = await this.accessTokenService.sign(token);
