@@ -17,9 +17,9 @@ export class JwtFactory {
         JwtModule.registerAsync({
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => ({
-            secret: configService.get<string>(`JWT_${name}_SECRET`, 'secret'),
+            secret: configService.get<string>(TOKEN_SECRET(name), 'secret'),
             verifyOptions: {
-              maxAge: configService.get<number>(TOKEN_SECRET(name), 86400),
+              maxAge: configService.get<number>(TOKEN_EXPIRES_IN(name), 86400),
             },
             signOptions: {
               expiresIn: configService.get<number>(
