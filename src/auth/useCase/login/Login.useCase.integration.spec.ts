@@ -35,7 +35,10 @@ describe('Integration test for Login use case', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token'),
+            generateAccessToken: jest.fn().mockResolvedValue({
+              tokenId: 'token-id',
+              userId: 'user-id',
+            }),
           },
         },
         {
@@ -54,6 +57,9 @@ describe('Integration test for Login use case', () => {
     const token = await loginUseCase.execute(VALID_LOGIN);
 
     expect(token).not.toBeNull();
-    expect(typeof token).toBe('string');
+    expect(token).toStrictEqual({
+      tokenId: expect.any(String),
+      userId: expect.any(String),
+    });
   });
 });
