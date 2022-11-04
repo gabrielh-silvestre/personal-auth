@@ -12,43 +12,60 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputRefreshDto } from '@auth/useCase/refresh/Refresh.dto';
+import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
 
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { RefreshTokenGuard } from '../../guard/RefreshToken.guard';
 import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
 import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
 
+type ResponseRefresh = {
+  access: string;
+  refresh: string;
+};
+
 @Controller('/auth')
 export class RefreshController {
   constructor(
+    private readonly accessTokenService: JwtAccessService,
     private readonly refreshTokenService: JwtRefreshService,
     private readonly refreshUseCase: RefreshUseCase,
   ) {}
 
   private async handle(
     data: InputRefreshDto,
-  ): Promise<{ token: string } | never> {
-    const token = await this.refreshUseCase.execute(data);
-    const jwtToken = await this.refreshTokenService.sign(token);
+  ): Promise<ResponseRefresh | never> {
+    const { accessTokenId, refreshTokenId, userId } =
+      await this.refreshUseCase.execute(data);
 
-    return { token: jwtToken };
+    const access = await this.accessTokenService.sign<TokenPayload>({
+      tokenId: accessTokenId,
+      userId,
+    });
+    const refresh = await this.refreshTokenService.sign<TokenPayload>({
+      tokenId: refreshTokenId,
+      userId,
+    });
+
+    return { access, refresh };
   }
 
   @UseGuards(RefreshTokenGuard)
   @Get('/refresh')
-  @UseInterceptors(new ParseHalJsonInterceptor<{ token: string }>())
+  @UseInterceptors(new ParseHalJsonInterceptor<ResponseRefresh>())
   async handleRest(
     @Request() data: IRequest,
-  ): Promise<{ token: string } | never> {
+  ): Promise<ResponseRefresh | never> {
     return this.handle(data.user);
   }
 
   @UseFilters(new ExceptionFilterRpc())
   @UseGuards(RefreshTokenGuard)
   @GrpcMethod('AuthService', 'RefreshToken')
-  async handleGrpc(@Body() data: IRequest): Promise<{ token: string } | never> {
+  async handleGrpc(@Body() data: IRequest): Promise<ResponseRefresh | never> {
     return this.handle(data.user);
   }
 }
