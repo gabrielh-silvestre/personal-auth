@@ -4,18 +4,17 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Request,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputRefreshDto } from '@auth/useCase/refresh/Refresh.dto';
 
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 
 import { RefreshTokenGuard } from '../../guard/RefreshToken.guard';
 import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
@@ -24,8 +23,7 @@ import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-
 @Controller('/auth')
 export class RefreshController {
   constructor(
-    @Inject('REFRESH_TOKEN_SERVICE')
-    private readonly refreshTokenService: JwtService,
+    private readonly refreshTokenService: JwtRefreshService,
     private readonly refreshUseCase: RefreshUseCase,
   ) {}
 
@@ -33,7 +31,7 @@ export class RefreshController {
     data: InputRefreshDto,
   ): Promise<{ token: string } | never> {
     const token = await this.refreshUseCase.execute(data);
-    const jwtToken = await this.refreshTokenService.signAsync(token);
+    const jwtToken = await this.refreshTokenService.sign(token);
 
     return { token: jwtToken };
   }
