@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import type { TokenPayload } from '@auth/infra/service/token/Token.service.adaptor';
+import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 

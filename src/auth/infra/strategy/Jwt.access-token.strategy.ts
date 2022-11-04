@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import type { TokenPayload } from '../service/token/Token.service.adaptor';
+import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
 import type { ITokenService } from '../service/token/token.service.interface';
 
 import { TOKEN_SECRET } from '@shared/utils/constants';
@@ -33,7 +33,6 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
 
   async validate(payload: TokenPayload): Promise<TokenPayload> {
     await this.tokenService.verifyToken(payload.tokenId);
-
-    return { userId: payload.userId, tokenId: payload.tokenId };
+    return payload;
   }
 }
