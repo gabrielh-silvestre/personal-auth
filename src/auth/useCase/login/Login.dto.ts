@@ -4,6 +4,7 @@ export interface InputLoginDto {
 }
 
 export interface OutputLoginDto {
-  tokenId: string;
+  accessTokenId: string;
+  refreshTokenId: string;
   userId: string;
 }

@@ -12,7 +12,11 @@ export class LoginUseCase {
   ) {}
 
   async execute({ email }: InputLoginDto): Promise<OutputLoginDto | never> {
-    const foundUser = await this.userService.findByEmail(email);
-    return this.tokenService.generateAccessToken(foundUser.id);
+    const { id: userId } = await this.userService.findByEmail(email);
+
+    const accessTokenId = await this.tokenService.generateAccessToken(userId);
+    const refreshTokenId = await this.tokenService.generateRefreshToken(userId);
+
+    return { accessTokenId, refreshTokenId, userId };
   }
 }
