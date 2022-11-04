@@ -45,10 +45,8 @@ describe('Integration test for Login controller', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue({
-              tokenId: 'token-id',
-              userId: 'user-id',
-            }),
+            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
+            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
         },
         {
