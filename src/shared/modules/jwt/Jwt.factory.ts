@@ -1,17 +1,18 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+
 import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants';
 
 type JwtModuleOptions = {
   name: string;
 };
 
-@Module({})
-export class CustomJwtModule {
+@Injectable()
+export class JwtFactory {
   public static register({ name }: JwtModuleOptions): DynamicModule {
     return {
-      module: CustomJwtModule,
+      module: JwtFactory,
       imports: [
         JwtModule.registerAsync({
           inject: [ConfigService],
