@@ -14,45 +14,28 @@ export class TokenServiceAdaptor implements ITokenService {
     private readonly validateTokenUseCase: ValidateTokenUseCase,
   ) {}
 
-  async generateAccessToken(userId: string): Promise<TokenPayload | never> {
+  async generateAccessToken(userId: string): Promise<string | never> {
     const token = await this.createTokenUseCase.execute(userId, 'ACCESS');
-
-    return {
-      userId: token.userId,
-      tokenId: token.id,
-    };
+    return token.id;
   }
 
-  async generateRecoverPasswordToken(
-    userId: string,
-  ): Promise<TokenPayload | never> {
+  async generateRecoverPasswordToken(userId: string): Promise<string | never> {
     const token = await this.createTokenUseCase.execute(
       userId,
       'RECOVER_PASSWORD',
     );
 
-    return {
-      userId: token.userId,
-      tokenId: token.id,
-    };
+    return token.id;
   }
 
-  async generateRefreshToken(userId: string): Promise<TokenPayload | never> {
+  async generateRefreshToken(userId: string): Promise<string | never> {
     const token = await this.createTokenUseCase.execute(userId, 'REFRESH');
-
-    return {
-      userId: token.userId,
-      tokenId: token.id,
-    };
+    return token.id;
   }
 
-  async refreshToken(tokenId: string): Promise<TokenPayload | never> {
+  async refreshToken(tokenId: string): Promise<string | never> {
     const token = await this.refreshTokenUseCase.execute(tokenId);
-
-    return {
-      userId: token.userId,
-      tokenId: token.tokenId,
-    };
+    return token.tokenId;
   }
 
   async verifyToken(tokenId: string): Promise<TokenPayload | never> {

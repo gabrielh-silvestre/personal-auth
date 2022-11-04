@@ -4,8 +4,8 @@ export type TokenPayload = {
 };
 
 export interface ITokenService {
-  generateAccessToken(userId: string): Promise<TokenPayload | never>;
-  generateRecoverPasswordToken(userId: string): Promise<TokenPayload | never>;
-  generateRefreshToken(userId: string): Promise<TokenPayload | never>;
+  generateAccessToken(userId: string): Promise<string | never>;
+  generateRecoverPasswordToken(userId: string): Promise<string | never>;
+  generateRefreshToken(userId: string): Promise<string | never>;
   verifyToken(token: string): Promise<TokenPayload | never>;
 }
