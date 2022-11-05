@@ -79,13 +79,15 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken).not.toBeNull();
   });
 
-  it('should find a token exists by userId', async () => {
+  it('should find a token by user id and type', async () => {
     const tokenRepository = new TokenInMemoryRepository();
     const [tokenToFind] = TOKENS_MOCK;
 
-    const foundToken = await tokenRepository.findByUserId(tokenToFind.userId);
+    const foundToken = await tokenRepository.findByUserIdAndType(
+      tokenToFind.userId,
+      tokenToFind.type,
+    );
 
     expect(foundToken).not.toBeNull();
-    expect(foundToken).toBeInstanceOf(Array);
   });
 });

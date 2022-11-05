@@ -1,40 +1,45 @@
+import type { Request as IRequest } from 'express';
+
 import {
   Body,
   Controller,
-  Post,
+  Get,
+  Request,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 
-import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
+import type { InputRefreshDto } from '@auth/useCase/refresh/Refresh.dto';
 import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
 
-import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
+import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
-import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
-import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
+import { RefreshTokenGuard } from '../../guard/RefreshToken.guard';
 import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
+import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
 
-type ResponseLogin = {
+type ResponseRefresh = {
   access: string;
   refresh: string;
 };
 
 @Controller('/auth')
-export class LoginController {
+export class RefreshController {
   constructor(
     private readonly accessTokenService: JwtAccessService,
     private readonly refreshTokenService: JwtRefreshService,
-    private readonly loginUseCase: LoginUseCase,
+    private readonly refreshUseCase: RefreshUseCase,
   ) {}
 
-  async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
+  private async handle(
+    data: InputRefreshDto,
+  ): Promise<ResponseRefresh | never> {
     const { accessTokenId, refreshTokenId, userId } =
-      await this.loginUseCase.execute(data);
+      await this.refreshUseCase.execute(data);
 
     const access = await this.accessTokenService.sign<TokenPayload>({
       tokenId: accessTokenId,
@@ -48,19 +53,19 @@ export class LoginController {
     return { access, refresh };
   }
 
-  @UseGuards(CredentialsGuard)
-  @Post('/login')
-  @UseInterceptors(new ParseHalJsonInterceptor<ResponseLogin>())
+  @UseGuards(RefreshTokenGuard)
+  @Get('/refresh')
+  @UseInterceptors(new ParseHalJsonInterceptor<ResponseRefresh>())
   async handleRest(
-    @Body() data: InputLoginDto,
-  ): Promise<ResponseLogin | never> {
-    return this.handle(data);
+    @Request() data: IRequest,
+  ): Promise<ResponseRefresh | never> {
+    return this.handle(data.user);
   }
 
-  @UseGuards(CredentialsGuard)
   @UseFilters(new ExceptionFilterRpc())
-  @GrpcMethod('AuthService', 'LoginUser')
-  async handleGrpc(data: InputLoginDto): Promise<ResponseLogin | never> {
-    return this.handle(data);
+  @UseGuards(RefreshTokenGuard)
+  @GrpcMethod('AuthService', 'RefreshToken')
+  async handleGrpc(@Body() data: IRequest): Promise<ResponseRefresh | never> {
+    return this.handle(data.user);
   }
 }

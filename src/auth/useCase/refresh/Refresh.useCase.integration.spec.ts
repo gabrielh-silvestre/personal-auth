@@ -1,8 +1,6 @@
 import { Test } from '@nestjs/testing';
 
-import { LoginUseCase } from './Login.useCase';
-
-import { PasswordFactory } from '@users/domain/factory/Password.factory';
+import { RefreshUseCase } from './Refresh.useCase';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
@@ -10,17 +8,12 @@ import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repo
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
-const VALID_LOGIN = {
-  email: USERS_MOCK[0].email,
-  password: 'password',
+const VALID_REFRESH = {
+  userId: USERS_MOCK[0].id,
 };
 
-describe('Integration test for Login use case', () => {
-  let loginUseCase: LoginUseCase;
-
-  beforeAll(() => {
-    USERS_MOCK[0].changePassword(PasswordFactory.createNew('password'));
-  });
+describe('Integration test for Refresh use case', () => {
+  let refreshUseCase: RefreshUseCase;
 
   beforeEach(async () => {
     UserInMemoryRepository.reset(USERS_MOCK);
@@ -28,7 +21,7 @@ describe('Integration test for Login use case', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        LoginUseCase,
+        RefreshUseCase,
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
@@ -36,20 +29,14 @@ describe('Integration test for Login use case', () => {
             generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
         },
-        {
-          provide: 'USER_SERVICE',
-          useValue: {
-            findByEmail: jest.fn().mockResolvedValue(USERS_MOCK[0]),
-          },
-        },
       ],
     }).compile();
 
-    loginUseCase = module.get<LoginUseCase>(LoginUseCase);
+    refreshUseCase = module.get<RefreshUseCase>(RefreshUseCase);
   });
 
-  it('should login with success', async () => {
-    const token = await loginUseCase.execute(VALID_LOGIN);
+  it('should refresh with success', async () => {
+    const token = await refreshUseCase.execute(VALID_REFRESH);
 
     expect(token).not.toBeNull();
     expect(token).toStrictEqual({

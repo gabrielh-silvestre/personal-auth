@@ -26,8 +26,13 @@ services:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       - MONGO_URI=mongodb://mongo:27017/${DB_NAME}
 
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      # - JWT_SECRET=${JWT_SECRET}
+      # - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
+      - JWT_ACCESS_TOKEN_EXPIRES_IN=${JWT_ACCESS_TOKEN_EXPIRES_IN}
+
+      - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
+      - JWT_REFRESH_TOKEN_EXPIRES_IN=${JWT_REFRESH_TOKEN_EXPIRES_IN}
 
       - MAILER_HOST=${MAILER_HOST}
       - MAILER_PORT=${MAILER_PORT}
@@ -87,6 +92,8 @@ services:
       - AMQP_URL=amqp://rabbitmq?connection_attempts=5&retry_delay=5
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_ERLANG_COOKIE=SQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_VHOST=/
     healthcheck:
       test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
       interval: 10s

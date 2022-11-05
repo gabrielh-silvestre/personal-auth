@@ -7,4 +7,5 @@ export const TOKENS_MOCK: Token[] = [
   TokenFactory.createAccessToken(uuid()),
   TokenFactory.createAccessToken(uuid()),
   TokenFactory.createAccessToken(uuid()),
+  TokenFactory.createRefreshToken(uuid()),
 ];

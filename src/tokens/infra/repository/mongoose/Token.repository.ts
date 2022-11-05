@@ -4,46 +4,53 @@ import { Model } from 'mongoose';
 
 import type { ITokenRepository } from '@tokens/domain/repository/token.repository.interface';
 
-import { TokenDocument, TokenSchema } from './Token.schema';
 import { Token } from '@tokens/domain/entity/Token';
+import { TokenType } from '@tokens/domain/entity/token.interface';
+
+import { TokenDocument, TokenSchema } from './Token.schema';
 
 @Injectable()
 export class TokenMongooseRepository implements ITokenRepository {
   constructor(
     @InjectModel(TokenSchema.name)
-    private readonly tokenModel: Model<TokenDocument>,
+    private readonly model: Model<TokenDocument>,
   ) {}
 
-  async findByUserId(userId: string): Promise<Token[]> {
-    const foundToken = await this.tokenModel.find({ userId });
-
-    return foundToken.map(
-      (token) =>
-        new Token(
-          token.id,
-          token.userId,
-          token.lastRefresh,
-          token.revoked,
-          token.type,
-        ),
-    );
-  }
-
   async create(entity: Token): Promise<void> {
-    new this.tokenModel({
-      id: entity.id,
+    const tokenAlreadyExists = await this.model.exists({
       userId: entity.userId,
-      lastRefresh: entity.lastRefresh,
-      expires: entity.expires,
-      revoked: entity.revoked,
       type: entity.type,
-    }).save();
+    });
+
+    if (tokenAlreadyExists) {
+      await this.model.findOneAndUpdate(
+        { userId: entity.userId, type: entity.type },
+        {
+          $set: {
+            id: entity.id,
+            lastRefresh: entity.lastRefresh,
+            expires: entity.expires,
+            revoked: entity.revoked,
+          },
+        },
+      );
+    } else {
+      await new this.model({
+        id: entity.id,
+        userId: entity.userId,
+        expireTime: entity.expireTime,
+        lastRefresh: entity.lastRefresh,
+        expires: entity.expires,
+        revoked: entity.revoked,
+        type: entity.type,
+      }).save();
+    }
   }
 
   async update(entity: Token): Promise<void> {
-    await this.tokenModel.updateMany(
+    await this.model.findOneAndUpdate(
       {
-        $or: [{ id: entity.id }, { userId: entity.userId }],
+        id: entity.id,
       },
       {
         $set: {
@@ -57,14 +64,35 @@ export class TokenMongooseRepository implements ITokenRepository {
   }
 
   async find(id: string): Promise<Token> {
-    const foundToken = await this.tokenModel.findOne({ id });
+    const foundToken = await this.model.findOne({ id });
 
-    return new Token(
-      foundToken.id,
-      foundToken.userId,
-      foundToken.lastRefresh,
-      foundToken.revoked,
-      foundToken.type,
-    );
+    return foundToken
+      ? new Token(
+          foundToken.id,
+          foundToken.userId,
+          foundToken.expireTime,
+          foundToken.lastRefresh,
+          foundToken.revoked,
+          foundToken.type,
+        )
+      : null;
+  }
+
+  async findByUserIdAndType(
+    userId: string,
+    type: TokenType,
+  ): Promise<Token | null> {
+    const foundToken = await this.model.findOne({ userId, type });
+
+    return foundToken
+      ? new Token(
+          foundToken.id,
+          foundToken.userId,
+          foundToken.expireTime,
+          foundToken.lastRefresh,
+          foundToken.revoked,
+          foundToken.type,
+        )
+      : null;
   }
 }

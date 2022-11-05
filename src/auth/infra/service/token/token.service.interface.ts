@@ -1,10 +1,11 @@
-export type OutputCreateToken = {
-  tokenId: string;
+export type TokenPayload = {
   userId: string;
+  tokenId: string;
 };
 
 export interface ITokenService {
-  generateToken(userId: string): Promise<string>;
-  generateRecoverPasswordToken(userId: string): Promise<string>;
-  verifyToken(token: string): Promise<OutputCreateToken | never>;
+  generateAccessToken(userId: string): Promise<string | never>;
+  generateRecoverPasswordToken(userId: string): Promise<string | never>;
+  generateRefreshToken(userId: string): Promise<string | never>;
+  verifyToken(token: string): Promise<TokenPayload | never>;
 }
