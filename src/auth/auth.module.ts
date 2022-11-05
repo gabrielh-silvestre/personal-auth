@@ -4,8 +4,7 @@ import { TokenModule } from '@tokens/token.module';
 import { UserModule } from '@users/user.module';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
-import { JwtAccessModule } from '@shared/modules/jwt/JwtAccess.module';
-import { JwtRefreshModule } from '@shared/modules/jwt/JwtRefresh.module';
+import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
@@ -26,8 +25,7 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
 @Module({
   imports: [
-    JwtAccessModule,
-    JwtRefreshModule,
+    CustomJwtModule,
     RmqModule.register('MAIL'),
     forwardRef(() => UserModule),
     TokenModule,
@@ -37,9 +35,9 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     LoginUseCase,
     ForgotPasswordUseCase,
     RefreshUseCase,
+    LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
-    LocalStrategy,
     {
       provide: 'TOKEN_SERVICE',
       useClass: TokenServiceAdaptor,

@@ -24,7 +24,7 @@ export class TokenMongooseRepository implements ITokenRepository {
 
     if (tokenAlreadyExists) {
       await this.model.findOneAndUpdate(
-        { userId: entity.userId },
+        { userId: entity.userId, type: entity.type },
         {
           $set: {
             id: entity.id,

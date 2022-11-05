@@ -17,7 +17,11 @@ export class ForgotPasswordUseCase {
   async execute({
     email,
   }: InputForgotPasswordDto): Promise<OutputForgotPasswordDto | never> {
-    const user = await this.userService.findByEmail(email);
-    return this.tokenService.generateRecoverPasswordToken(user.id);
+    const { id: userId } = await this.userService.findByEmail(email);
+    const tokenId = await this.tokenService.generateRecoverPasswordToken(
+      userId,
+    );
+
+    return { tokenId, userId };
   }
 }

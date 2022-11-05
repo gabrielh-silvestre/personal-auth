@@ -13,7 +13,7 @@ export class AuthenticateGuard extends AuthGuard('access-token') {
 
   handleRequest<T = TokenPayload>(err: Error | null, user: T, info: any): T {
     if (info || err) {
-      throw ExceptionFactory.forbidden('Invalid token');
+      throw ExceptionFactory.forbidden(err?.message || info?.message);
     }
 
     return user;

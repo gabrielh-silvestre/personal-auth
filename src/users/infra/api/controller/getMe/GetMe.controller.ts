@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Request,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
 
 import { AuthenticateGuard } from '@auth/infra/api/guard/Authenticate.guard';
+import { ExceptionFilterRpc } from '../../filter/ExceptionFilter.grpc';
 import { ParseHalJsonInterceptor } from '../../interceptor/Parse.hal-json.interceptor';
 
 type OutPutGetMe = {
@@ -39,6 +41,7 @@ export class GetMeController {
     return this.handle(data.user.userId);
   }
 
+  @UseFilters(new ExceptionFilterRpc())
   @UseGuards(AuthenticateGuard)
   @GrpcMethod('UserService', 'GetMe')
   async handleGrpc(@Body() data: IRequest): Promise<OutPutGetMe> {

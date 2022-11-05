@@ -92,7 +92,11 @@ describe('Rest API (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send(VALID_LOGIN_USER)
-        .expect(201);
+        .expect(201)
+        .then((res) => {
+          token = res.body.data.access;
+          return res;
+        });
 
       expect(response.body).toStrictEqual({
         _links: {
@@ -101,7 +105,8 @@ describe('Rest API (e2e)', () => {
           },
         },
         data: {
-          token: expect.any(String),
+          access: expect.any(String),
+          refresh: expect.any(String),
         },
       });
     });
@@ -125,12 +130,12 @@ describe('Rest API (e2e)', () => {
 
   describe('/users/me (GET)', () => {
     it('should recover a user', async () => {
-      await request(app.getHttpServer())
-        .post('/auth/login')
-        .send(VALID_LOGIN_USER)
-        .then((res) => {
-          token = res.body.data.token;
-        });
+      // await request(app.getHttpServer())
+      //   .post('/auth/login')
+      //   .send(VALID_LOGIN_USER)
+      //   .then((res) => {
+      //     token = res.body.data.access;
+      //   });
 
       const response = await request(app.getHttpServer())
         .get(`/users/me`)

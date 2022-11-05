@@ -8,7 +8,8 @@ message LoginUserRequest {
 }
 
 message LoginUserResponse {
-  string token = 1;
+  string access = 1;
+  string refresh = 2;
 }
 
 message RefreshTokenRequest {
@@ -16,7 +17,8 @@ message RefreshTokenRequest {
 }
 
 message RefreshTokenResponse {
-  string token = 1;
+  string access = 1;
+  string refresh = 2;
 }
 
 service AuthService {

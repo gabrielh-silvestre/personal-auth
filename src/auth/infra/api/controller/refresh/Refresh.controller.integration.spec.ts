@@ -4,6 +4,9 @@ import { Test } from '@nestjs/testing';
 import { RefreshController } from './Refresh.controller';
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
@@ -30,17 +33,17 @@ describe('Integration test for Refresh controller', () => {
         {
           provide: 'TOKEN_SERVICE',
           useValue: {
-            generateRefreshToken: jest.fn().mockResolvedValue({
-              tokenId: 'token-id',
-              userId: 'user-id',
-            }),
+            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
+            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
         },
         {
-          provide: 'REFRESH_TOKEN_SERVICE',
-          useValue: {
-            signAsync: jest.fn().mockResolvedValue('token'),
-          },
+          provide: JwtRefreshService,
+          useValue: { sign: jest.fn().mockResolvedValue('token') },
+        },
+        {
+          provide: JwtAccessService,
+          useValue: { sign: jest.fn().mockResolvedValue('token') },
         },
       ],
     }).compile();
@@ -54,7 +57,8 @@ describe('Integration test for Refresh controller', () => {
 
       expect(token).not.toBeNull();
       expect(token).toStrictEqual({
-        token: expect.any(String),
+        access: expect.any(String),
+        refresh: expect.any(String),
       });
     });
 
@@ -63,7 +67,8 @@ describe('Integration test for Refresh controller', () => {
 
       expect(token).not.toBeNull();
       expect(token).toStrictEqual({
-        token: expect.any(String),
+        access: expect.any(String),
+        refresh: expect.any(String),
       });
     });
   });
