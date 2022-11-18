@@ -3,8 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { RevokeTokenController } from './infra/api/controller/RevokeToken.controller';
 
-import { TokenFacade } from './infra/facade/Token.facade';
-
 import { RevokeTokenUseCase } from './useCase/revoke/RevokeToken.useCase';
 import { CreateTokenUseCase } from './useCase/create/CreateToken.useCase';
 import { ValidateTokenUseCase } from './useCase/validate/ValidateToken.useCase';
@@ -28,12 +26,11 @@ import {
     CreateTokenUseCase,
     RefreshTokenUseCase,
     ValidateTokenUseCase,
-    TokenFacade,
     {
       provide: 'TOKEN_REPO',
       useClass: TokenMongooseRepository,
     },
   ],
-  exports: [TokenFacade],
+  exports: [CreateTokenUseCase, ValidateTokenUseCase, RefreshTokenUseCase],
 })
 export class TokenModule {}

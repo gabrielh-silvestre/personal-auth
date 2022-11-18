@@ -2,17 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import type { IUserService, OutputUser } from './user.service.interface';
 
-import { UserFacade } from '@users/infra/facade/User.facade';
+import { GetUserByEmailUseCase } from '@users/useCase/getByEmail/GetUserByEmail.useCase';
+import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
 
 @Injectable()
 export class UserServiceAdaptor implements IUserService {
-  constructor(private readonly userFacade: UserFacade) {}
+  constructor(
+    private readonly getUserByIdUseCase: GetUserByIdUseCase,
+    private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
+  ) {}
 
   async findById(id: string): Promise<OutputUser | never> {
-    return this.userFacade.getById(id);
+    return await this.getUserByIdUseCase.execute(id);
   }
 
   async findByEmail(email: string): Promise<OutputUser | never> {
-    return this.userFacade.getByEmail(email);
+    return this.getUserByEmailUseCase.execute(email);
   }
 }
