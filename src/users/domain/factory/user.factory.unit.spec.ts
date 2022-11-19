@@ -9,8 +9,6 @@ describe('Test Domain User factory', () => {
     const user = UserFactory.create(
       VALID_USERNAME,
       VALID_EMAIL,
-      VALID_EMAIL,
-      VALID_PASSWORD,
       VALID_PASSWORD,
     );
 
@@ -23,27 +21,22 @@ describe('Test Domain User factory', () => {
     expect(user.password.toString()).not.toBe('password');
   });
 
-  it('should throw an error if emails do not match', () => {
-    expect(() => {
-      UserFactory.create(
-        VALID_USERNAME,
-        VALID_EMAIL,
-        'u@email.com',
-        VALID_PASSWORD,
-        VALID_PASSWORD,
-      );
-    }).toThrowError('Emails must match');
-  });
+  it('should create a user from persistence', () => {
+    const user = UserFactory.createFromPersistence(
+      'id',
+      VALID_USERNAME,
+      VALID_EMAIL,
+      new Date(),
+      new Date(),
+      VALID_PASSWORD,
+    );
 
-  it('should throw an error if passwords do not match', () => {
-    expect(() => {
-      UserFactory.create(
-        VALID_USERNAME,
-        VALID_EMAIL,
-        VALID_EMAIL,
-        VALID_PASSWORD,
-        'pass',
-      );
-    }).toThrowError('Passwords must match');
+    expect(user).toBeDefined();
+    expect(user.id).toBe('id');
+    expect(user.username).toBe('username');
+    expect(user.email).toBe('email@email.com');
+
+    expect(user.password).toBeDefined();
+    expect(user.password.toString()).not.toBe('password');
   });
 });
