@@ -3,6 +3,41 @@ on: [pull_request]
 jobs:
   Automatic-Tests:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify git repository
+        uses: actions/checkout@v2
+
+      - name: Install node on version
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Cache node_modules
+        id: my-cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.my-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    needs: Automatic-Tests
+
     services:
       postgres:
         image: postgres:14.3-alpine
@@ -29,33 +64,40 @@ jobs:
           --health-retries 10
 
     steps:
-      - name: Verify git repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Install node on version
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test
-
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+      - name: Cache node_modules
+        id: my-cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
         with:
-          fetch-depth: 0
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.my-cache.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: Test coverage generation
         run: npm run test:cov
+        env:
+          DATABASE_URL: postgres://postgres:postgres@postgres:5432/database
+          MONGO_URI: mongodb://mongo:27017/database
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
