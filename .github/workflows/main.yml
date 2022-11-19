@@ -93,6 +93,9 @@ jobs:
         if: steps.coverage-cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Migrate database
+        run: prisma migrate dev
+
       - name: Run tests and generate coverage
         run: npm run test:cov
         env:
