@@ -54,9 +54,6 @@ jobs:
         with:
           output: report-markdown
 
-      - name: Generate coverage
-        run: npm run test:cov
-
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
