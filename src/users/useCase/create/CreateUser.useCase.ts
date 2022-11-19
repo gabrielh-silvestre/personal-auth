@@ -15,8 +15,26 @@ export class CreateUserUseCase {
     @Inject('MAIL_SERVICE') private readonly mailService: IMailService,
   ) {}
 
-  private async isEmailAlreadyInUse(email: string): Promise<boolean> {
-    return this.userRepository.existsByEmail(email);
+  private async isEmailAlreadyInUse(email: string): Promise<void | never> {
+    const isInUse = await this.userRepository.existsByEmail(email);
+
+    if (isInUse) {
+      throw ExceptionFactory.conflict('Email already registered');
+    }
+  }
+
+  private isCredentialsEqual(
+    email: string,
+    confirmEmail: string,
+    password: string,
+    confirmPassword: string,
+  ): void | never {
+    const isEmailEqual = email === confirmEmail;
+    const isPasswordEqual = password === confirmPassword;
+
+    if (!isEmailEqual || !isPasswordEqual) {
+      throw ExceptionFactory.invalidArgument('Credentials not match');
+    }
   }
 
   private async createUserEmail(user: IUser): Promise<void | never> {
@@ -30,19 +48,10 @@ export class CreateUserUseCase {
     password,
     confirmPassword,
   }: InputCreateUserDto): Promise<OutputCreateUserDto | never> {
-    const newUser = UserFactory.create(
-      username,
-      email,
-      confirmEmail,
-      password,
-      confirmPassword,
-    );
+    this.isCredentialsEqual(email, confirmEmail, password, confirmPassword);
+    await this.isEmailAlreadyInUse(email);
 
-    const emailAlreadyRegistered = await this.isEmailAlreadyInUse(email);
-
-    if (emailAlreadyRegistered) {
-      throw ExceptionFactory.conflict('Email already registered');
-    }
+    const newUser = UserFactory.create(username, email, password);
 
     await this.userRepository.create(newUser);
     this.createUserEmail(newUser);
