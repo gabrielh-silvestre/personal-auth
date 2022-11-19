@@ -85,29 +85,6 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
           MONGO_URI: mongodb://localhost:27017/database
 
-      - name: Upload coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-artifact
-          path: ./coverage/test-report.xml
-
-
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    needs: [Automatic-Tests, Coverage]
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Download coverage
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage-artifact
-          path: ./coverage
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
