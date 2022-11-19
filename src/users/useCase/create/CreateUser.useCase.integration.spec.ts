@@ -23,8 +23,10 @@ const INVALID_NEW_USER = {
 
 describe('Integration test for Create User use case', () => {
   let createUserUseCase: CreateUserUseCase;
+  let welcomeMail: jest.Mock;
 
   beforeEach(async () => {
+    welcomeMail = jest.fn();
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
@@ -33,9 +35,7 @@ describe('Integration test for Create User use case', () => {
         CreateUserUseCase,
         {
           provide: 'MAIL_SERVICE',
-          useValue: {
-            welcomeMail: jest.fn(),
-          },
+          useValue: { welcomeMail },
         },
         {
           provide: 'USER_REPO',
@@ -55,12 +55,16 @@ describe('Integration test for Create User use case', () => {
       id: expect.any(String),
       username: expect.any(String),
     });
+
+    expect(welcomeMail).toBeCalledTimes(1);
   });
 
   it('should throw an error if email is already registered', async () => {
     await expect(createUserUseCase.execute(INVALID_NEW_USER)).rejects.toThrow(
       'Email already registered',
     );
+
+    expect(welcomeMail).not.toBeCalled();
   });
 
   it('should throw and error if credentials not match', async () => {
@@ -71,11 +75,15 @@ describe('Integration test for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
+    expect(welcomeMail).not.toBeCalled();
+
     await expect(
       createUserUseCase.execute({
         ...VALID_NEW_USER,
         confirmPassword: 'invalid-password',
       }),
     ).rejects.toThrow('Credentials not match');
+
+    expect(welcomeMail).not.toBeCalled();
   });
 });

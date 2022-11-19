@@ -75,4 +75,13 @@ describe('Test domain Token factory', () => {
     expect(refreshToken).toBeDefined();
     expect(refreshToken.type).toBe(TokenType.REFRESH);
   });
+
+  it('should throw an error when create a token with invalid type', () => {
+    expect(() =>
+      TokenFactory.createTokenFromType(
+        'INVALID_TYPE' as TokenType,
+        VALID_USER_ID,
+      ),
+    ).toThrowError('Invalid token type');
+  });
 });

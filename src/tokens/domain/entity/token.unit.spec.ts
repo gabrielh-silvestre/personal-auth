@@ -25,12 +25,14 @@ describe('Unit test domain Token entity', () => {
 
     expect(token.expires).toBeDefined();
     expect(token.revoked).toBeFalsy();
+    expect(token.type).toBe(TokenType.ACCESS);
+
+    expect(token.expires).toBeInstanceOf(Date);
+    expect(token.expires > new Date()).toBeTruthy();
+    expect(token.expires === new Date()).toBeFalsy();
 
     expect(token.lastRefresh).toBeInstanceOf(Date);
-    expect(token.expires).toBeInstanceOf(Date);
-
     expect(token.lastRefresh < token.expires).toBeTruthy();
-    expect(token.type).toBe(TokenType.ACCESS);
   });
 
   it('should create a new recover password token', () => {
@@ -127,12 +129,13 @@ describe('Unit test domain Token entity', () => {
     const token = new Token(
       uuid(),
       uuid(),
-      EXPIRE_TIME,
+      0,
       LAST_REFRESH,
       false,
       TokenType.ACCESS,
     );
 
-    expect(token.expiresIn()).toBeGreaterThan(0);
+    expect(token.expiresIn()).toBeLessThanOrEqual(0);
+    expect(token.isValid()).toBeFalsy();
   });
 });
