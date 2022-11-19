@@ -8,12 +8,26 @@ jobs:
       - name: Verify git repository
         uses: actions/checkout@v2
 
+      - name: Cache node_modules
+        id: my-cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install node on version
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
       - name: Install dependencies
+        if: steps.my-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run tests
@@ -22,9 +36,6 @@ jobs:
 
   Coverage:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/database
-      MONGO_URI: mongodb://mongo:27017/database
 
     services:
       postgres:
@@ -54,11 +65,39 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: ArtiomTr/jest-coverage-report-action@v2
-        id: coverage
+      # - uses: ArtiomTr/jest-coverage-report-action@v2
+      #   id: coverage
+      #   with:
+      #     test-script: npm run test:cov
+      #     output: report-markdown
+
+      - name: Install node on version
+        uses: actions/setup-node@v1
         with:
-          test-script: npm run test:cov
-          output: report-markdown
+          node-version: 16
+
+      - name: Cache node_modules
+        id: my-cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.my-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Run tests and generate coverage
+        run: npm run test:cov
+        env:
+          DATABASE_URL: postgres://postgres:postgres@postgres:5432/database
+          MONGO_URI: mongodb://mongo:27017/database
 
       - name: Upload coverage
         uses: actions/upload-artifact@v3
@@ -66,9 +105,9 @@ jobs:
           name: coverage-artifact
           path: ./coverage/test-report.xml
 
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.report }}
+      # - uses: marocchino/sticky-pull-request-comment@v2
+      #   with:
+      #     message: ${{ steps.coverage.outputs.report }}
 
 
   sonarcloud:
