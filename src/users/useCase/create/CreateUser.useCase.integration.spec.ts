@@ -1,4 +1,3 @@
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
@@ -29,7 +28,7 @@ describe('Integration test for Create User use case', () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [EventEmitterModule.forRoot({ removeListener: true })],
+      imports: [],
       providers: [
         CreateUserUseCase,
         {
@@ -62,5 +61,21 @@ describe('Integration test for Create User use case', () => {
     await expect(createUserUseCase.execute(INVALID_NEW_USER)).rejects.toThrow(
       'Email already registered',
     );
+  });
+
+  it('should throw and error if credentials not match', async () => {
+    await expect(
+      createUserUseCase.execute({
+        ...VALID_NEW_USER,
+        confirmEmail: 'invalid-email',
+      }),
+    ).rejects.toThrow('Credentials not match');
+
+    await expect(
+      createUserUseCase.execute({
+        ...VALID_NEW_USER,
+        confirmPassword: 'invalid-password',
+      }),
+    ).rejects.toThrow('Credentials not match');
   });
 });
