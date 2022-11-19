@@ -8,15 +8,15 @@ export class User implements IUser {
   private _username: string;
   private _email: string;
   private _password: IPassword;
-  private _updatedAt: Date;
   private _createdAt: Date;
+  private _updatedAt: Date;
 
   constructor(
     id: string,
     username: string,
     email: string,
-    updatedAt: Date,
     createdAt: Date,
+    updatedAt: Date,
   ) {
     this._id = id;
     this._username = username;
