@@ -38,11 +38,11 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      db:
+      postgres:
         image: postgres:14.3-alpine
         env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: database
         ports:
           - 5432:5432
@@ -96,8 +96,8 @@ jobs:
       - name: Run tests and generate coverage
         run: npm run test:cov
         env:
-          DATABASE_URL: postgresql://user:password@db:5432/database
-          MONGO_URI: mongodb://mongo:27017/database
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/database
+          MONGO_URI: mongodb://localhost:27017/database
 
       - name: Upload coverage
         uses: actions/upload-artifact@v3
