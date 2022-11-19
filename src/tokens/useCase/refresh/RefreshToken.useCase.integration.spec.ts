@@ -5,7 +5,7 @@ import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.r
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
-const [, , , token] = TOKENS_MOCK;
+const [, , access, token] = TOKENS_MOCK;
 
 describe('Integration tests for Refresh Token use case', () => {
   let refreshTokenUseCase: RefreshTokenUseCase;
@@ -42,6 +42,12 @@ describe('Integration tests for Refresh Token use case', () => {
   it('should throw an error if token is already revoked', async () => {
     token.revoke();
     await expect(refreshTokenUseCase.execute(token.id)).rejects.toThrow(
+      'Invalid token',
+    );
+  });
+
+  it('should throw an error if token is not a refresh token', async () => {
+    await expect(refreshTokenUseCase.execute(access.id)).rejects.toThrow(
       'Invalid token',
     );
   });

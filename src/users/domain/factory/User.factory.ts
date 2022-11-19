@@ -7,20 +7,24 @@ export class UserFactory {
   public static create(
     username: string,
     email: string,
-    confirmEmail: string,
     password: string,
-    confirmPassword: string,
   ): User {
-    if (email !== confirmEmail) {
-      throw new Error('Emails must match');
-    }
-
-    if (password !== confirmPassword) {
-      throw new Error('Passwords must match');
-    }
-
-    const newUser = new User(uuid(), username, email);
+    const newUser = new User(uuid(), username, email, new Date(), new Date());
     newUser.changePassword(PasswordFactory.createNew(password));
+
+    return newUser;
+  }
+
+  public static createFromPersistence(
+    id: string,
+    username: string,
+    email: string,
+    createdAt: Date,
+    updatedAt: Date,
+    password: string,
+  ): User {
+    const newUser = new User(id, username, email, createdAt, updatedAt);
+    newUser.changePassword(PasswordFactory.createFromHash(password));
 
     return newUser;
   }
