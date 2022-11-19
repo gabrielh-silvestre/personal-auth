@@ -1,5 +1,5 @@
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
@@ -57,12 +57,6 @@ jobs:
       - name: Install dependencies
         # if: steps.coverage-cache.outputs.cache-hit != 'true'
         run: npm ci
-
-      - name: Migrate database
-        run: npx prisma migrate dev
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
-          MONGO_URI: mongodb://localhost:27017/database
 
       - name: Run tests and generate coverage
         run: npm run test:cov

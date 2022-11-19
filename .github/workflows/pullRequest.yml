@@ -1,5 +1,5 @@
 on:
-  pull_request_target:
+  pull_request:
       branches:
         - dev
 
@@ -61,7 +61,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
           MONGO_URI: mongodb://localhost:27017/database
         with:
-          test-script: npm run test:all
+          test-script: npm run test:cov
           output: report-markdown
 
       - uses: marocchino/sticky-pull-request-comment@v2
