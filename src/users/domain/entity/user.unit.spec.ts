@@ -152,8 +152,8 @@ describe('Unit test domain User entity', () => {
           uuid(),
           VALID_USERNAME,
           VALID_EMAIL,
-          new Date(),
           new Date('invalid'),
+          new Date(),
         ),
     ).toThrowError('CreatedAt must be a valid date');
   });
@@ -165,8 +165,8 @@ describe('Unit test domain User entity', () => {
           uuid(),
           VALID_USERNAME,
           VALID_EMAIL,
-          new Date('invalid'),
           new Date(),
+          new Date('invalid'),
         ),
     ).toThrowError('UpdatedAt must be a valid date');
   });
