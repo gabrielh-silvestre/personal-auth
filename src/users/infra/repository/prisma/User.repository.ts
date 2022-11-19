@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User as PrismaUser } from '@prisma/client';
 
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
 import { User } from '@users/domain/entity/User';
+import { UserFactory } from '@users/domain/factory/User.factory';
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 @Injectable()
@@ -12,6 +13,17 @@ export class UserPrismaRepository implements IUserRepository {
 
   constructor() {
     this.prismaClient = new PrismaClient();
+  }
+
+  private convertToUser(foundUser: PrismaUser): User {
+    return UserFactory.createFromPersistence(
+      foundUser.id,
+      foundUser.username,
+      foundUser.email,
+      foundUser.createdAt,
+      foundUser.updatedAt,
+      foundUser.password,
+    );
   }
 
   async create(entity: User): Promise<void> {
@@ -50,7 +62,7 @@ export class UserPrismaRepository implements IUserRepository {
       return null;
     }
 
-    const user = new User(foundUser.id, foundUser.username, foundUser.email);
+    const user = this.convertToUser(foundUser);
     user.changePassword(PasswordFactory.createFromHash(foundUser.password));
 
     return user;
@@ -65,7 +77,7 @@ export class UserPrismaRepository implements IUserRepository {
       return null;
     }
 
-    const user = new User(foundUser.id, foundUser.username, foundUser.email);
+    const user = this.convertToUser(foundUser);
     user.changePassword(PasswordFactory.createFromHash(foundUser.password));
 
     return user;
