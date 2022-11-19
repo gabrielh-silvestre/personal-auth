@@ -64,6 +64,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
+          MONGO_URI: mongodb://localhost:27017/database
 
       # - uses: ArtiomTr/jest-coverage-report-action@v2
       #   id: coverage
@@ -98,9 +101,6 @@ jobs:
 
       - name: Run tests and generate coverage
         run: npm run test:cov
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
-          MONGO_URI: mongodb://localhost:27017/database
 
       - name: Upload coverage
         uses: actions/upload-artifact@v3
