@@ -1,9 +1,8 @@
-import { v4 as uuid } from 'uuid';
-
 import { User } from '@users/domain/entity/User';
+import { UserFactory } from '@users/domain/factory/User.factory';
 
 export const USERS_MOCK: User[] = [
-  new User(uuid(), 'John', 'john@email.com'),
-  new User(uuid(), 'Doe', 'doe@email.com'),
-  new User(uuid(), 'Jane', 'jane@email.com'),
+  UserFactory.create('John', 'john@email.com', 'password'),
+  UserFactory.create('Doe', 'doe@email.com', 'password'),
+  UserFactory.create('Jane', 'jane@email.com', 'password'),
 ];
