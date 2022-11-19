@@ -8,26 +8,12 @@ jobs:
       - name: Verify git repository
         uses: actions/checkout@v2
 
-      - name: Cache node_modules
-        id: automatic-tests-cache
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-automatic-tests-cache--build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - name: Install node on version
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
       - name: Install dependencies
-        if: steps.automatic-tests-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run tests
@@ -65,32 +51,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - uses: ArtiomTr/jest-coverage-report-action@v2
-      #   id: coverage
-      #   with:
-      #     test-script: npm run test:cov
-      #     output: report-markdown
-
       - name: Install node on version
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
-      - name: Cache node_modules
-        id: coverage-cache
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-coverage-cache--build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      # - name: Cache node_modules
+      #   id: coverage-cache
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-coverage-cache--build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
 
       - name: Install dependencies
-        if: steps.coverage-cache.outputs.cache-hit != 'true'
+        # if: steps.coverage-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Migrate database
@@ -111,10 +91,6 @@ jobs:
           name: coverage-artifact
           path: ./coverage/test-report.xml
 
-      # - uses: marocchino/sticky-pull-request-comment@v2
-      #   with:
-      #     message: ${{ steps.coverage.outputs.report }}
-
 
   sonarcloud:
     name: SonarCloud
@@ -131,34 +107,6 @@ jobs:
         with:
           name: coverage-artifact
           path: ./coverage
-
-      # - name: Install node on version
-      #   uses: actions/setup-node@v1
-      #   with:
-      #     node-version: 16
-
-      # - name: Cache node_modules
-      #   id: my-cache
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - name: Install dependencies
-      #   if: steps.my-cache.outputs.cache-hit != 'true'
-      #   run: npm ci
-
-      # - name: Test coverage generation
-      #   run: npm run test:cov
-      #   env:
-      #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/database
-      #     MONGO_URI: mongodb://mongo:27017/database
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
