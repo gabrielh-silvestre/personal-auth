@@ -52,6 +52,7 @@ jobs:
       - uses: ArtiomTr/jest-coverage-report-action@v2
         id: coverage
         with:
+          test-script: npm run test:cov
           output: report-markdown
 
       - name: Upload coverage
@@ -63,7 +64,6 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: ${{ steps.coverage.outputs.report }}
-          test-script: npm run test:all
 
 
   sonarcloud:
