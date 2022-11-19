@@ -46,7 +46,6 @@ jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
-    needs: [Automatic-Tests, Coverage]
     steps:
       - uses: actions/checkout@v2
         with:
