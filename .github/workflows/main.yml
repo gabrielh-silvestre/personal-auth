@@ -43,19 +43,6 @@ jobs:
       - name: Run tests
         run: npm run test
 
-  Coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ArtiomTr/jest-coverage-report-action@v2
-        id: coverage
-        with:
-          output: report-markdown
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.report }}
-          test-script: npm run test:all
-
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
@@ -64,6 +51,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Test coverage generation
+        run: npm run test:cov
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
