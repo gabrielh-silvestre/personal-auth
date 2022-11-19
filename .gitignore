@@ -17,6 +17,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+/reports
 
 # IDEs and editors
 /.idea
@@ -39,3 +40,6 @@ lerna-debug.log*
 
 # misc
 t.ts
+
+# stryker temp files
+.stryker-tmp
