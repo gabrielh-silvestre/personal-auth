@@ -94,7 +94,7 @@ jobs:
         run: npm ci
 
       - name: Migrate database
-        run: prisma migrate dev
+        run: npx prisma migrate dev
 
       - name: Run tests and generate coverage
         run: npm run test:cov
