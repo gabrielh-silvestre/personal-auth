@@ -18,7 +18,6 @@ describe('Integration tests for Get Me controller', () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [],
       providers: [
         GetMeController,
         GetUserByIdUseCase,

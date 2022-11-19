@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsEmail,
   validateSync,
+  IsDate,
 } from 'class-validator';
 
 import type { IValidator } from '@shared/domain/validator/validator.interface';
@@ -22,20 +23,40 @@ export class UserClassValidator implements IValidator<IUser> {
   @IsEmail({}, { message: 'Email must be a valid email address' })
   private readonly email: string;
 
-  private constructor(id: string, username: string, email: string) {
+  @IsDate({ message: 'CreatedAt must be a valid date' })
+  private readonly createdAt: Date;
+
+  @IsDate({ message: 'UpdatedAt must be a valid date' })
+  private readonly updatedAt: Date;
+
+  private constructor(
+    id: string,
+    username: string,
+    email: string,
+    createdAt: Date,
+    updatedAt: Date,
+  ) {
     this.id = id;
     this.username = username;
     this.email = email;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   static init(): UserClassValidator {
-    return new UserClassValidator('', '', '');
+    return new UserClassValidator('', '', '', new Date(), new Date());
   }
 
   validate(entity: IUser): void | never {
-    const { id, username, email } = entity;
+    const { id, username, email, createdAt, updatedAt } = entity;
 
-    const userValidation = new UserClassValidator(id, username, email);
+    const userValidation = new UserClassValidator(
+      id,
+      username,
+      email,
+      createdAt,
+      updatedAt,
+    );
 
     const [error] = validateSync(userValidation, { stopAtFirstError: true });
 

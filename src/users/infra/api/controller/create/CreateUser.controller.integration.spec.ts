@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
@@ -24,7 +23,6 @@ describe('Integration test for Create User controller', () => {
     UserInMemoryRepository.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
-      imports: [EventEmitterModule.forRoot({ removeListener: true })],
       providers: [
         CreateUserController,
         CreateUserUseCase,

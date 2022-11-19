@@ -1,7 +1,6 @@
-import { v4 as uuid } from 'uuid';
-
-import { User } from '@users/domain/entity/User';
 import { UserInMemoryRepository } from './User.repository';
+
+import { UserFactory } from '@users/domain/factory/User.factory';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -12,7 +11,7 @@ describe('Unit test infra in memory User repository', () => {
 
   it('should create a user', async () => {
     const userRepository = new UserInMemoryRepository();
-    const newUser = new User(uuid(), 'Joe', 'joe@email.com');
+    const newUser = UserFactory.create('Joe', 'joe@email.com', 'password');
 
     await userRepository.create(newUser);
 

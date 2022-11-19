@@ -19,6 +19,7 @@ export class JwtRefreshService {
       ),
       expiresIn: this.configService.get<number>(
         TOKEN_EXPIRES_IN('REFRESH_TOKEN'),
+        604800000,
       ),
     });
   }

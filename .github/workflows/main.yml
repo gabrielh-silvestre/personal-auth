@@ -1,8 +1,17 @@
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
 
 jobs:
-  Automatic-Tests:
+  Coverage:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:14.3-alpine
@@ -30,28 +39,38 @@ jobs:
 
     steps:
       - name: Verify git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install node on version
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
+      # - name: Cache node_modules
+      #   id: coverage-cache
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-coverage-cache--build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
+
       - name: Install dependencies
+        # if: steps.coverage-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Run tests
-        run: npm run test
+      - name: Run tests and generate coverage
+        run: npm run test:cov
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
+          MONGO_URI: mongodb://localhost:27017/database
 
-  Coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ArtiomTr/jest-coverage-report-action@v2
-        id: coverage
-        with:
-          output: report-markdown
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.report }}
-          test-script: npm run test:all
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

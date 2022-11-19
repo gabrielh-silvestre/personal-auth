@@ -5,6 +5,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 
 import { Exception } from '@exceptions/entity/Exception';
@@ -12,6 +13,8 @@ import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
 @Catch(Error)
 export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
+  private readonly logger: Logger = new Logger();
+
   private normalizeError(error: Error) {
     if (error instanceof Exception) {
       return error;
@@ -21,6 +24,7 @@ export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
       return new Exception(error.message, 3, error.getStatus());
     }
 
+    this.logger.error(error.message, error.stack);
     return ExceptionFactory.internal(error.message);
   }
 

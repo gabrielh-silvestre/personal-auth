@@ -19,6 +19,7 @@ export class JwtAccessService {
       ),
       expiresIn: this.configService.get<number>(
         TOKEN_EXPIRES_IN('ACCESS_TOKEN'),
+        86400000,
       ),
     });
   }
