@@ -20,7 +20,7 @@
     "test:integration": "jest \".*\\.integration.spec\\.ts\"",
     "test:all": "prisma migrate dev && jest --forceExit --config ./test/jest-all.config.js",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage --config ./test/jest-all.config.js",
+    "test:cov": "jest --coverage --forceExit --config ./test/jest-all.config.js",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
     "test:mutations": "stryker run --incremental"
