@@ -130,7 +130,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: coverage-artifact
-          path: coverage
+          path: ./coverage
 
       # - name: Install node on version
       #   uses: actions/setup-node@v1
