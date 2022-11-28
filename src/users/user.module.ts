@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common/decorators';
-import { ConfigModule } from '@nestjs/config';
+// import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
@@ -14,7 +14,8 @@ import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
-import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
+import { MailRmqGateway } from './infra/gateway/mail/rmq/MailRmq.gateway';
+import { MailService } from './infra/service/mail/Mail.service';
 
 @Module({
   imports: [RmqModule.register('MAIL'), AuthModule],
@@ -26,7 +27,11 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     GetUserByEmailUseCase,
     {
       provide: 'MAIL_SERVICE',
-      useClass: MailServiceAdaptor,
+      useClass: MailService,
+    },
+    {
+      provide: 'MAIL_GATEWAY',
+      useClass: MailRmqGateway,
     },
     {
       provide: 'USER_REPO',
