@@ -3,20 +3,13 @@ import { Test } from '@nestjs/testing';
 import { RefreshUseCase } from './Refresh.useCase';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-
-const VALID_REFRESH = {
-  userId: USERS_MOCK[0].id,
-};
 
 describe('Integration test for Refresh use case', () => {
   let refreshUseCase: RefreshUseCase;
 
   beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
@@ -36,7 +29,7 @@ describe('Integration test for Refresh use case', () => {
   });
 
   it('should refresh with success', async () => {
-    const token = await refreshUseCase.execute(VALID_REFRESH);
+    const token = await refreshUseCase.execute({ userId: 'fake-user-id' });
 
     expect(token).not.toBeNull();
     expect(token).toStrictEqual({

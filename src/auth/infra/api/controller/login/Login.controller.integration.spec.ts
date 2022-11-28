@@ -3,16 +3,18 @@ import { Test } from '@nestjs/testing';
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 
 import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
+
+import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
+import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 const VALID_LOGIN = {
   email: USERS_MOCK[0].email,
@@ -27,7 +29,7 @@ describe('Integration test for Login controller', () => {
   });
 
   beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
+    UserMemoryGateway.reset(USERS_MOCK);
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
@@ -35,8 +37,12 @@ describe('Integration test for Login controller', () => {
         LoginController,
         LoginUseCase,
         {
+          provide: 'USER_DATABASE',
+          useClass: UserMemoryGateway,
+        },
+        {
           provide: 'USER_REPO',
-          useClass: UserInMemoryRepository,
+          useClass: UserRepository,
         },
         {
           provide: 'TOKEN_REPO',
