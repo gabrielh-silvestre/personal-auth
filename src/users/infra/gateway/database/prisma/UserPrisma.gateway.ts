@@ -47,7 +47,7 @@ export class UserPrismaGateway implements IUserDatabaseGateway {
   }
 
   async create(user: User): Promise<void> {
-    this.client.user.create({
+    await this.client.user.create({
       data: {
         id: user.id,
         username: user.username,
@@ -60,7 +60,7 @@ export class UserPrismaGateway implements IUserDatabaseGateway {
   }
 
   async update(user: User): Promise<void> {
-    this.client.user.update({
+    await this.client.user.update({
       where: { id: user.id },
       data: {
         username: user.username,
@@ -72,7 +72,7 @@ export class UserPrismaGateway implements IUserDatabaseGateway {
   }
 
   async delete(id: string): Promise<void> {
-    this.client.user.delete({
+    await this.client.user.delete({
       where: { id },
     });
   }
