@@ -4,7 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { UserPrismaRepository } from './infra/repository/prisma/User.repository';
+import { UserPrismaGateway } from './infra/gateway/database/prisma/UserPrisma.gateway';
+import { UserRepository } from './infra/repository/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
 import { GetMeController } from './infra/api/controller/getMe/GetMe.controller';
@@ -29,7 +30,11 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     },
     {
       provide: 'USER_REPO',
-      useClass: UserPrismaRepository,
+      useClass: UserRepository,
+    },
+    {
+      provide: 'USER_DATABASE',
+      useClass: UserPrismaGateway,
     },
   ],
 })
