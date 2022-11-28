@@ -3,7 +3,9 @@ import { Test } from '@nestjs/testing';
 import { CreateUserController } from './CreateUser.controller';
 import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
+import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
+import { UserRepository } from '@users/infra/repository/User.repository';
+
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -20,7 +22,7 @@ describe('Integration test for Create User controller', () => {
   let userController: CreateUserController;
 
   beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
+    UserMemoryGateway.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       providers: [
@@ -33,8 +35,12 @@ describe('Integration test for Create User controller', () => {
           },
         },
         {
+          provide: 'USER_DATABASE',
+          useClass: UserMemoryGateway,
+        },
+        {
           provide: 'USER_REPO',
-          useClass: UserInMemoryRepository,
+          useClass: UserRepository,
         },
         {
           provide: 'TOKEN_REPO',
