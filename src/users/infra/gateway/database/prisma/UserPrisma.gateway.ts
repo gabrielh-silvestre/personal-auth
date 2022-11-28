@@ -4,10 +4,10 @@ import { PrismaClient, User as PrismaUser } from '@prisma/client';
 import { User } from '@users/domain/entity/User';
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import type { IUserGateway } from '../UserGateway.interface';
+import type { IUserDatabaseGateway } from '../UserDatabase.gateway.interface';
 
 @Injectable()
-export class UserPrismaGateway implements IUserGateway {
+export class UserPrismaGateway implements IUserDatabaseGateway {
   private readonly client: PrismaClient;
 
   constructor() {

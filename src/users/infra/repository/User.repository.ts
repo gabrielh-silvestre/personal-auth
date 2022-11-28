@@ -1,13 +1,14 @@
 import { Inject } from '@nestjs/common';
 
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
-import type { IUserGateway } from '../gateway/database/UserGateway.interface';
+import type { IUserDatabaseGateway } from '../gateway/database/UserDatabase.gateway.interface';
 
 import { User } from '@users/domain/entity/User';
 
 export class UserRepository implements IUserRepository {
   constructor(
-    @Inject('USER_DATABASE') private readonly userDatabaseGateway: IUserGateway,
+    @Inject('USER_DATABASE')
+    private readonly userDatabaseGateway: IUserDatabaseGateway,
   ) {}
 
   async find(id: string): Promise<User> {

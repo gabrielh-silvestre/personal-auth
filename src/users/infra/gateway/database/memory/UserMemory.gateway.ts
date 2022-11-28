@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { User } from '@users/domain/entity/User';
 
-import type { IUserGateway } from '../UserGateway.interface';
+import type { IUserDatabaseGateway } from '../UserDatabase.gateway.interface';
 
 @Injectable()
-export class UserMemoryGateway implements IUserGateway {
+export class UserMemoryGateway implements IUserDatabaseGateway {
   private static readonly USERS: User[] = [];
 
   async getAll(): Promise<User[]> {

@@ -1,4 +1,4 @@
-import type { IUserGateway } from '../gateway/database/UserGateway.interface';
+import type { IUserDatabaseGateway } from '../gateway/database/UserDatabase.gateway.interface';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
@@ -10,7 +10,7 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test infra UserRepository', () => {
   let userRepository: IUserRepository;
-  let userGateway: IUserGateway;
+  let userGateway: IUserDatabaseGateway;
 
   beforeEach(() => {
     UserMemoryGateway.reset(USERS_MOCK);

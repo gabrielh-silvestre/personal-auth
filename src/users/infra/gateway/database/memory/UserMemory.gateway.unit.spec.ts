@@ -1,4 +1,4 @@
-import type { IUserGateway } from '../UserGateway.interface';
+import type { IUserDatabaseGateway } from '../UserDatabase.gateway.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
@@ -7,7 +7,7 @@ import { UserMemoryGateway } from './UserMemory.gateway';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Unit test infra UserMemory gateway', () => {
-  let userGateway: IUserGateway;
+  let userGateway: IUserDatabaseGateway;
 
   beforeEach(() => {
     UserMemoryGateway.reset(USERS_MOCK);

@@ -1,6 +1,6 @@
 import { User } from '@users/domain/entity/User';
 
-export interface IUserGateway {
+export interface IUserDatabaseGateway {
   getAll(): Promise<User[]>;
   getById(id: string): Promise<User | null>;
   getByEmail(email: string): Promise<User | null>;
