@@ -8,7 +8,6 @@ import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -23,7 +22,6 @@ describe('Integration test for Refresh controller', () => {
   let refreshController: RefreshController;
 
   beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
