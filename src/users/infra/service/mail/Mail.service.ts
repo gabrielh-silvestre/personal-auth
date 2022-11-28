@@ -1,20 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 
+import type { IMailGateway } from '@users/infra/gateway/mail/Mail.gateway.interface';
 import type { IMailService, InputWelcomeMail } from './mail.service.interface';
 
-type MailDataDto = {
-  to: string;
-  subject: string;
-  text: string;
-  html: string;
-};
-
 @Injectable()
-export class MailServiceAdaptor implements IMailService {
-  constructor(@Inject('MAIL') private readonly client: ClientProxy) {}
+export class MailService implements IMailService {
+  constructor(
+    @Inject('MAIL_GATEWAY') private readonly mailGateway: IMailGateway,
+  ) {}
 
-  private buildMailData({ email, username }: InputWelcomeMail): MailDataDto {
+  private buildMailData({ email, username }: InputWelcomeMail) {
     return {
       to: email,
       subject: 'Welcome to the S1 auth service!',
@@ -24,6 +19,8 @@ export class MailServiceAdaptor implements IMailService {
   }
 
   async welcomeMail(data: InputWelcomeMail): Promise<void> {
-    this.client.emit('send_welcome_mail', this.buildMailData(data));
+    const { to, subject, text, html } = this.buildMailData(data);
+
+    this.mailGateway.send(to, subject, { text, html });
   }
 }
