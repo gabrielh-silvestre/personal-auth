@@ -1,17 +1,17 @@
-import type { IUserDatabaseGateway } from '../UserDatabase.gateway.interface';
+import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserMemoryGateway } from './UserMemory.gateway';
+import { UserMemoryAdapter } from './UserMemory.adapter';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Unit test infra UserMemory gateway', () => {
-  let userGateway: IUserDatabaseGateway;
+  let userGateway: IUserDatabaseAdapter;
 
   beforeEach(() => {
-    UserMemoryGateway.reset(USERS_MOCK);
-    userGateway = new UserMemoryGateway();
+    UserMemoryAdapter.reset(USERS_MOCK);
+    userGateway = new UserMemoryAdapter();
   });
 
   it('should return all users', async () => {

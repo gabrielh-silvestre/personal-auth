@@ -1,8 +1,8 @@
-import type { IUserDatabaseGateway } from '@users/infra/gateway/database/UserDatabase.gateway.interface';
+import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { GetUserByEmailUseCase } from './GetUserByEmail.useCase';
 
-import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
+import { UserMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -10,15 +10,15 @@ import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 const [{ email }] = USERS_MOCK;
 
 describe('Integration tests for Get User by id use case', () => {
-  let userDatabaseGateway: IUserDatabaseGateway;
+  let userDatabaseGateway: IUserDatabaseAdapter;
   let userRepository: UserRepository;
 
   let getUserByEmailUseCase: GetUserByEmailUseCase;
 
   beforeEach(() => {
-    UserMemoryGateway.reset(USERS_MOCK);
+    UserMemoryAdapter.reset(USERS_MOCK);
 
-    userDatabaseGateway = new UserMemoryGateway();
+    userDatabaseGateway = new UserMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
     getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);

@@ -1,10 +1,10 @@
-import type { IMailGateway } from '@users/infra/gateway/mail/Mail.gateway.interface';
+import type { IMailGateway } from '@users/infra/adapter/mail/Mail.gateway.interface';
 import type { IMailService } from '@users/infra/service/mail/mail.service.interface';
-import type { IUserDatabaseGateway } from '@users/infra/gateway/database/UserDatabase.gateway.interface';
+import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
-import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
+import { UserMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { MailService } from '@users/infra/service/mail/Mail.service';
@@ -28,9 +28,9 @@ const INVALID_NEW_USER = {
 };
 
 describe('Integration test for Create User use case', () => {
-  UserMemoryGateway.reset(USERS_MOCK);
+  UserMemoryAdapter.reset(USERS_MOCK);
 
-  let userDatabaseGateway: IUserDatabaseGateway;
+  let userDatabaseGateway: IUserDatabaseAdapter;
   let userRepository: UserRepository;
 
   let mailGateway: IMailGateway;
@@ -39,7 +39,7 @@ describe('Integration test for Create User use case', () => {
   let createUserUseCase: CreateUserUseCase;
 
   beforeEach(() => {
-    userDatabaseGateway = new UserMemoryGateway();
+    userDatabaseGateway = new UserMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
     mailGateway = { send: jest.fn() };

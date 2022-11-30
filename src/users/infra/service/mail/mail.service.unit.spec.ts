@@ -1,4 +1,4 @@
-import type { IMailGateway } from '@users/infra/gateway/mail/Mail.gateway.interface';
+import type { IMailGateway } from '@users/infra/adapter/mail/Mail.gateway.interface';
 import type { IMailService } from './mail.service.interface';
 
 import { MailService } from './Mail.service';
