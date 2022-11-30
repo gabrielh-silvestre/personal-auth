@@ -5,43 +5,48 @@ import { User } from '@users/domain/entity/User';
 import type { IUserDatabaseAdapter } from '../UserDatabase.adapter.interface';
 
 @Injectable()
-export class UserMemoryAdapter implements IUserDatabaseAdapter {
+export class UserDatabaseMemoryAdapter implements IUserDatabaseAdapter {
   private static readonly USERS: User[] = [];
 
   async getAll(): Promise<User[]> {
-    return UserMemoryAdapter.USERS;
+    return UserDatabaseMemoryAdapter.USERS;
   }
 
   async getById(id: string): Promise<User | null> {
-    return UserMemoryAdapter.USERS.find((user) => user.id === id) || null;
+    return (
+      UserDatabaseMemoryAdapter.USERS.find((user) => user.id === id) || null
+    );
   }
 
   async getByEmail(email: string): Promise<User | null> {
-    return UserMemoryAdapter.USERS.find((user) => user.email === email) || null;
+    return (
+      UserDatabaseMemoryAdapter.USERS.find((user) => user.email === email) ||
+      null
+    );
   }
 
   async create(user: User): Promise<void> {
-    UserMemoryAdapter.USERS.push(user);
+    UserDatabaseMemoryAdapter.USERS.push(user);
   }
 
   async update(user: User): Promise<void> {
-    const foundUserIndex = UserMemoryAdapter.USERS.findIndex(
+    const foundUserIndex = UserDatabaseMemoryAdapter.USERS.findIndex(
       (user) => user.id === user.id,
     );
 
-    UserMemoryAdapter.USERS[foundUserIndex] = user;
+    UserDatabaseMemoryAdapter.USERS[foundUserIndex] = user;
   }
 
   async delete(id: string): Promise<void> {
-    const foundUserIndex = UserMemoryAdapter.USERS.findIndex(
+    const foundUserIndex = UserDatabaseMemoryAdapter.USERS.findIndex(
       (user) => user.id === id,
     );
 
-    UserMemoryAdapter.USERS.splice(foundUserIndex, 1);
+    UserDatabaseMemoryAdapter.USERS.splice(foundUserIndex, 1);
   }
 
   static reset(users: User[]): void {
-    UserMemoryAdapter.USERS.length = 0;
-    UserMemoryAdapter.USERS.push(...users);
+    UserDatabaseMemoryAdapter.USERS.length = 0;
+    UserDatabaseMemoryAdapter.USERS.push(...users);
   }
 }

@@ -3,7 +3,7 @@ import type { IUserRepository } from '@users/domain/repository/user.repository.i
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserMemoryAdapter } from '../adapter/database/memory/UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from '../adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from './User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -13,9 +13,9 @@ describe('Integration test infra UserRepository', () => {
   let userGateway: IUserDatabaseAdapter;
 
   beforeEach(() => {
-    UserMemoryAdapter.reset(USERS_MOCK);
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    userGateway = new UserMemoryAdapter();
+    userGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userGateway);
   });
 

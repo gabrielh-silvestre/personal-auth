@@ -5,7 +5,7 @@ import { GetMeController } from './GetMe.controller';
 
 import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
 
-import { UserMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
@@ -17,7 +17,7 @@ describe('Integration tests for Get Me controller', () => {
   const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
-    UserMemoryAdapter.reset(USERS_MOCK);
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       providers: [
@@ -29,7 +29,7 @@ describe('Integration tests for Get Me controller', () => {
         },
         {
           provide: 'USER_DATABASE',
-          useClass: UserMemoryAdapter,
+          useClass: UserDatabaseMemoryAdapter,
         },
         {
           provide: 'TOKEN_REPO',

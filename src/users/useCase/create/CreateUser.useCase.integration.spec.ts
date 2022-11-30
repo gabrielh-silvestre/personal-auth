@@ -4,7 +4,7 @@ import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDat
 
 import { CreateUserUseCase } from './CreateUser.useCase';
 
-import { UserMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { MailService } from '@users/infra/service/mail/Mail.service';
@@ -28,7 +28,7 @@ const INVALID_NEW_USER = {
 };
 
 describe('Integration test for Create User use case', () => {
-  UserMemoryAdapter.reset(USERS_MOCK);
+  UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
   let userDatabaseGateway: IUserDatabaseAdapter;
   let userRepository: UserRepository;
@@ -39,7 +39,7 @@ describe('Integration test for Create User use case', () => {
   let createUserUseCase: CreateUserUseCase;
 
   beforeEach(() => {
-    userDatabaseGateway = new UserMemoryAdapter();
+    userDatabaseGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
     mailGateway = { send: jest.fn() };

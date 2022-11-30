@@ -2,7 +2,7 @@ import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDat
 
 import { GetUserByEmailUseCase } from './GetUserByEmail.useCase';
 
-import { UserMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
@@ -16,9 +16,9 @@ describe('Integration tests for Get User by id use case', () => {
   let getUserByEmailUseCase: GetUserByEmailUseCase;
 
   beforeEach(() => {
-    UserMemoryAdapter.reset(USERS_MOCK);
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    userDatabaseGateway = new UserMemoryAdapter();
+    userDatabaseGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userDatabaseGateway);
 
     getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);

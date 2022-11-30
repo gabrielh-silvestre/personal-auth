@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common/decorators';
 import { AuthModule } from '@auth/auth.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 
-import { UserPrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
+import { UserDatabasePrismaAdapter } from './infra/adapter/database/prisma/UserPrisma.adapter';
 import { UserRepository } from './infra/repository/User.repository';
 
 import { CreateUserController } from './infra/api/controller/create/CreateUser.controller';
@@ -39,7 +39,7 @@ import { MailService } from './infra/service/mail/Mail.service';
     },
     {
       provide: 'USER_DATABASE',
-      useClass: UserPrismaAdapter,
+      useClass: UserDatabasePrismaAdapter,
     },
   ],
 })
