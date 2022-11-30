@@ -14,8 +14,8 @@ import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
-import { MailRmqGateway } from './infra/adapter/mail/rmq/MailRmq.gateway';
-import { MailService } from './infra/service/mail/Mail.service';
+import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
+import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
 @Module({
   imports: [RmqModule.register('MAIL'), AuthModule],
@@ -27,11 +27,11 @@ import { MailService } from './infra/service/mail/Mail.service';
     GetUserByEmailUseCase,
     {
       provide: 'MAIL_SERVICE',
-      useClass: MailService,
+      useClass: MailGateway,
     },
     {
-      provide: 'MAIL_GATEWAY',
-      useClass: MailRmqGateway,
+      provide: 'MAIL_ADAPTER',
+      useClass: MailRmqAdapter,
     },
     {
       provide: 'USER_REPO',

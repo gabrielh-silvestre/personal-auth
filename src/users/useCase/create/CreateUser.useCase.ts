@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { IUser } from '@users/domain/entity/user.interface';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 import type { InputCreateUserDto, OutputCreateUserDto } from './CreateUser.dto';
-import type { IMailService } from '@users/infra/service/mail/mail.service.interface';
+import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
@@ -12,7 +12,7 @@ import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 export class CreateUserUseCase {
   constructor(
     @Inject('USER_REPO') private readonly userRepository: IUserRepository,
-    @Inject('MAIL_SERVICE') private readonly mailService: IMailService,
+    @Inject('MAIL_SERVICE') private readonly mailService: IMailGateway,
   ) {}
 
   private async isEmailAlreadyInUse(email: string): Promise<void | never> {
