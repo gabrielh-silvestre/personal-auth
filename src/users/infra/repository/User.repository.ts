@@ -5,9 +5,11 @@ import type { IUserDatabaseAdapter } from '../adapter/database/UserDatabase.adap
 
 import { User } from '@users/domain/entity/User';
 
+import { USER_DATABASE_ADAPTER } from '@users/utils/constants';
+
 export class UserRepository implements IUserRepository {
   constructor(
-    @Inject('USER_DATABASE')
+    @Inject(USER_DATABASE_ADAPTER)
     private readonly userDatabaseAdapter: IUserDatabaseAdapter,
   ) {}
 

@@ -8,11 +8,13 @@ import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interf
 import { UserFactory } from '@users/domain/factory/User.factory';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
+import { MAIL_GATEWAY, USER_REPOSITORY } from '@users/utils/constants';
+
 @Injectable()
 export class CreateUserUseCase {
   constructor(
-    @Inject('USER_REPO') private readonly userRepository: IUserRepository,
-    @Inject('MAIL_SERVICE') private readonly mailService: IMailGateway,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(MAIL_GATEWAY) private readonly mailGateway: IMailGateway,
   ) {}
 
   private async isEmailAlreadyInUse(email: string): Promise<void | never> {
@@ -38,7 +40,7 @@ export class CreateUserUseCase {
   }
 
   private async createUserEmail(user: IUser): Promise<void | never> {
-    this.mailService.welcomeMail(user);
+    this.mailGateway.welcomeMail(user);
   }
 
   async execute({

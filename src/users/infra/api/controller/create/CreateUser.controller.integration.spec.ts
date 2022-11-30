@@ -6,9 +6,12 @@ import { CreateUserUseCase } from '@users/useCase/create/CreateUser.useCase';
 import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  MAIL_GATEWAY,
+  USER_DATABASE_ADAPTER,
+  USER_REPOSITORY,
+} from '@users/utils/constants';
 
 const VALID_NEW_USER = {
   username: 'Joe',
@@ -29,22 +32,18 @@ describe('Integration test for Create User controller', () => {
         CreateUserController,
         CreateUserUseCase,
         {
-          provide: 'MAIL_SERVICE',
+          provide: MAIL_GATEWAY,
           useValue: {
             welcomeMail: jest.fn(),
           },
         },
         {
-          provide: 'USER_DATABASE',
+          provide: USER_DATABASE_ADAPTER,
           useClass: UserDatabaseMemoryAdapter,
         },
         {
-          provide: 'USER_REPO',
+          provide: USER_REPOSITORY,
           useClass: UserRepository,
-        },
-        {
-          provide: 'TOKEN_REPO',
-          useClass: TokenInMemoryRepository,
         },
       ],
     }).compile();

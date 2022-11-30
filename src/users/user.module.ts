@@ -17,6 +17,13 @@ import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCa
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
+import {
+  MAIL_ADAPTER,
+  MAIL_GATEWAY,
+  USER_DATABASE_ADAPTER,
+  USER_REPOSITORY,
+} from './utils/constants';
+
 @Module({
   imports: [RmqModule.register('MAIL'), AuthModule],
   exports: [GetUserByIdUseCase, GetUserByEmailUseCase],
@@ -26,19 +33,19 @@ import { MailGateway } from './infra/gateway/mail/Mail.gateway';
     GetUserByIdUseCase,
     GetUserByEmailUseCase,
     {
-      provide: 'MAIL_SERVICE',
+      provide: MAIL_GATEWAY,
       useClass: MailGateway,
     },
     {
-      provide: 'MAIL_ADAPTER',
+      provide: MAIL_ADAPTER,
       useClass: MailRmqAdapter,
     },
     {
-      provide: 'USER_REPO',
+      provide: USER_REPOSITORY,
       useClass: UserRepository,
     },
     {
-      provide: 'USER_DATABASE',
+      provide: USER_DATABASE_ADAPTER,
       useClass: UserDatabasePrismaAdapter,
     },
   ],
