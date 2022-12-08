@@ -14,10 +14,15 @@ import { CreateUserUseCase } from './useCase/create/CreateUser.useCase';
 import { GetUserByIdUseCase } from './useCase/getById/GetUserById.useCase';
 import { GetUserByEmailUseCase } from './useCase/getByEmail/GetUserByEmail.useCase';
 
+import { AuthServiceAdapter } from './infra/adapter/auth/service/AuthService.adapter';
+import { AuthGateway } from './infra/gateway/auth/Auth.gateway';
+
 import { MailRmqAdapter } from './infra/adapter/mail/rmq/MailRmq.adapter';
 import { MailGateway } from './infra/gateway/mail/Mail.gateway';
 
 import {
+  AUTH_ADAPTER,
+  AUTH_GATEWAY,
   MAIL_ADAPTER,
   MAIL_GATEWAY,
   USER_DATABASE_ADAPTER,
@@ -39,6 +44,14 @@ import {
     {
       provide: MAIL_ADAPTER,
       useClass: MailRmqAdapter,
+    },
+    {
+      provide: AUTH_ADAPTER,
+      useClass: AuthServiceAdapter,
+    },
+    {
+      provide: AUTH_GATEWAY,
+      useClass: AuthGateway,
     },
     {
       provide: USER_REPOSITORY,

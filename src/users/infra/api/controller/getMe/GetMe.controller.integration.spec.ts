@@ -1,5 +1,7 @@
 import type { Request } from 'express';
+
 import { Test } from '@nestjs/testing';
+import { from } from 'rxjs';
 
 import { GetMeController } from './GetMe.controller';
 
@@ -9,7 +11,11 @@ import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/
 import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-import { USER_DATABASE_ADAPTER, USER_REPOSITORY } from '@users/utils/constants';
+import {
+  AUTH_GATEWAY,
+  USER_DATABASE_ADAPTER,
+  USER_REPOSITORY,
+} from '@users/utils/constants';
 
 describe('Integration tests for Get Me controller', () => {
   let userController: GetMeController;
@@ -29,6 +35,12 @@ describe('Integration tests for Get Me controller', () => {
         {
           provide: USER_DATABASE_ADAPTER,
           useClass: UserDatabaseMemoryAdapter,
+        },
+        {
+          provide: AUTH_GATEWAY,
+          useValue: {
+            verify: jest.fn().mockResolvedValue(from([{ userId }])),
+          },
         },
         {
           provide: 'TOKEN_SERVICE',
