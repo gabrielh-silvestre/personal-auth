@@ -8,8 +8,9 @@ async function main() {
 
 export const resetUsersDb = () =>
   main()
-    .catch((e) => {
-      console.log(e);
+    .catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
       process.exit(1);
     })
     .finally(async () => {
