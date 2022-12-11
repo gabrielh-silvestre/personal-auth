@@ -53,9 +53,18 @@ jobs:
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: ArtiomTr/jest-coverage-report-action@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests and generate coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2
         id: coverage
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
@@ -63,6 +72,7 @@ jobs:
         with:
           test-script: npm run test:cov
           output: report-markdown
+          skip-step: install
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
