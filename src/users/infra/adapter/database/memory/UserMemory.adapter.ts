@@ -31,7 +31,7 @@ export class UserDatabaseMemoryAdapter implements IUserDatabaseAdapter {
 
   async update(user: User): Promise<void> {
     const foundUserIndex = UserDatabaseMemoryAdapter.USERS.findIndex(
-      (user) => user.id === user.id,
+      ({ id }) => id === user.id,
     );
 
     UserDatabaseMemoryAdapter.USERS[foundUserIndex] = user;
