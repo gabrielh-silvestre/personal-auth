@@ -1,33 +1,31 @@
-import { Test } from '@nestjs/testing';
+import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { GetUserByEmailUseCase } from './GetUserByEmail.useCase';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
+
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
+const [{ email }] = USERS_MOCK;
+
 describe('Integration tests for Get User by id use case', () => {
+  let userDatabaseGateway: IUserDatabaseAdapter;
+  let userRepository: UserRepository;
+
   let getUserByEmailUseCase: GetUserByEmailUseCase;
 
-  beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
+  beforeEach(() => {
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    const module = await Test.createTestingModule({
-      providers: [
-        GetUserByEmailUseCase,
-        {
-          provide: 'USER_REPO',
-          useClass: UserInMemoryRepository,
-        },
-      ],
-    }).compile();
+    userDatabaseGateway = new UserDatabaseMemoryAdapter();
+    userRepository = new UserRepository(userDatabaseGateway);
 
-    getUserByEmailUseCase = module.get<GetUserByEmailUseCase>(
-      GetUserByEmailUseCase,
-    );
+    getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);
   });
 
   it('should get a user by id with success', async () => {
-    const user = await getUserByEmailUseCase.execute(USERS_MOCK[0].email);
+    const user = await getUserByEmailUseCase.execute(email);
 
     expect(user).not.toBeNull();
   });

@@ -3,6 +3,6 @@ export type InputWelcomeMail = {
   username: string;
 };
 
-export interface IMailService {
+export interface IMailGateway {
   welcomeMail(user: InputWelcomeMail): Promise<void>;
 }

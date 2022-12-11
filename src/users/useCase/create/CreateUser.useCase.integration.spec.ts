@@ -1,7 +1,13 @@
-import { Test } from '@nestjs/testing';
+import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
+import type { IMailGateway } from '@users/infra/gateway/mail/mail.gateway.interface';
+import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { CreateUserUseCase } from './CreateUser.useCase';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
+
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserRepository } from '@users/infra/repository/User.repository';
+
+import { MailGateway } from '@users/infra/gateway/mail/Mail.gateway';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -22,29 +28,24 @@ const INVALID_NEW_USER = {
 };
 
 describe('Integration test for Create User use case', () => {
+  UserDatabaseMemoryAdapter.reset(USERS_MOCK);
+
+  let userDatabaseGateway: IUserDatabaseAdapter;
+  let userRepository: UserRepository;
+
+  let mailAdapter: IMailAdapter;
+  let mailGateway: IMailGateway;
+
   let createUserUseCase: CreateUserUseCase;
-  let welcomeMail: jest.Mock;
 
-  beforeEach(async () => {
-    welcomeMail = jest.fn();
-    UserInMemoryRepository.reset(USERS_MOCK);
+  beforeEach(() => {
+    userDatabaseGateway = new UserDatabaseMemoryAdapter();
+    userRepository = new UserRepository(userDatabaseGateway);
 
-    const module = await Test.createTestingModule({
-      imports: [],
-      providers: [
-        CreateUserUseCase,
-        {
-          provide: 'MAIL_SERVICE',
-          useValue: { welcomeMail },
-        },
-        {
-          provide: 'USER_REPO',
-          useClass: UserInMemoryRepository,
-        },
-      ],
-    }).compile();
+    mailAdapter = { send: jest.fn() };
+    mailGateway = new MailGateway(mailAdapter);
 
-    createUserUseCase = module.get<CreateUserUseCase>(CreateUserUseCase);
+    createUserUseCase = new CreateUserUseCase(userRepository, mailGateway);
   });
 
   it('should create a user with success', async () => {
@@ -56,7 +57,7 @@ describe('Integration test for Create User use case', () => {
       username: expect.any(String),
     });
 
-    expect(welcomeMail).toBeCalledTimes(1);
+    expect(mailAdapter.send).toHaveBeenCalledTimes(1);
   });
 
   it('should throw an error if email is already registered', async () => {
@@ -64,7 +65,7 @@ describe('Integration test for Create User use case', () => {
       'Email already registered',
     );
 
-    expect(welcomeMail).not.toBeCalled();
+    expect(mailAdapter.send).not.toBeCalled();
   });
 
   it('should throw and error if credentials not match', async () => {
@@ -75,7 +76,7 @@ describe('Integration test for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
-    expect(welcomeMail).not.toBeCalled();
+    expect(mailAdapter.send).not.toBeCalled();
 
     await expect(
       createUserUseCase.execute({
@@ -84,6 +85,6 @@ describe('Integration test for Create User use case', () => {
       }),
     ).rejects.toThrow('Credentials not match');
 
-    expect(welcomeMail).not.toBeCalled();
+    expect(mailAdapter.send).not.toBeCalled();
   });
 });

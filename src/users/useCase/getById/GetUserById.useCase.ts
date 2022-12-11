@@ -5,10 +5,12 @@ import type { OutputGetUserDto } from '../getByEmail/GetUserByEmail.dto';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
+import { USER_REPOSITORY } from '@users/utils/constants';
+
 @Injectable()
 export class GetUserByIdUseCase {
   constructor(
-    @Inject('USER_REPO') private readonly userRepository: IUserRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(id: string): Promise<OutputGetUserDto | never> {

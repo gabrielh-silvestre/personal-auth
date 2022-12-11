@@ -1,27 +1,25 @@
-import { Test } from '@nestjs/testing';
+import type { IUserDatabaseAdapter } from '@users/infra/adapter/database/UserDatabase.adapter.interface';
 
 import { GetUserByIdUseCase } from './GetUserById.useCase';
-import { UserInMemoryRepository } from '@users/infra/repository/memory/User.repository';
+
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
+import { UserRepository } from '@users/infra/repository/User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration tests for Get User by id use case', () => {
+  let userDatabaseGateway: IUserDatabaseAdapter;
+  let userRepository: UserRepository;
+
   let getUserByIdUseCase: GetUserByIdUseCase;
 
-  beforeEach(async () => {
-    UserInMemoryRepository.reset(USERS_MOCK);
+  beforeEach(() => {
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    const module = await Test.createTestingModule({
-      providers: [
-        GetUserByIdUseCase,
-        {
-          provide: 'USER_REPO',
-          useClass: UserInMemoryRepository,
-        },
-      ],
-    }).compile();
+    userDatabaseGateway = new UserDatabaseMemoryAdapter();
+    userRepository = new UserRepository(userDatabaseGateway);
 
-    getUserByIdUseCase = module.get<GetUserByIdUseCase>(GetUserByIdUseCase);
+    getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
   });
 
   it('should get a user by id with success', async () => {
