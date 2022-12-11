@@ -1,21 +1,21 @@
-import type { IUserDatabaseGateway } from '../gateway/database/UserDatabase.gateway.interface';
+import type { IUserDatabaseAdapter } from '../adapter/database/UserDatabase.adapter.interface';
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
 
 import { UserFactory } from '@users/domain/factory/User.factory';
 
-import { UserMemoryGateway } from '../gateway/database/memory/UserMemory.gateway';
+import { UserDatabaseMemoryAdapter } from '../adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from './User.repository';
 
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 describe('Integration test infra UserRepository', () => {
   let userRepository: IUserRepository;
-  let userGateway: IUserDatabaseGateway;
+  let userGateway: IUserDatabaseAdapter;
 
   beforeEach(() => {
-    UserMemoryGateway.reset(USERS_MOCK);
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
-    userGateway = new UserMemoryGateway();
+    userGateway = new UserDatabaseMemoryAdapter();
     userRepository = new UserRepository(userGateway);
   });
 

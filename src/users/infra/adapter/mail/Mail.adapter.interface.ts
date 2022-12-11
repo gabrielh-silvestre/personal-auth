@@ -3,6 +3,6 @@ export type InputBody = {
   html: string;
 };
 
-export interface IMailGateway {
+export interface IMailAdapter {
   send(to: string, subject: string, body: InputBody): Promise<void>;
 }

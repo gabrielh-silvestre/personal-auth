@@ -1,39 +1,41 @@
 import { Inject } from '@nestjs/common';
 
 import type { IUserRepository } from '@users/domain/repository/user.repository.interface';
-import type { IUserDatabaseGateway } from '../gateway/database/UserDatabase.gateway.interface';
+import type { IUserDatabaseAdapter } from '../adapter/database/UserDatabase.adapter.interface';
 
 import { User } from '@users/domain/entity/User';
 
+import { USER_DATABASE_ADAPTER } from '@users/utils/constants';
+
 export class UserRepository implements IUserRepository {
   constructor(
-    @Inject('USER_DATABASE')
-    private readonly userDatabaseGateway: IUserDatabaseGateway,
+    @Inject(USER_DATABASE_ADAPTER)
+    private readonly userDatabaseAdapter: IUserDatabaseAdapter,
   ) {}
 
   async find(id: string): Promise<User> {
-    const foundUser = await this.userDatabaseGateway.getById(id);
+    const foundUser = await this.userDatabaseAdapter.getById(id);
 
     return foundUser;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const foundUser = await this.userDatabaseGateway.getByEmail(email);
+    const foundUser = await this.userDatabaseAdapter.getByEmail(email);
 
     return foundUser;
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    const foundUser = await this.userDatabaseGateway.getByEmail(email);
+    const foundUser = await this.userDatabaseAdapter.getByEmail(email);
 
     return !!foundUser;
   }
 
   async create(entity: User): Promise<void> {
-    this.userDatabaseGateway.create(entity);
+    this.userDatabaseAdapter.create(entity);
   }
 
   async update(entity: User): Promise<void> {
-    this.userDatabaseGateway.update(entity);
+    this.userDatabaseAdapter.update(entity);
   }
 }

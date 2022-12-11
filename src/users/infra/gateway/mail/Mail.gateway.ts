@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { IMailGateway } from '@users/infra/gateway/mail/Mail.gateway.interface';
-import type { IMailService, InputWelcomeMail } from './mail.service.interface';
+import type { IMailAdapter } from '@users/infra/adapter/mail/Mail.adapter.interface';
+import type { IMailGateway, InputWelcomeMail } from './mail.gateway.interface';
+
+import { MAIL_ADAPTER } from '@users/utils/constants';
 
 @Injectable()
-export class MailService implements IMailService {
+export class MailGateway implements IMailGateway {
   constructor(
-    @Inject('MAIL_GATEWAY') private readonly mailGateway: IMailGateway,
+    @Inject(MAIL_ADAPTER) private readonly mailAdapter: IMailAdapter,
   ) {}
 
   private buildMailData({ email, username }: InputWelcomeMail) {
@@ -21,6 +23,6 @@ export class MailService implements IMailService {
   async welcomeMail(data: InputWelcomeMail): Promise<void> {
     const { to, subject, text, html } = this.buildMailData(data);
 
-    this.mailGateway.send(to, subject, { text, html });
+    this.mailAdapter.send(to, subject, { text, html });
   }
 }

@@ -1,39 +1,46 @@
 import type { Request } from 'express';
+
 import { Test } from '@nestjs/testing';
+import { from } from 'rxjs';
 
 import { GetMeController } from './GetMe.controller';
 
 import { GetUserByIdUseCase } from '@users/useCase/getById/GetUserById.useCase';
 
-import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
+import { UserDatabaseMemoryAdapter } from '@users/infra/adapter/database/memory/UserMemory.adapter';
 import { UserRepository } from '@users/infra/repository/User.repository';
 
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
+import {
+  AUTH_GATEWAY,
+  USER_DATABASE_ADAPTER,
+  USER_REPOSITORY,
+} from '@users/utils/constants';
 
 describe('Integration tests for Get Me controller', () => {
   let userController: GetMeController;
   const [{ id: userId }] = USERS_MOCK;
 
   beforeEach(async () => {
-    UserMemoryGateway.reset(USERS_MOCK);
+    UserDatabaseMemoryAdapter.reset(USERS_MOCK);
 
     const module = await Test.createTestingModule({
       providers: [
         GetMeController,
         GetUserByIdUseCase,
         {
-          provide: 'USER_REPO',
+          provide: USER_REPOSITORY,
           useClass: UserRepository,
         },
         {
-          provide: 'USER_DATABASE',
-          useClass: UserMemoryGateway,
+          provide: USER_DATABASE_ADAPTER,
+          useClass: UserDatabaseMemoryAdapter,
         },
         {
-          provide: 'TOKEN_REPO',
-          useClass: TokenInMemoryRepository,
+          provide: AUTH_GATEWAY,
+          useValue: {
+            verify: jest.fn().mockResolvedValue(from([{ userId }])),
+          },
         },
         {
           provide: 'TOKEN_SERVICE',

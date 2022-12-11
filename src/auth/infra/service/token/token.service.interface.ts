@@ -8,4 +8,5 @@ export interface ITokenService {
   generateRecoverPasswordToken(userId: string): Promise<string | never>;
   generateRefreshToken(userId: string): Promise<string | never>;
   verifyToken(token: string): Promise<TokenPayload | never>;
+  verifyJwtToken(token: string): Promise<TokenPayload | never>;
 }

@@ -10,9 +10,6 @@ import { PasswordFactory } from '@users/domain/factory/Password.factory';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
-import { UserMemoryGateway } from '@users/infra/gateway/database/memory/UserMemory.gateway';
-import { UserRepository } from '@users/infra/repository/User.repository';
-
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
@@ -29,21 +26,12 @@ describe('Integration test for Login controller', () => {
   });
 
   beforeEach(async () => {
-    UserMemoryGateway.reset(USERS_MOCK);
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
       providers: [
         LoginController,
         LoginUseCase,
-        {
-          provide: 'USER_DATABASE',
-          useClass: UserMemoryGateway,
-        },
-        {
-          provide: 'USER_REPO',
-          useClass: UserRepository,
-        },
         {
           provide: 'TOKEN_REPO',
           useClass: TokenInMemoryRepository,
