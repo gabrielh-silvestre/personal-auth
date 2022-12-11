@@ -69,17 +69,5 @@ jobs:
           MONGO_URI: mongodb://localhost:27017/database
         run: npm run test:cov
 
-      # - name: Run tests and generate coverage report
-      #   uses: ArtiomTr/jest-coverage-report-action@v2
-      #   id: coverage
-      #   env:
-      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
-      #     MONGO_URI: mongodb://localhost:27017/database
-      #   with:
-      #     test-script: npm run test:cov
-      #     output: report-markdown
-      #     skip-step: install
-
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.report }}
+      - name: Comment coverage on PR
+        uses: romeovs/lcov-reporter-action@v0.2.16
