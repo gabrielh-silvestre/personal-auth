@@ -16,8 +16,8 @@ import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
-import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
-import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
+import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 type ResponseLogin = {
   access: string;

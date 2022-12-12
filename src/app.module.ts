@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
-import { UserModule } from '@users/user.module';
 import { TokenModule } from '@tokens/token.module';
 import { AuthModule } from '@auth/auth.module';
 
@@ -27,7 +26,6 @@ import { MONGO_URI } from '@shared/utils/constants';
       inject: [ConfigService],
     }),
     EventEmitterModule.forRoot(),
-    UserModule,
     TokenModule,
     AuthModule,
   ],

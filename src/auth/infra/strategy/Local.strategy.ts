@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 
 import type { IUserService } from '@auth/infra/service/user/user.service.interface';
-import type { IUser } from '@users/domain/entity/user.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
@@ -18,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<IUser> {
+  async validate(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
     const isCredentialsValid = user && user.password.isEqual(password);
 

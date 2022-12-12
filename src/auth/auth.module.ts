@@ -1,7 +1,6 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { TokenModule } from '@tokens/token.module';
-import { UserModule } from '@users/user.module';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
@@ -24,12 +23,7 @@ import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
 @Module({
-  imports: [
-    CustomJwtModule,
-    RmqModule.register('MAIL'),
-    forwardRef(() => UserModule),
-    TokenModule,
-  ],
+  imports: [CustomJwtModule, RmqModule.register('MAIL'), TokenModule],
   controllers: [LoginController, ForgotPasswordController, RefreshController],
   providers: [
     LoginUseCase,
