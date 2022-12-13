@@ -30,7 +30,7 @@ describe('Rest API (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, ConfigModule.forRoot({ isGlobal: true })],
+      imports: [AppModule],
       providers: [
         {
           provide: 'MAIL_SERVICE',
@@ -79,6 +79,8 @@ describe('Rest API (e2e)', () => {
     });
 
     it('should return a 401 if the credentials are invalid', async () => {
+      userServiceMock.verifyCredentials.mockReturnValueOnce(from([null]));
+
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
