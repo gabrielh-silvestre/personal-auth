@@ -8,9 +8,6 @@ import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
 
-import { ForgotPasswordController } from './infra/api/controller/forgotPassword/ForgotPassword.controller';
-import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
-
 import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
 import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
 
@@ -29,10 +26,9 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     RmqModule.register('USER'),
     TokenModule,
   ],
-  controllers: [LoginController, ForgotPasswordController, RefreshController],
+  controllers: [LoginController, RefreshController],
   providers: [
     LoginUseCase,
-    ForgotPasswordUseCase,
     RefreshUseCase,
     LocalStrategy,
     JwtAccessTokenStrategy,
