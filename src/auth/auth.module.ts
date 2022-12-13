@@ -23,7 +23,12 @@ import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
 import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
 
 @Module({
-  imports: [CustomJwtModule, RmqModule.register('MAIL'), TokenModule],
+  imports: [
+    CustomJwtModule,
+    RmqModule.register('MAIL'),
+    RmqModule.register('USER'),
+    TokenModule,
+  ],
   controllers: [LoginController, ForgotPasswordController, RefreshController],
   providers: [
     LoginUseCase,
