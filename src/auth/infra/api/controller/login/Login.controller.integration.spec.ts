@@ -11,6 +11,8 @@ import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
+import { TOKEN_GATEWAY } from '@auth/utils/constants';
+
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Integration test for Login controller', () => {
@@ -20,15 +22,11 @@ describe('Integration test for Login controller', () => {
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
+      controllers: [LoginController],
       providers: [
-        LoginController,
         LoginUseCase,
         {
-          provide: 'TOKEN_REPO',
-          useClass: TokenInMemoryRepository,
-        },
-        {
-          provide: 'TOKEN_SERVICE',
+          provide: TOKEN_GATEWAY,
           useValue: {
             generateAccessToken: jest.fn().mockResolvedValue('token-id'),
             generateRefreshToken: jest.fn().mockResolvedValue('token-id'),

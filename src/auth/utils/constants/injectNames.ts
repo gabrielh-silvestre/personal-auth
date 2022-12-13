@@ -1,0 +1,5 @@
+export const USER_ADAPTER = 'USER_ADAPTER';
+export const USER_GATEWAY = 'USER_GATEWAY';
+
+export const TOKEN_ADAPTER = 'TOKEN_ADAPTER';
+export const TOKEN_GATEWAY = 'TOKEN_GATEWAY';

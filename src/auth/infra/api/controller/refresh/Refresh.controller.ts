@@ -12,7 +12,7 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputRefreshDto } from '@auth/useCase/refresh/Refresh.dto';
-import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
+import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';

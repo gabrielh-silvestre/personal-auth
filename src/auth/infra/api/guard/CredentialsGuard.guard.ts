@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
+import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 

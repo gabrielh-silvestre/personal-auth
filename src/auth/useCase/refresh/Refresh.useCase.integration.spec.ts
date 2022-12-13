@@ -1,31 +1,26 @@
-import { Test } from '@nestjs/testing';
+import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
+import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { RefreshUseCase } from './Refresh.useCase';
 
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
+import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+const TOKEN_PAYLOAD = {
+  userId: 'fake-user-id',
+  tokenId: 'fake-token-id',
+};
 
 describe('Integration test for Refresh use case', () => {
   let refreshUseCase: RefreshUseCase;
+  let tokenGateway: ITokenGateway;
+  const tokenAdapter: ITokenAdapter = {
+    generate: jest.fn().mockReturnValue('fake-token-id'),
+    verify: jest.fn().mockReturnValue(TOKEN_PAYLOAD),
+  };
 
-  beforeEach(async () => {
-    TokenInMemoryRepository.reset(TOKENS_MOCK);
-
-    const module = await Test.createTestingModule({
-      providers: [
-        RefreshUseCase,
-        {
-          provide: 'TOKEN_SERVICE',
-          useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
-            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
-          },
-        },
-      ],
-    }).compile();
-
-    refreshUseCase = module.get<RefreshUseCase>(RefreshUseCase);
+  beforeEach(() => {
+    tokenGateway = new TokenGateway(tokenAdapter);
+    refreshUseCase = new RefreshUseCase(tokenGateway);
   });
 
   it('should refresh with success', async () => {
