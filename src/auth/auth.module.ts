@@ -15,9 +15,18 @@ import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strate
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
-import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
-import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
-import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
+import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter';
+import { UserGateway } from './infra/gateway/user/User.gateway';
+
+import { TokenServiceAdapter } from './infra/adapter/token/service/TokenService.adapter';
+import { TokenGateway } from './infra/gateway/token/Token.gateway';
+
+import {
+  TOKEN_ADAPTER,
+  TOKEN_GATEWAY,
+  USER_ADAPTER,
+  USER_GATEWAY,
+} from './utils/constants';
 
 @Module({
   imports: [
@@ -34,18 +43,21 @@ import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     {
-      provide: 'TOKEN_SERVICE',
-      useClass: TokenServiceAdaptor,
+      provide: USER_ADAPTER,
+      useClass: UserRmqAdapter,
     },
     {
-      provide: 'USER_SERVICE',
-      useClass: UserServiceAdaptor,
+      provide: USER_GATEWAY,
+      useClass: UserGateway,
     },
     {
-      provide: 'MAIL_SERVICE',
-      useClass: MailServiceAdaptor,
+      provide: TOKEN_ADAPTER,
+      useClass: TokenServiceAdapter,
+    },
+    {
+      provide: TOKEN_GATEWAY,
+      useClass: TokenGateway,
     },
   ],
-  exports: [{ provide: 'TOKEN_SERVICE', useClass: TokenServiceAdaptor }],
 })
 export class AuthModule {}
