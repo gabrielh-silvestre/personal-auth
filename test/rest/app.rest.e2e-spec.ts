@@ -5,8 +5,8 @@ import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 
 import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
-
-import { resetUsersDb } from '../../prisma/reset';
+import { from } from 'rxjs';
+import { ConfigModule } from '@nestjs/config';
 
 const VALID_NEW_USER = {
   username: 'Johnny',
@@ -23,25 +23,26 @@ const VALID_LOGIN_USER = {
 
 describe('Rest API (e2e)', () => {
   let app: INestApplication;
-  let token: string;
 
-  beforeAll(async () => {
-    await resetUsersDb();
-  });
-
-  afterAll(async () => {
-    await resetUsersDb();
-  });
+  const userServiceMock = {
+    verifyCredentials: jest.fn(),
+  };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, ConfigModule.forRoot({ isGlobal: true })],
       providers: [
         {
           provide: 'MAIL_SERVICE',
           useValue: {
             welcomeMail: jest.fn(),
             recoverPasswordMail: jest.fn(),
+          },
+        },
+        {
+          provide: 'USER_SERVICE',
+          useValue: {
+            verifyCredentials: userServiceMock.verifyCredentials,
           },
         },
       ],
@@ -53,50 +54,16 @@ describe('Rest API (e2e)', () => {
     await app.init();
   }, 15000);
 
-  describe('/users (POST)', () => {
-    it('should create a new user', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/users')
-        .send(VALID_NEW_USER)
-        .expect(201);
-
-      expect(response.body).toStrictEqual({
-        _links: {
-          self: {
-            href: expect.any(String),
-          },
-        },
-        data: {
-          id: expect.any(String),
-          username: expect.any(String),
-        },
-      });
-    });
-
-    it('should return a 409 if the user already exists', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/users')
-        .send(VALID_NEW_USER)
-        .expect(409);
-
-      expect(response.body).toStrictEqual({
-        statusCode: 409,
-        message: 'Email already registered',
-        path: '/users',
-      });
-    });
-  });
-
   describe('/auth/login (POST)', () => {
     it('should login a user', async () => {
+      userServiceMock.verifyCredentials.mockReturnValueOnce(
+        from([{ id: '1' }]),
+      );
+
       const response = await request(app.getHttpServer())
         .post('/auth/login')
         .send(VALID_LOGIN_USER)
-        .expect(201)
-        .then((res) => {
-          token = res.body.data.access;
-          return res;
-        });
+        .expect(201);
 
       expect(response.body).toStrictEqual({
         _links: {
@@ -124,47 +91,6 @@ describe('Rest API (e2e)', () => {
         statusCode: 403,
         message: 'Invalid credentials',
         path: '/auth/login',
-      });
-    });
-  });
-
-  describe('/users/me (GET)', () => {
-    it('should recover a user', async () => {
-      // await request(app.getHttpServer())
-      //   .post('/auth/login')
-      //   .send(VALID_LOGIN_USER)
-      //   .then((res) => {
-      //     token = res.body.data.access;
-      //   });
-
-      const response = await request(app.getHttpServer())
-        .get(`/users/me`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
-
-      expect(response.body).toStrictEqual({
-        _links: {
-          self: {
-            href: expect.any(String),
-          },
-        },
-        data: {
-          id: expect.any(String),
-          username: expect.any(String),
-        },
-      });
-    });
-
-    it('should return a 401 if the token is invalid', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/users/me')
-        .set('Authorization', `Bearer invalid-token`)
-        .expect(403);
-
-      expect(response.body).toStrictEqual({
-        statusCode: 403,
-        message: expect.any(String),
-        path: '/users/me',
       });
     });
   });
