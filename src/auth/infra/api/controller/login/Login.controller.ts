@@ -1,7 +1,9 @@
+import type { Request as IRequest } from 'express';
+
 import {
-  Body,
   Controller,
   Post,
+  Request,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -51,10 +53,8 @@ export class LoginController {
   @UseGuards(CredentialsGuard)
   @Post('/login')
   @UseInterceptors(new ParseHalJsonInterceptor<ResponseLogin>())
-  async handleRest(
-    @Body() data: InputLoginDto,
-  ): Promise<ResponseLogin | never> {
-    return this.handle(data);
+  async handleRest(@Request() data: IRequest): Promise<ResponseLogin | never> {
+    return this.handle({ userId: data.user.userId });
   }
 
   @UseGuards(CredentialsGuard)

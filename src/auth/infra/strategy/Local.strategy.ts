@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { catchError, lastValueFrom, map } from 'rxjs';
 import { Strategy } from 'passport-local';
 
 import type { IUserService } from '@auth/infra/service/user/user.service.interface';
@@ -18,13 +19,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, password: string): Promise<any> {
-    const user = await this.userService.findByEmail(email);
-    const isCredentialsValid = user && user.password.isEqual(password);
+    const obsUserId = this.userService.verifyCredentials(email, password).pipe(
+      map(({ id }) => ({ userId: id })),
+      catchError(() => {
+        throw ExceptionFactory.forbidden('Unauthorized');
+      }),
+    );
 
-    if (!isCredentialsValid) {
-      throw ExceptionFactory.forbidden('Invalid credentials');
-    }
-
-    return user;
+    return lastValueFrom(obsUserId);
   }
 }
