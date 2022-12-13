@@ -11,7 +11,7 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
-import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
+import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
