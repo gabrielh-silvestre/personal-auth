@@ -1,7 +1,9 @@
+import type { Request as IRequest } from 'express';
+
 import {
-  Body,
   Controller,
   Post,
+  Request,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -16,8 +18,8 @@ import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
-import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
-import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
+import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 type ResponseLogin = {
   access: string;
@@ -51,10 +53,8 @@ export class LoginController {
   @UseGuards(CredentialsGuard)
   @Post('/login')
   @UseInterceptors(new ParseHalJsonInterceptor<ResponseLogin>())
-  async handleRest(
-    @Body() data: InputLoginDto,
-  ): Promise<ResponseLogin | never> {
-    return this.handle(data);
+  async handleRest(@Request() data: IRequest): Promise<ResponseLogin | never> {
+    return this.handle({ userId: data.user.userId });
   }
 
   @UseGuards(CredentialsGuard)

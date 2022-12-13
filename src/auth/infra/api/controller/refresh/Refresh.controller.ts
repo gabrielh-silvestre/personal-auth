@@ -19,8 +19,8 @@ import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { RefreshTokenGuard } from '../../guard/RefreshToken.guard';
-import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
-import { ParseHalJsonInterceptor } from '@users/infra/api/interceptor/Parse.hal-json.interceptor';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
+import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
 
 type ResponseRefresh = {
   access: string;

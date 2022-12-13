@@ -10,7 +10,6 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "prestart:dev": "prisma migrate dev",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
@@ -19,16 +18,10 @@
     "test": "jest",
     "test:unit": "jest \".*\\.unit.spec\\.ts\"",
     "test:integration": "jest \".*\\.integration.spec\\.ts\"",
-
-    "pretest:all": "prisma migrate dev",
     "test:all": "jest --forceExit --config ./test/jest-all.config.js",
-
-    "pretest:cov": "prisma migrate dev",
-    "test:cov": "jest --coverage --forceExit --config ./test/jest-all.config.js",
-
-    "pretest:e2e": "prisma migrate dev",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
-
+    
+    "test:cov": "jest --coverage --forceExit --config ./test/jest-all.config.js",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch",
     "test:mutations": "stryker run --incremental"

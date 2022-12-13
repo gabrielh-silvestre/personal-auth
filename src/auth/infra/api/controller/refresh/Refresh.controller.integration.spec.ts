@@ -10,11 +10,10 @@ import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_REFRESH_REST = {
   user: {
-    userId: USERS_MOCK[0].id,
+    userId: '1',
   },
 } as Request;
 
