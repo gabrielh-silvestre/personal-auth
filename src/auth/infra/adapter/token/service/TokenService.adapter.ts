@@ -30,9 +30,7 @@ export class TokenServiceAdapter implements ITokenAdapter {
   }
 
   async verify(token: string): Promise<TokenPayload | never> {
-    const { tokenId, userId } =
-      await this.jwtAccessService.verify<TokenPayload>(token);
-    await this.validateTokenUseCase.execute(tokenId);
+    const { tokenId, userId } = await this.validateTokenUseCase.execute(token);
 
     return { tokenId, userId };
   }

@@ -11,11 +11,8 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
-import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
-import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
 import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
@@ -28,26 +25,17 @@ type ResponseLogin = {
 
 @Controller('/auth')
 export class LoginController {
-  constructor(
-    private readonly accessTokenService: JwtAccessService,
-    private readonly refreshTokenService: JwtRefreshService,
-    private readonly loginUseCase: LoginUseCase,
-  ) {}
+  constructor(private readonly loginUseCase: LoginUseCase) {}
 
   async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
-    const { accessTokenId, refreshTokenId, userId } =
-      await this.loginUseCase.execute(data);
+    const { accessTokenId, refreshTokenId } = await this.loginUseCase.execute(
+      data,
+    );
 
-    const access = await this.accessTokenService.sign<TokenPayload>({
-      tokenId: accessTokenId,
-      userId,
-    });
-    const refresh = await this.refreshTokenService.sign<TokenPayload>({
-      tokenId: refreshTokenId,
-      userId,
-    });
-
-    return { access, refresh };
+    return {
+      access: accessTokenId,
+      refresh: refreshTokenId,
+    };
   }
 
   @UseGuards(CredentialsGuard)
