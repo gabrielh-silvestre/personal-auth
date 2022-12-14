@@ -11,6 +11,9 @@ import { LoginUseCase } from './useCase/login/Login.useCase';
 import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
 import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
 
+import { VerifyTokenController } from './infra/api/controller/verifyToken/VerifyToken.controller';
+import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase';
+
 import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
@@ -31,14 +34,15 @@ import {
 @Module({
   imports: [
     CustomJwtModule,
+    TokenModule,
     RmqModule.register('MAIL'),
     RmqModule.register('USER'),
-    TokenModule,
   ],
-  controllers: [LoginController, RefreshController],
+  controllers: [LoginController, RefreshController, VerifyTokenController],
   providers: [
     LoginUseCase,
     RefreshUseCase,
+    VerifyTokenUseCase,
     LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
