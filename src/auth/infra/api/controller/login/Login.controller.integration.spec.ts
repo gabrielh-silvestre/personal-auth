@@ -6,21 +6,12 @@ import { from } from 'rxjs';
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
-import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
-
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-
 import { TOKEN_GATEWAY } from '@auth/utils/constants';
-
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Integration test for Login controller', () => {
   let loginController: LoginController;
 
   beforeEach(async () => {
-    TokenInMemoryRepository.reset(TOKENS_MOCK);
-
     const module = await Test.createTestingModule({
       controllers: [LoginController],
       providers: [
@@ -31,14 +22,6 @@ describe('Integration test for Login controller', () => {
             generateAccessToken: jest.fn().mockResolvedValue('token-id'),
             generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
           },
-        },
-        {
-          provide: JwtAccessService,
-          useValue: { sign: jest.fn().mockResolvedValue('token') },
-        },
-        {
-          provide: JwtRefreshService,
-          useValue: { sign: jest.fn().mockResolvedValue('token') },
         },
         {
           provide: 'USER_SERVICE',
