@@ -9,12 +9,13 @@ import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
 
+import { TOKEN_GATEWAY } from '@auth/utils/constants';
+
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
 
 const VALID_REFRESH_REST = {
   user: {
-    userId: USERS_MOCK[0].id,
+    userId: '1',
   },
 } as Request;
 
@@ -25,11 +26,11 @@ describe('Integration test for Refresh controller', () => {
     TokenInMemoryRepository.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
+      controllers: [RefreshController],
       providers: [
-        RefreshController,
         RefreshUseCase,
         {
-          provide: 'TOKEN_SERVICE',
+          provide: TOKEN_GATEWAY,
           useValue: {
             generateAccessToken: jest.fn().mockResolvedValue('token-id'),
             generateRefreshToken: jest.fn().mockResolvedValue('token-id'),

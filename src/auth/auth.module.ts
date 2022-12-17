@@ -1,7 +1,6 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { TokenModule } from '@tokens/token.module';
-import { UserModule } from '@users/user.module';
 
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
@@ -9,48 +8,60 @@ import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 import { LoginController } from './infra/api/controller/login/Login.controller';
 import { LoginUseCase } from './useCase/login/Login.useCase';
 
-import { ForgotPasswordController } from './infra/api/controller/forgotPassword/ForgotPassword.controller';
-import { ForgotPasswordUseCase } from './useCase/forgotPassword/ForgotPassword.useCase';
-
 import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
 import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
+
+import { VerifyTokenController } from './infra/api/controller/verifyToken/VerifyToken.controller';
+import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase';
 
 import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
-import { TokenServiceAdaptor } from './infra/service/token/Token.service.adaptor';
-import { UserServiceAdaptor } from './infra/service/user/User.service.adaptor';
-import { MailServiceAdaptor } from './infra/service/mail/Mail.service.adaptor';
+import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter';
+import { UserGateway } from './infra/gateway/user/User.gateway';
+
+import { TokenServiceAdapter } from './infra/adapter/token/service/TokenService.adapter';
+import { TokenGateway } from './infra/gateway/token/Token.gateway';
+
+import {
+  TOKEN_ADAPTER,
+  TOKEN_GATEWAY,
+  USER_ADAPTER,
+  USER_GATEWAY,
+} from './utils/constants';
 
 @Module({
   imports: [
     CustomJwtModule,
-    RmqModule.register('MAIL'),
-    forwardRef(() => UserModule),
     TokenModule,
+    RmqModule.register('MAIL'),
+    RmqModule.register('USER'),
   ],
-  controllers: [LoginController, ForgotPasswordController, RefreshController],
+  controllers: [LoginController, RefreshController, VerifyTokenController],
   providers: [
     LoginUseCase,
-    ForgotPasswordUseCase,
     RefreshUseCase,
+    VerifyTokenUseCase,
     LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     {
-      provide: 'TOKEN_SERVICE',
-      useClass: TokenServiceAdaptor,
+      provide: USER_ADAPTER,
+      useClass: UserRmqAdapter,
     },
     {
-      provide: 'USER_SERVICE',
-      useClass: UserServiceAdaptor,
+      provide: USER_GATEWAY,
+      useClass: UserGateway,
     },
     {
-      provide: 'MAIL_SERVICE',
-      useClass: MailServiceAdaptor,
+      provide: TOKEN_ADAPTER,
+      useClass: TokenServiceAdapter,
+    },
+    {
+      provide: TOKEN_GATEWAY,
+      useClass: TokenGateway,
     },
   ],
-  exports: [{ provide: 'TOKEN_SERVICE', useClass: TokenServiceAdaptor }],
 })
 export class AuthModule {}

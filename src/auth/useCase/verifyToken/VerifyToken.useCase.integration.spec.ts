@@ -1,7 +1,7 @@
 import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
 import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
 
-import { RefreshUseCase } from './Refresh.useCase';
+import { VerifyTokenUseCase } from './VerifyToken.useCase';
 
 import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
 
@@ -10,26 +10,27 @@ const TOKEN_PAYLOAD = {
   tokenId: 'fake-token-id',
 };
 
-describe('Integration test for Refresh use case', () => {
-  let refreshUseCase: RefreshUseCase;
+describe('Integration test for VerifyToken use case', () => {
+  let verifyTokenUseCase: VerifyTokenUseCase;
   let tokenGateway: ITokenGateway;
+
   const tokenAdapter: ITokenAdapter = {
-    generate: jest.fn().mockReturnValue('fake-token-id'),
+    generate: jest.fn(),
     verify: jest.fn().mockReturnValue(TOKEN_PAYLOAD),
   };
 
   beforeEach(() => {
     tokenGateway = new TokenGateway(tokenAdapter);
-    refreshUseCase = new RefreshUseCase(tokenGateway);
+    verifyTokenUseCase = new VerifyTokenUseCase(tokenGateway);
   });
 
-  it('should refresh with success', async () => {
-    const token = await refreshUseCase.execute({ userId: 'fake-user-id' });
+  it('should verify with success', async () => {
+    const result = await verifyTokenUseCase.execute({
+      tokenId: 'fake-token-id',
+    });
 
-    expect(token).not.toBeNull();
-    expect(token).toStrictEqual({
-      accessTokenId: expect.any(String),
-      refreshTokenId: expect.any(String),
+    expect(result).not.toBeNull();
+    expect(result).toStrictEqual({
       userId: expect.any(String),
     });
   });

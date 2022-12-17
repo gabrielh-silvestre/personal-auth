@@ -2,15 +2,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 
-import type { IUserService } from '@auth/infra/service/user/user.service.interface';
-import type { IUser } from '@users/domain/entity/user.interface';
+import type { IUserGateway } from '../gateway/user/user.gateway.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+
+import { USER_GATEWAY } from '@auth/utils/constants';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject('USER_SERVICE') private readonly userService: IUserService,
+    @Inject(USER_GATEWAY) private readonly userGateway: IUserGateway,
   ) {
     super({
       usernameField: 'email',
@@ -18,14 +19,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<IUser> {
-    const user = await this.userService.findByEmail(email);
-    const isCredentialsValid = user && user.password.isEqual(password);
+  async validate(email: string, password: string): Promise<any> {
+    try {
+      const { id } = await this.userGateway.verifyCredentials(email, password);
 
-    if (!isCredentialsValid) {
+      return { userId: id };
+    } catch {
       throw ExceptionFactory.forbidden('Invalid credentials');
     }
-
-    return user;
   }
 }

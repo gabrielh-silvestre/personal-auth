@@ -1,6 +1,5 @@
 export interface InputLoginDto {
-  email: string;
-  password: string;
+  userId: string;
 }
 
 export interface OutputLoginDto {

@@ -9,12 +9,10 @@ services:
     volumes:
       - .:/app
     ports:
-      - 3000:${PORT}
+      - ${PORT}:${PORT}
       - 50051:50051
     tty: true
     depends_on:
-      postgres:
-        condition: service_healthy
       mongo:
         condition: service_healthy
       rabbitmq:
@@ -23,7 +21,6 @@ services:
       - PORT=${PORT}
       - GRPC_URL=backend:50051
 
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       - MONGO_URI=mongodb://mongo:27017/${DB_NAME}
 
       # - JWT_SECRET=${JWT_SECRET}
@@ -34,36 +31,11 @@ services:
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRES_IN=${JWT_REFRESH_TOKEN_EXPIRES_IN}
 
-      - MAILER_HOST=${MAILER_HOST}
-      - MAILER_PORT=${MAILER_PORT}
-      - MAILER_USER=${MAILER_USER}
-      - MAILER_PASS=${MAILER_PASS}
-
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:${RABBITMQ_PORT}
-    networks:
-      - personal-network
-
-  postgres:
-    image: postgres:14.3-alpine
-    restart: always
-    ports:
-      - ${DB_PORT}:5432
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready', '-d', 'db_prod']
-      interval: 30s
-      timeout: 60s
-      retries: 10
-      start_period: 30s
-    cap_add:
-      - SYS_NICE # Deve omitir alertas menores
     networks:
       - personal-network
 

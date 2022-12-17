@@ -5,7 +5,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { RevokeTokenUseCase } from '@tokens/useCase/revoke/RevokeToken.useCase';
 
 import { AuthenticateGuard } from '@auth/infra/api/guard/Authenticate.guard';
-import { ExceptionFilterRpc } from '@users/infra/api/filter/ExceptionFilter.grpc';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller()
 export class RevokeTokenController {

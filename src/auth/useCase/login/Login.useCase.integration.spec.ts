@@ -1,53 +1,25 @@
-import { Test } from '@nestjs/testing';
+import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
+import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { LoginUseCase } from './Login.useCase';
 
-import { PasswordFactory } from '@users/domain/factory/Password.factory';
-
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { USERS_MOCK } from '@shared/utils/mocks/users.mock';
-
-const VALID_LOGIN = {
-  email: USERS_MOCK[0].email,
-  password: 'password',
-};
+import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
 
 describe('Integration test for Login use case', () => {
   let loginUseCase: LoginUseCase;
+  let tokenGateway: ITokenGateway;
+  const tokenAdapter: ITokenAdapter = {
+    generate: jest.fn().mockReturnValue('fake-token-id'),
+    verify: jest.fn(),
+  };
 
-  beforeAll(() => {
-    USERS_MOCK[0].changePassword(PasswordFactory.createNew('password'));
-  });
-
-  beforeEach(async () => {
-    TokenInMemoryRepository.reset(TOKENS_MOCK);
-
-    const module = await Test.createTestingModule({
-      providers: [
-        LoginUseCase,
-        {
-          provide: 'TOKEN_SERVICE',
-          useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
-            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
-          },
-        },
-        {
-          provide: 'USER_SERVICE',
-          useValue: {
-            findByEmail: jest.fn().mockResolvedValue(USERS_MOCK[0]),
-          },
-        },
-      ],
-    }).compile();
-
-    loginUseCase = module.get<LoginUseCase>(LoginUseCase);
+  beforeEach(() => {
+    tokenGateway = new TokenGateway(tokenAdapter);
+    loginUseCase = new LoginUseCase(tokenGateway);
   });
 
   it('should login with success', async () => {
-    const token = await loginUseCase.execute(VALID_LOGIN);
+    const token = await loginUseCase.execute({ userId: '1' });
 
     expect(token).not.toBeNull();
     expect(token).toStrictEqual({

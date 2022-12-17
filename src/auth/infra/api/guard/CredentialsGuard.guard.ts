@@ -2,15 +2,21 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import type { TokenPayload } from '@auth/infra/service/token/token.service.interface';
-import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
+import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+
+export type InputCredentialsDto = {
+  email: string;
+  password: string;
+};
 
 @Injectable()
 export class CredentialsGuard extends AuthGuard('local') {
   private convertGrpcCredentialsToHttpBody(context: ExecutionContext): void {
-    const { email, password } = context.switchToRpc().getData<InputLoginDto>();
+    const { email, password } = context
+      .switchToRpc()
+      .getData<InputCredentialsDto>();
     context.switchToHttp().getRequest().body = { email, password };
   }
 
