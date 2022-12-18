@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { TokenModule } from '@tokens/token.module';
 
@@ -21,15 +22,19 @@ import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strate
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
+import {
+  tokenSchema,
+  TokenSchema,
+} from './infra/adapter/database/mongoose/MongooseSchema';
+import { DatabaseMongooseAdapter } from './infra/adapter/database/mongoose/DatabaseMongoose.adapter';
+import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
+
 import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter';
 import { UserGateway } from './infra/gateway/user/User.gateway';
 
-import { TokenServiceAdapter } from './infra/adapter/token/service/TokenService.adapter';
-import { TokenGateway } from './infra/gateway/token/Token.gateway';
-
 import {
-  TOKEN_ADAPTER,
-  TOKEN_GATEWAY,
+  DATABASE_ADAPTER,
+  DATABASE_GATEWAY,
   USER_ADAPTER,
   USER_GATEWAY,
 } from './utils/constants';
@@ -40,6 +45,9 @@ import {
     TokenModule,
     RmqModule.register('MAIL'),
     RmqModule.register('USER'),
+    MongooseModule.forFeature([
+      { name: TokenSchema.name, schema: tokenSchema },
+    ]),
   ],
   controllers: [
     LoginController,
@@ -64,12 +72,12 @@ import {
       useClass: UserGateway,
     },
     {
-      provide: TOKEN_ADAPTER,
-      useClass: TokenServiceAdapter,
+      provide: DATABASE_ADAPTER,
+      useClass: DatabaseMongooseAdapter,
     },
     {
-      provide: TOKEN_GATEWAY,
-      useClass: TokenGateway,
+      provide: DATABASE_GATEWAY,
+      useClass: DatabaseGateway,
     },
   ],
 })
