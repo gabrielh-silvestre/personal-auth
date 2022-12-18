@@ -8,7 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 
 import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
 
@@ -48,7 +48,7 @@ export class LoginController {
   @UseGuards(CredentialsGuard)
   @UseFilters(new ExceptionFilterRpc())
   @GrpcMethod('AuthService', 'LoginUser')
-  async handleGrpc(data: InputLoginDto): Promise<ResponseLogin | never> {
-    return this.handle(data);
+  async handleGrpc(@Payload() data: IRequest): Promise<ResponseLogin | never> {
+    return this.handle({ userId: data.user.userId });
   }
 }
