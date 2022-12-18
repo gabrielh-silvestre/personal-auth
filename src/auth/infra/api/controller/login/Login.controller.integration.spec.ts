@@ -49,7 +49,9 @@ describe('Integration test for Login controller', () => {
     });
 
     it('with gRPC request', async () => {
-      const response = await loginController.handleGrpc({ userId: '1' });
+      const response = await loginController.handleGrpc({
+        user: { userId: '1' },
+      } as Request);
 
       expect(response).not.toBeNull();
       expect(response).toStrictEqual({
