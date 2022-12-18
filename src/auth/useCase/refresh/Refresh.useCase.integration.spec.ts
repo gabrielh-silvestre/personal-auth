@@ -8,6 +8,8 @@ import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/Datab
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
+const [, , { userId: accessId }, { userId }] = TOKENS_MOCK;
+
 describe('Integration test for Refresh use case', () => {
   let refreshUseCase: RefreshUseCase;
   let databaseGateway: IDatabaseGateway;
@@ -22,7 +24,7 @@ describe('Integration test for Refresh use case', () => {
   });
 
   it('should refresh with success', async () => {
-    const token = await refreshUseCase.execute({ userId: 'fake-user-id' });
+    const token = await refreshUseCase.execute({ userId });
 
     expect(token).not.toBeNull();
     expect(token).toStrictEqual({
@@ -30,5 +32,17 @@ describe('Integration test for Refresh use case', () => {
       refreshTokenId: expect.any(String),
       userId: expect.any(String),
     });
+  });
+
+  it('should throw an error when the token does not exist', async () => {
+    await expect(
+      refreshUseCase.execute({ userId: 'invalid-user-id' }),
+    ).rejects.toThrowError('Invalid token');
+  });
+
+  it('should throw an error when the token is invalid', async () => {
+    await expect(
+      refreshUseCase.execute({ userId: accessId }),
+    ).rejects.toThrowError('Invalid token');
   });
 });

@@ -1,8 +1,4 @@
-export enum TokenType {
-  ACCESS = 'ACCESS',
-  RECOVER_PASSWORD = 'RECOVER_PASSWORD',
-  REFRESH = 'REFRESH',
-}
+export type TokenType = 'ACCESS' | 'RECOVER_PASSWORD' | 'REFRESH';
 
 export interface IToken {
   get id(): string;

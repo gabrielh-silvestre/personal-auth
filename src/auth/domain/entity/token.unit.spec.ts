@@ -1,7 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
 import { Token } from './Token';
-import { TokenType } from './token.interface';
 
 const LAST_REFRESH = new Date();
 const EXPIRE_TIME = 10000;
@@ -14,7 +13,7 @@ describe('Unit test domain Token entity', () => {
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      TokenType.ACCESS,
+      'ACCESS',
     );
 
     expect(token).toBeDefined();
@@ -25,7 +24,7 @@ describe('Unit test domain Token entity', () => {
 
     expect(token.expires).toBeDefined();
     expect(token.revoked).toBeFalsy();
-    expect(token.type).toBe(TokenType.ACCESS);
+    expect(token.type).toBe('ACCESS');
 
     expect(token.expires).toBeInstanceOf(Date);
     expect(token.expires > new Date()).toBeTruthy();
@@ -42,7 +41,7 @@ describe('Unit test domain Token entity', () => {
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      TokenType.RECOVER_PASSWORD,
+      'RECOVER_PASSWORD',
     );
 
     expect(token).toBeDefined();
@@ -58,18 +57,11 @@ describe('Unit test domain Token entity', () => {
     expect(token.expires).toBeInstanceOf(Date);
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
-    expect(token.type).toBe(TokenType.RECOVER_PASSWORD);
+    expect(token.type).toBe('RECOVER_PASSWORD');
   });
 
   it('should refresh a access token', async () => {
-    const token = new Token(
-      uuid(),
-      uuid(),
-      0,
-      LAST_REFRESH,
-      false,
-      TokenType.REFRESH,
-    );
+    const token = new Token(uuid(), uuid(), 0, LAST_REFRESH, false, 'REFRESH');
     const firstRefresh = token.expires;
 
     token.refresh();
@@ -85,7 +77,7 @@ describe('Unit test domain Token entity', () => {
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      TokenType.RECOVER_PASSWORD,
+      'RECOVER_PASSWORD',
     );
 
     expect(() => token.refresh()).toThrowError(
@@ -100,7 +92,7 @@ describe('Unit test domain Token entity', () => {
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      TokenType.ACCESS,
+      'ACCESS',
     );
 
     token.revoke();
@@ -115,7 +107,7 @@ describe('Unit test domain Token entity', () => {
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      TokenType.ACCESS,
+      'ACCESS',
     );
 
     expect(token.isValid()).toBeTruthy();
@@ -126,14 +118,7 @@ describe('Unit test domain Token entity', () => {
   });
 
   it('should check if token is expired', () => {
-    const token = new Token(
-      uuid(),
-      uuid(),
-      0,
-      LAST_REFRESH,
-      false,
-      TokenType.ACCESS,
-    );
+    const token = new Token(uuid(), uuid(), 0, LAST_REFRESH, false, 'ACCESS');
 
     expect(token.expiresIn()).toBeLessThanOrEqual(0);
     expect(token.isValid()).toBeFalsy();

@@ -1,4 +1,4 @@
-import { IToken, TokenType } from './token.interface';
+import type { IToken, TokenType } from './token.interface';
 
 export class Token implements IToken {
   private _id: string;
@@ -31,7 +31,7 @@ export class Token implements IToken {
   }
 
   refresh(): void {
-    if (this._type !== TokenType.REFRESH) {
+    if (this._type !== 'REFRESH') {
       throw new Error('Only refresh tokens can be refreshed');
     }
 

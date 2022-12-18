@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid';
 
-import { TokenType } from '@auth/domain/entity/token.interface';
 import { TokenFactory } from '@auth/domain/factory/Token.factory';
 
 import { DatabaseMemoryAdapter } from './DatabaseMemory.adapter';
@@ -43,7 +42,7 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken?.userId).toBe(newToken.userId);
 
     expect(foundToken?.isValid()).toBeTruthy();
-    expect(foundToken?.type).toBe(TokenType.ACCESS);
+    expect(foundToken?.type).toBe('ACCESS');
   });
 
   it('should create a recover password token', async () => {
@@ -59,7 +58,7 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken?.userId).toBe(newToken.userId);
 
     expect(foundToken?.isValid()).toBeTruthy();
-    expect(foundToken?.type).toBe(TokenType.RECOVER_PASSWORD);
+    expect(foundToken?.type).toBe('RECOVER_PASSWORD');
   });
 
   it('should update a token or create a new one if not found', async () => {
