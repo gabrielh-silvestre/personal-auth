@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { TokenModule } from '@tokens/token.module';
-
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 
@@ -42,7 +40,6 @@ import {
 @Module({
   imports: [
     CustomJwtModule,
-    TokenModule,
     RmqModule.register('MAIL'),
     RmqModule.register('USER'),
     MongooseModule.forFeature([

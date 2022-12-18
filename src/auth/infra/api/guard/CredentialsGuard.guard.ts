@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
@@ -20,7 +20,7 @@ export class CredentialsGuard extends AuthGuard('local') {
     context.switchToHttp().getRequest().body = { email, password };
   }
 
-  handleRequest<T = TokenPayload>(err: any, user: any, info: any): T {
+  handleRequest<T = TokenPayloadDto>(err: any, user: any, info: any): T {
     if (err || !user) {
       throw ExceptionFactory.forbidden(err?.message || info?.message);
     }

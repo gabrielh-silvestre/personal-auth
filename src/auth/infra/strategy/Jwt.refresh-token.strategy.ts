@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import type { TokenPayload } from '../gateway/token/token.gateway.interface';
+import type { TokenPayloadDto } from './JwtPayload.dto';
 
 import { TOKEN_SECRET } from '@shared/utils/constants';
 
@@ -28,7 +28,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: TokenPayload): Promise<TokenPayload> {
+  async validate(payload: TokenPayloadDto): Promise<TokenPayloadDto> {
     return payload;
   }
 }
