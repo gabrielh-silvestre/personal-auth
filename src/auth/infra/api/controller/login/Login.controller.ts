@@ -14,6 +14,9 @@ import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
 
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+
 import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
 import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
@@ -25,17 +28,26 @@ type ResponseLogin = {
 
 @Controller('/auth')
 export class LoginController {
-  constructor(private readonly loginUseCase: LoginUseCase) {}
+  constructor(
+    private readonly loginUseCase: LoginUseCase,
+    private readonly jwtAccess: JwtAccessService,
+    private readonly jwtRefresh: JwtRefreshService,
+  ) {}
 
   async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
-    const { accessTokenId, refreshTokenId } = await this.loginUseCase.execute(
-      data,
-    );
+    const { accessTokenId, refreshTokenId, userId } =
+      await this.loginUseCase.execute(data);
 
-    return {
-      access: accessTokenId,
-      refresh: refreshTokenId,
-    };
+    const access = await this.jwtAccess.sign({
+      tokenId: accessTokenId,
+      userId,
+    });
+    const refresh = await this.jwtRefresh.sign({
+      tokenId: refreshTokenId,
+      userId,
+    });
+
+    return { access, refresh };
   }
 
   @UseGuards(CredentialsGuard)
