@@ -13,7 +13,7 @@ import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
 
-const [{ userId }] = TOKENS_MOCK;
+const [, , , { userId }] = TOKENS_MOCK;
 
 const VALID_REFRESH_REST = {
   user: { userId },
