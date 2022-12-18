@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid';
 
+import type { TokenType } from '../entity/token.interface';
+
 import { Token } from '../entity/Token';
-import { TokenType } from '../entity/token.interface';
 
 export class TokenFactory {
   private static ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
@@ -19,7 +20,7 @@ export class TokenFactory {
       tokenExpireTime,
       new Date(),
       false,
-      TokenType.ACCESS,
+      'ACCESS',
     );
   }
 
@@ -34,7 +35,7 @@ export class TokenFactory {
       tokenExpireTime,
       new Date(),
       false,
-      TokenType.RECOVER_PASSWORD,
+      'RECOVER_PASSWORD',
     );
   }
 
@@ -49,17 +50,17 @@ export class TokenFactory {
       tokenExpireTime,
       new Date(),
       false,
-      TokenType.REFRESH,
+      'REFRESH',
     );
   }
 
   public static createTokenFromType(type: TokenType, userId: string): Token {
     switch (type) {
-      case TokenType.ACCESS:
+      case 'ACCESS':
         return TokenFactory.createAccessToken(userId);
-      case TokenType.RECOVER_PASSWORD:
+      case 'RECOVER_PASSWORD':
         return TokenFactory.createRecoverPasswordToken(userId);
-      case TokenType.REFRESH:
+      case 'REFRESH':
         return TokenFactory.createRefreshToken(userId);
       default:
         throw new Error('Invalid token type');
