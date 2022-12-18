@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto';
 
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
@@ -11,7 +11,7 @@ export class AuthenticateGuard extends AuthGuard('access-token') {
     super();
   }
 
-  handleRequest<T = TokenPayload>(err: Error | null, user: T, info: any): T {
+  handleRequest<T = TokenPayloadDto>(err: Error | null, user: T, info: any): T {
     if (info || err) {
       throw ExceptionFactory.forbidden(err?.message || info?.message);
     }

@@ -1,30 +1,30 @@
-import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
-import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
 
 import { RefreshUseCase } from './Refresh.useCase';
 
-import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 
-const TOKEN_PAYLOAD = {
-  userId: 'fake-user-id',
-  tokenId: 'fake-token-id',
-};
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+
+const [, , { userId: accessId }, { userId }] = TOKENS_MOCK;
 
 describe('Integration test for Refresh use case', () => {
   let refreshUseCase: RefreshUseCase;
-  let tokenGateway: ITokenGateway;
-  const tokenAdapter: ITokenAdapter = {
-    generate: jest.fn().mockReturnValue('fake-token-id'),
-    verify: jest.fn().mockReturnValue(TOKEN_PAYLOAD),
-  };
+  let databaseGateway: IDatabaseGateway;
+  let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {
-    tokenGateway = new TokenGateway(tokenAdapter);
-    refreshUseCase = new RefreshUseCase(tokenGateway);
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
+    refreshUseCase = new RefreshUseCase(databaseGateway);
   });
 
   it('should refresh with success', async () => {
-    const token = await refreshUseCase.execute({ userId: 'fake-user-id' });
+    const token = await refreshUseCase.execute({ userId });
 
     expect(token).not.toBeNull();
     expect(token).toStrictEqual({
@@ -32,5 +32,17 @@ describe('Integration test for Refresh use case', () => {
       refreshTokenId: expect.any(String),
       userId: expect.any(String),
     });
+  });
+
+  it('should throw an error when the token does not exist', async () => {
+    await expect(
+      refreshUseCase.execute({ userId: 'invalid-user-id' }),
+    ).rejects.toThrowError('Invalid token');
+  });
+
+  it('should throw an error when the token is invalid', async () => {
+    await expect(
+      refreshUseCase.execute({ userId: accessId }),
+    ).rejects.toThrowError('Invalid token');
   });
 });

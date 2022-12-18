@@ -29,7 +29,7 @@ async function bootstrap() {
       url: GRPC_URL,
       package: ['proto.tokens', 'proto.auth'],
       protoPath: [
-        join(__dirname, '../tokens/infra/proto/token.proto'),
+        join(__dirname, '../auth/infra/proto/token.proto'),
         join(__dirname, '../auth/infra/proto/auth.proto'),
       ],
     },

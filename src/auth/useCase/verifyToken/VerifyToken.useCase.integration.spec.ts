@@ -1,37 +1,49 @@
-import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
-import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
 
 import { VerifyTokenUseCase } from './VerifyToken.useCase';
 
-import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 
-const TOKEN_PAYLOAD = {
-  userId: 'fake-user-id',
-  tokenId: 'fake-token-id',
-};
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+
+const [TOKEN] = TOKENS_MOCK;
+const { id: tokenId } = TOKEN;
 
 describe('Integration test for VerifyToken use case', () => {
   let verifyTokenUseCase: VerifyTokenUseCase;
-  let tokenGateway: ITokenGateway;
-
-  const tokenAdapter: ITokenAdapter = {
-    generate: jest.fn(),
-    verify: jest.fn().mockReturnValue(TOKEN_PAYLOAD),
-  };
+  let databaseGateway: IDatabaseGateway;
+  let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {
-    tokenGateway = new TokenGateway(tokenAdapter);
-    verifyTokenUseCase = new VerifyTokenUseCase(tokenGateway);
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
+    verifyTokenUseCase = new VerifyTokenUseCase(databaseGateway);
   });
 
   it('should verify with success', async () => {
-    const result = await verifyTokenUseCase.execute({
-      tokenId: 'fake-token-id',
-    });
+    const result = await verifyTokenUseCase.execute({ tokenId });
 
     expect(result).not.toBeNull();
     expect(result).toStrictEqual({
       userId: expect.any(String),
     });
+  });
+
+  it('should throw an exception when token does not exist', async () => {
+    await expect(
+      verifyTokenUseCase.execute({ tokenId: 'invalid' }),
+    ).rejects.toThrowError('Invalid token');
+  });
+
+  it('should throw an exception when token is expired', async () => {
+    TOKEN.revoke();
+
+    await expect(verifyTokenUseCase.execute({ tokenId })).rejects.toThrowError(
+      'Invalid token',
+    );
   });
 });
