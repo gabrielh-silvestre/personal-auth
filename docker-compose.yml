@@ -6,6 +6,7 @@ services:
       dockerfile: .docker/Dockerfile.dev
     command: npm run start:dev
     restart: on-failure
+    mem_limit: 512m
     volumes:
       - .:/app
     ports:
@@ -42,6 +43,7 @@ services:
   mongo:
     image: mongo:5.0.7
     restart: always
+    mem_limit: 256m
     ports:
       - ${MONGO_PORT}:27017
     healthcheck:
@@ -57,6 +59,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.9-management-alpine
+    mem_limit: 256m
     ports:
       - ${RABBITMQ_PORT}:5672
       - ${RABBITMQ_MANAGEMENT_PORT}:15672

@@ -6,21 +6,45 @@ import { from } from 'rxjs';
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
-import { TOKEN_GATEWAY } from '@auth/utils/constants';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+
+const [{ userId }] = TOKENS_MOCK;
 
 describe('Integration test for Login controller', () => {
   let loginController: LoginController;
 
   beforeEach(async () => {
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+
     const module = await Test.createTestingModule({
       controllers: [LoginController],
       providers: [
         LoginUseCase,
         {
-          provide: TOKEN_GATEWAY,
+          provide: DATABASE_ADAPTER,
+          useClass: DatabaseMemoryAdapter,
+        },
+        {
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
+        },
+        {
+          provide: JwtAccessService,
           useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
-            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
+            sign: jest.fn().mockReturnValue('access'),
+          },
+        },
+        {
+          provide: JwtRefreshService,
+          useValue: {
+            sign: jest.fn().mockReturnValue('refresh'),
           },
         },
         {
@@ -38,7 +62,7 @@ describe('Integration test for Login controller', () => {
   describe('should login', () => {
     it('with REST request', async () => {
       const response = await loginController.handleRest({
-        user: { userId: '1' },
+        user: { userId },
       } as Request);
 
       expect(response).not.toBeNull();
@@ -50,7 +74,7 @@ describe('Integration test for Login controller', () => {
 
     it('with gRPC request', async () => {
       const response = await loginController.handleGrpc({
-        user: { userId: '1' },
+        user: { userId },
       } as Request);
 
       expect(response).not.toBeNull();

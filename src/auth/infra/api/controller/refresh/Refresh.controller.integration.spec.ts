@@ -4,45 +4,46 @@ import { Test } from '@nestjs/testing';
 import { RefreshController } from './Refresh.controller';
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
-import { TokenInMemoryRepository } from '@tokens/infra/repository/memory/Token.repository';
-
-import { TOKEN_GATEWAY } from '@auth/utils/constants';
-
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+
+const [{ userId }] = TOKENS_MOCK;
 
 const VALID_REFRESH_REST = {
-  user: {
-    userId: '1',
-  },
+  user: { userId },
 } as Request;
 
 describe('Integration test for Refresh controller', () => {
   let refreshController: RefreshController;
 
   beforeEach(async () => {
-    TokenInMemoryRepository.reset(TOKENS_MOCK);
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [RefreshController],
       providers: [
         RefreshUseCase,
         {
-          provide: TOKEN_GATEWAY,
-          useValue: {
-            generateAccessToken: jest.fn().mockResolvedValue('token-id'),
-            generateRefreshToken: jest.fn().mockResolvedValue('token-id'),
-          },
+          provide: DATABASE_ADAPTER,
+          useClass: DatabaseMemoryAdapter,
         },
         {
-          provide: JwtRefreshService,
-          useValue: { sign: jest.fn().mockResolvedValue('token') },
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
         {
           provide: JwtAccessService,
-          useValue: { sign: jest.fn().mockResolvedValue('token') },
+          useValue: { sign: jest.fn().mockResolvedValue('access') },
+        },
+        {
+          provide: JwtRefreshService,
+          useValue: { sign: jest.fn().mockResolvedValue('refresh') },
         },
       ],
     }).compile();

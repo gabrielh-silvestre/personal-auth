@@ -12,7 +12,7 @@ import {
 import { GrpcMethod } from '@nestjs/microservices';
 
 import type { InputRefreshDto } from '@auth/useCase/refresh/Refresh.dto';
-import type { TokenPayload } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto';
 
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
@@ -41,11 +41,11 @@ export class RefreshController {
     const { accessTokenId, refreshTokenId, userId } =
       await this.refreshUseCase.execute(data);
 
-    const access = await this.accessTokenService.sign<TokenPayload>({
+    const access = await this.accessTokenService.sign<TokenPayloadDto>({
       tokenId: accessTokenId,
       userId,
     });
-    const refresh = await this.refreshTokenService.sign<TokenPayload>({
+    const refresh = await this.refreshTokenService.sign<TokenPayloadDto>({
       tokenId: refreshTokenId,
       userId,
     });

@@ -1,21 +1,24 @@
-import type { ITokenAdapter } from '@auth/infra/adapter/token/Token.adapter.interface';
-import type { ITokenGateway } from '@auth/infra/gateway/token/token.gateway.interface';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
 
 import { GenerateTokenUseCase } from './GenerateToken.useCase';
 
-import { TokenGateway } from '@auth/infra/gateway/token/Token.gateway';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Integration test for GenerateToken use case', () => {
   let generateTokenUseCase: GenerateTokenUseCase;
-  let tokenGateway: ITokenGateway;
-  const tokenAdapter: ITokenAdapter = {
-    generate: jest.fn().mockReturnValue('fake-token-id'),
-    verify: jest.fn(),
-  };
+  let databaseGateway: IDatabaseGateway;
+  let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {
-    tokenGateway = new TokenGateway(tokenAdapter);
-    generateTokenUseCase = new GenerateTokenUseCase(tokenGateway);
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+
+    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseGateway = new DatabaseGateway(databaseAdapter);
+    generateTokenUseCase = new GenerateTokenUseCase(databaseGateway);
   });
 
   it('should generate token with success', async () => {
