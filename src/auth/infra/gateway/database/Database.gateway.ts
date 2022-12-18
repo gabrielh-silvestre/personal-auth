@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { TokenType } from '@auth/domain/entity/token.interface';
 import type { IDatabaseGateway } from './Database.gateway.interface';
@@ -6,9 +6,14 @@ import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.ada
 
 import { Token } from '@auth/domain/entity/Token';
 
+import { DATABASE_ADAPTER } from '@auth/utils/constants';
+
 @Injectable()
 export class DatabaseGateway implements IDatabaseGateway {
-  constructor(private readonly databaseAdapter: IDatabaseAdapter) {}
+  constructor(
+    @Inject(DATABASE_ADAPTER)
+    private readonly databaseAdapter: IDatabaseAdapter,
+  ) {}
 
   async find(id: string): Promise<Token> {
     return this.databaseAdapter.findOne({ id });
