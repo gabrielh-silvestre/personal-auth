@@ -40,13 +40,13 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
   }
 
   async findAll(): Promise<Token[]> {
-    const foundTokens = await this.model.find();
+    const foundTokens = await this.model.find().exec();
 
     return foundTokens.map((token) => this.modelToDomain(token));
   }
 
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
-    const foundToken = await this.model.findOne(dto);
+    const foundToken = await this.model.findOne(dto).exec();
 
     return !!foundToken ? this.modelToDomain(foundToken) : null;
   }
@@ -65,21 +65,23 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
   }
 
   async update(entity: Token): Promise<void> {
-    await this.model.findOneAndUpdate(
-      {
-        id: entity.id,
-      },
-      {
-        $set: {
-          lastRefresh: entity.lastRefresh,
-          expires: entity.expires,
-          revoked: entity.revoked,
+    await this.model
+      .findOneAndUpdate(
+        {
+          id: entity.id,
         },
-      },
-    );
+        {
+          $set: {
+            lastRefresh: entity.lastRefresh,
+            expires: entity.expires,
+            revoked: entity.revoked,
+          },
+        },
+      )
+      .exec();
   }
 
   async delete(id: string): Promise<void> {
-    await this.model.findOneAndDelete({ id });
+    await this.model.findOneAndDelete({ id }).exec();
   }
 }
