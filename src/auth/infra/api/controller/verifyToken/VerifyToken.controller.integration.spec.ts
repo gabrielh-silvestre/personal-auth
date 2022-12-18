@@ -4,21 +4,31 @@ import { Test } from '@nestjs/testing';
 import { VerifyTokenController } from './VerifyToken.controller';
 import { VerifyTokenUseCase } from '@auth/useCase/verifyToken/VerifyToken.useCase';
 
-import { TOKEN_GATEWAY } from '@auth/utils/constants';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+
+const [{ id: tokenId }] = TOKENS_MOCK;
 
 describe('Integration test for VerifyToken controller', () => {
   let verifyTokenController: VerifyTokenController;
 
   beforeEach(async () => {
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+
     const module = await Test.createTestingModule({
       controllers: [VerifyTokenController],
       providers: [
         VerifyTokenUseCase,
         {
-          provide: TOKEN_GATEWAY,
-          useValue: {
-            verifyToken: jest.fn().mockResolvedValue({ userId: '1' }),
-          },
+          provide: DATABASE_ADAPTER,
+          useClass: DatabaseMemoryAdapter,
+        },
+        {
+          provide: DATABASE_GATEWAY,
+          useClass: DatabaseGateway,
         },
       ],
     }).compile();
@@ -31,7 +41,7 @@ describe('Integration test for VerifyToken controller', () => {
   describe('should verify token', () => {
     it('with RMQ message', async () => {
       const response = await verifyTokenController.handle({
-        user: { userId: '1' },
+        user: { tokenId },
       } as Request);
 
       expect(response).not.toBeNull();
