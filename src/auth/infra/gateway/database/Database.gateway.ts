@@ -10,12 +10,12 @@ import type {
 import { Token } from '@auth/domain/entity/Token';
 import { TokenFactory } from '@auth/domain/factory/Token.factory';
 
-import { DATABASE_ADAPTER } from '@auth/utils/constants';
+import { ORM_ADAPTER } from '@auth/utils/constants';
 
 @Injectable()
 export class DatabaseGateway implements IDatabaseGateway {
   constructor(
-    @Inject(DATABASE_ADAPTER)
+    @Inject(ORM_ADAPTER)
     private readonly databaseAdapter: IOrmAdapter,
   ) {}
 
