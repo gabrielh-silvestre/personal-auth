@@ -20,12 +20,9 @@ import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strate
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
+import { tokenSchema } from './infra/adapter/orm/mongoose/Token.schema';
 import { OrmMongooseAdapter } from './infra/adapter/orm/mongoose/OrmMongoose.adapter';
 import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
-import {
-  tokenSchema,
-  TokenSchema,
-} from './infra/adapter/orm/mongoose/MongooseSchema';
 
 import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 import { UserGateway } from './infra/gateway/user/User.gateway';
@@ -35,15 +32,15 @@ import {
   DATABASE_GATEWAY,
   QUEUE_ADAPTER,
   USER_GATEWAY,
+  AUTH_QUEUE,
+  TOKEN_SCHEMA,
 } from './utils/constants';
 
 @Module({
   imports: [
     CustomJwtModule,
-    RmqModule.register('AUTH_QUEUE'),
-    MongooseModule.forFeature([
-      { name: TokenSchema.name, schema: tokenSchema },
-    ]),
+    RmqModule.register(AUTH_QUEUE),
+    MongooseModule.forFeature([{ name: TOKEN_SCHEMA, schema: tokenSchema }]),
   ],
   controllers: [
     LoginController,

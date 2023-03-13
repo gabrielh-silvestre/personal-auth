@@ -1,6 +1,6 @@
 import type { IToken } from '@auth/domain/entity/token.interface';
 import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
-import type { IOrmAdapter } from '@auth/infra/adapter/orm/Orm.adapter.interface';
+import type { IOrmAdapter } from '@shared/infra/adapter/orm/Orm.adapter.interface';
 
 import { VerifyTokenUseCase } from './VerifyToken.useCase';
 

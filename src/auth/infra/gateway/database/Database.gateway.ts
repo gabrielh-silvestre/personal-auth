@@ -5,7 +5,7 @@ import type { IDatabaseGateway } from './Database.gateway.interface';
 import type {
   IOrmAdapter,
   OrmTokenDto,
-} from '@auth/infra/adapter/orm/Orm.adapter.interface';
+} from '@shared/infra/adapter/orm/Orm.adapter.interface';
 
 import { Token } from '@auth/domain/entity/Token';
 import { TokenFactory } from '@auth/domain/factory/Token.factory';

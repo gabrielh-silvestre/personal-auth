@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, timeout } from 'rxjs';
 
-import type { IQueueAdapter } from '../Queue.adapter.interface';
+import type { IQueueAdapter } from '@shared/infra/adapter/queue/Queue.adapter.interface';
 
 @Injectable()
 export class QueueRmqAdapter implements IQueueAdapter {

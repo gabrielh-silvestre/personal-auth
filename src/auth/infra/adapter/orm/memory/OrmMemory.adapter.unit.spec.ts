@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
-import type { IOrmAdapter } from '../Orm.adapter.interface';
+import type { IOrmAdapter } from '@shared/infra/adapter/orm/Orm.adapter.interface';
+import type { OrmTokenDto } from '../orm.interface';
 
 import { TokenFactory } from '@auth/domain/factory/Token.factory';
 
@@ -9,7 +10,7 @@ import { OrmMemoryAdapter } from './OrmMemory.adapter';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Unit test infra in memory Task repository', () => {
-  let ormAdapter: IOrmAdapter<any>;
+  let ormAdapter: IOrmAdapter<OrmTokenDto>;
 
   beforeEach(() => {
     ormAdapter = new OrmMemoryAdapter();
