@@ -1,90 +1,51 @@
 import { Injectable } from '@nestjs/common';
 
-import type { IOrmAdapter, OrmTokenDto } from '../Orm.adapter.interface';
+import type { IOrmAdapter } from '../Orm.adapter.interface';
 
 import { Token } from '@auth/domain/entity/Token';
 
 @Injectable()
-export class OrmMemoryAdapter implements IOrmAdapter {
-  private static TOKENS: Token[] = [];
+export class OrmMemoryAdapter<T> implements IOrmAdapter<T> {
+  private static DATA: any[] = [];
 
-  private static convertToOrm(token: Token): OrmTokenDto {
-    return {
-      id: token.id,
-      userId: token.userId,
-      expireTime: token.expireTime,
-      lastRefresh: token.lastRefresh,
-      expires: token.expires,
-      revoked: token.revoked,
-      type: token.type,
-    };
+  async findAll(): Promise<T[]> {
+    return OrmMemoryAdapter.DATA;
   }
 
-  private static convertToEntity(token: OrmTokenDto): Token {
-    return new Token(
-      token.id,
-      token.userId,
-      token.expireTime,
-      token.lastRefresh,
-      token.revoked,
-      token.type,
-    );
-  }
-
-  async findAll(): Promise<OrmTokenDto[]> {
-    return OrmMemoryAdapter.TOKENS.map(OrmMemoryAdapter.convertToOrm);
-  }
-
-  async findOne<T extends Partial<OrmTokenDto>>(
-    dto: T,
-  ): Promise<OrmTokenDto | null> {
+  async findOne<K extends Partial<T>>(dto: K): Promise<T | null> {
     const objEntries = Object.entries(dto);
 
-    const foundToken = OrmMemoryAdapter.TOKENS.find((token) => {
-      return objEntries.every(([key, value]) => token[key] === value);
+    const foundData = OrmMemoryAdapter.DATA.find((item) => {
+      return objEntries.every(([key, value]) => item[key] === value);
     });
 
-    return foundToken ? OrmMemoryAdapter.convertToOrm(foundToken) : null;
+    return foundData || null;
   }
 
-  async create(dto: OrmTokenDto): Promise<void> {
-    const foundToken = OrmMemoryAdapter.TOKENS.findIndex(
-      ({ userId }) => userId === dto.userId,
-    );
-    const entity = OrmMemoryAdapter.convertToEntity(dto);
-
-    if (foundToken === -1) {
-      OrmMemoryAdapter.TOKENS.push(entity);
-    } else {
-      OrmMemoryAdapter.TOKENS[foundToken] = entity;
-    }
+  async create(dto: T): Promise<void> {
+    OrmMemoryAdapter.DATA.push(dto);
   }
 
-  async update(dto: OrmTokenDto): Promise<void> {
-    const foundIndex = OrmMemoryAdapter.TOKENS.findIndex(
-      (token) => token.id === dto.id,
+  async update(id: string, dto: T): Promise<void> {
+    const foundIndex = OrmMemoryAdapter.DATA.findIndex(
+      (item) => item.id === id,
     );
-    const entity = OrmMemoryAdapter.convertToEntity(dto);
 
-    if (foundIndex === -1) {
-      OrmMemoryAdapter.TOKENS.push(entity);
-    } else {
-      OrmMemoryAdapter.TOKENS[foundIndex] = entity;
-    }
+    if (foundIndex !== -1) OrmMemoryAdapter.DATA[foundIndex] = dto;
   }
 
   async delete(id: string): Promise<void> {
-    const foundIndex = OrmMemoryAdapter.TOKENS.findIndex(
+    const foundIndex = OrmMemoryAdapter.DATA.findIndex(
       (token) => token.id === id,
     );
 
     if (foundIndex !== -1) {
-      OrmMemoryAdapter.TOKENS.splice(foundIndex, 1);
+      OrmMemoryAdapter.DATA.splice(foundIndex, 1);
     }
   }
 
   static reset(tokens: Token[]): void {
-    OrmMemoryAdapter.TOKENS.length = 0;
-    OrmMemoryAdapter.TOKENS.push(...tokens);
+    OrmMemoryAdapter.DATA.length = 0;
+    OrmMemoryAdapter.DATA.push(...tokens);
   }
 }

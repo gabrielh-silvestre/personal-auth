@@ -16,15 +16,27 @@ import { ORM_ADAPTER } from '@auth/utils/constants';
 export class DatabaseGateway implements IDatabaseGateway {
   constructor(
     @Inject(ORM_ADAPTER)
-    private readonly databaseAdapter: IOrmAdapter,
+    private readonly ormAdapter: IOrmAdapter<OrmTokenDto>,
   ) {}
 
   private static convertToDomain(dto: OrmTokenDto): Token {
     return TokenFactory.createTokenFromPersistence(dto);
   }
 
+  private static convertToPersistence(entity: Token): OrmTokenDto {
+    return {
+      id: entity.id,
+      userId: entity.userId,
+      type: entity.type,
+      expires: entity.expires,
+      expireTime: entity.expireTime,
+      lastRefresh: entity.lastRefresh,
+      revoked: entity.revoked,
+    };
+  }
+
   async find(id: string): Promise<Token> {
-    const foundToken = await this.databaseAdapter.findOne({ id });
+    const foundToken = await this.ormAdapter.findOne({ id });
     return foundToken ? DatabaseGateway.convertToDomain(foundToken) : null;
   }
 
@@ -32,7 +44,7 @@ export class DatabaseGateway implements IDatabaseGateway {
     userId: string,
     type: TokenType,
   ): Promise<Token | null> {
-    const foundToken = await this.databaseAdapter.findOne({
+    const foundToken = await this.ormAdapter.findOne({
       userId,
       type,
     });
@@ -41,10 +53,13 @@ export class DatabaseGateway implements IDatabaseGateway {
   }
 
   async create(entity: Token): Promise<void> {
-    await this.databaseAdapter.create(entity);
+    await this.ormAdapter.create(DatabaseGateway.convertToPersistence(entity));
   }
 
   async update(entity: Token): Promise<void> {
-    await this.databaseAdapter.update(entity);
+    await this.ormAdapter.update(
+      entity.id,
+      DatabaseGateway.convertToPersistence(entity),
+    );
   }
 }

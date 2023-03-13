@@ -1,61 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Document, Model } from 'mongoose';
 
-import type { IToken } from '@auth/domain/entity/token.interface';
-import type { IOrmAdapter, OrmTokenDto } from '../Orm.adapter.interface';
+import type { IOrmAdapter } from '../Orm.adapter.interface';
 
-import { TokenDocument, TokenSchema } from './MongooseSchema';
+import { TOKEN_SCHEMA } from '@auth/utils/constants';
 
 @Injectable()
-export class OrmMongooseAdapter implements IOrmAdapter {
+export class OrmMongooseAdapter<T> implements IOrmAdapter<T> {
   constructor(
-    @InjectModel(TokenSchema.name)
-    private readonly model: Model<TokenDocument>,
+    @InjectModel(TOKEN_SCHEMA)
+    private readonly model: Model<T & Document>,
   ) {}
 
-  async findAll(): Promise<OrmTokenDto[]> {
+  async findAll(): Promise<T[]> {
     const foundTokens = await this.model.find().exec();
 
     return foundTokens;
   }
 
-  async findOne<T extends Partial<IToken>>(
-    dto: T,
-  ): Promise<OrmTokenDto | null> {
+  async findOne<K extends Partial<T>>(dto: K): Promise<T | null> {
     const foundToken = await this.model.findOne(dto).exec();
 
     return foundToken || null;
   }
 
-  async create(entity: OrmTokenDto): Promise<void> {
-    const tokenAlreadyExists = await this.findOne({
-      userId: entity.userId,
-      type: entity.type,
-    });
-
-    if (tokenAlreadyExists) {
-      await this.update(entity);
-    } else {
-      await this.model.create(entity);
-    }
+  async create(dto: T): Promise<void> {
+    await this.model.create(dto);
   }
 
-  async update(entity: OrmTokenDto): Promise<void> {
-    await this.model
-      .findOneAndUpdate(
-        {
-          id: entity.id,
-        },
-        {
-          $set: {
-            lastRefresh: entity.lastRefresh,
-            expires: entity.expires,
-            revoked: entity.revoked,
-          },
-        },
-      )
-      .exec();
+  async update(id: string, dto: T): Promise<void> {
+    await this.model.findOneAndUpdate({ id }, dto).exec();
   }
 
   async delete(id: string): Promise<void> {

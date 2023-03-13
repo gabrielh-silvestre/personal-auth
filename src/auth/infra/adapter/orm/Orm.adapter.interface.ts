@@ -10,10 +10,10 @@ export interface OrmTokenDto {
   type: TokenType;
 }
 
-export interface IOrmAdapter {
-  findAll(): Promise<OrmTokenDto[]>;
-  findOne<T extends Partial<OrmTokenDto>>(dto: T): Promise<OrmTokenDto | null>;
-  create(data: OrmTokenDto): Promise<void>;
-  update(data: OrmTokenDto): Promise<void>;
+export interface IOrmAdapter<T> {
+  findAll(): Promise<T[]>;
+  findOne<K extends Partial<T>>(dto: K): Promise<T | null>;
+  create(data: T): Promise<void>;
+  update(id: string, data: T): Promise<void>;
   delete(id: string): Promise<void>;
 }

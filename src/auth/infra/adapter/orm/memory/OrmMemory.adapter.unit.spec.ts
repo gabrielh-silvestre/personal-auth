@@ -9,7 +9,7 @@ import { OrmMemoryAdapter } from './OrmMemory.adapter';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Unit test infra in memory Task repository', () => {
-  let ormAdapter: IOrmAdapter;
+  let ormAdapter: IOrmAdapter<any>;
 
   beforeEach(() => {
     ormAdapter = new OrmMemoryAdapter();
@@ -54,7 +54,6 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken?.id).toBeDefined();
     expect(foundToken?.userId).toBe(newToken.userId);
 
-    // expect(foundToken?.isValid()).toBeTruthy();
     expect(foundToken?.type).toBe('RECOVER_PASSWORD');
   });
 
@@ -62,7 +61,7 @@ describe('Unit test infra in memory Task repository', () => {
     const [tokenToUpdate] = TOKENS_MOCK;
 
     tokenToUpdate.revoke();
-    await ormAdapter.update(tokenToUpdate);
+    await ormAdapter.update(tokenToUpdate.id, tokenToUpdate);
     const foundToken = await ormAdapter.findOne({ id: tokenToUpdate.id });
 
     expect(foundToken).not.toBeNull();
@@ -70,7 +69,7 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken?.userId).toBe(tokenToUpdate.userId);
 
     const newToken = TokenFactory.createAccessToken(uuid());
-    await ormAdapter.update(newToken);
+    await ormAdapter.update(tokenToUpdate.id, newToken);
     const foundNewToken = await ormAdapter.findOne({ id: newToken.id });
 
     expect(foundNewToken).not.toBeNull();

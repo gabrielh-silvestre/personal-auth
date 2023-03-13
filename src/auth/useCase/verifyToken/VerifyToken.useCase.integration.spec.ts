@@ -1,3 +1,4 @@
+import type { IToken } from '@auth/domain/entity/token.interface';
 import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
 import type { IOrmAdapter } from '@auth/infra/adapter/orm/Orm.adapter.interface';
 
@@ -14,7 +15,7 @@ const { id: tokenId } = TOKEN;
 describe('Integration test for VerifyToken use case', () => {
   let verifyTokenUseCase: VerifyTokenUseCase;
   let databaseGateway: IDatabaseGateway;
-  let databaseAdapter: IOrmAdapter;
+  let databaseAdapter: IOrmAdapter<IToken>;
 
   beforeEach(() => {
     OrmMemoryAdapter.reset(TOKENS_MOCK);
