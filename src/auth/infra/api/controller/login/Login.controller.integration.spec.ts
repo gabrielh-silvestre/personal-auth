@@ -6,14 +6,14 @@ import { from } from 'rxjs';
 import { LoginController } from './Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@auth/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
 
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+import { ORM_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
 
 const [{ userId }] = TOKENS_MOCK;
 
@@ -21,15 +21,15 @@ describe('Integration test for Login controller', () => {
   let loginController: LoginController;
 
   beforeEach(async () => {
-    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+    OrmMemoryAdapter.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [LoginController],
       providers: [
         LoginUseCase,
         {
-          provide: DATABASE_ADAPTER,
-          useClass: DatabaseMemoryAdapter,
+          provide: ORM_ADAPTER,
+          useClass: OrmMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,

@@ -1,22 +1,22 @@
 import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
+import type { IOrmAdapter } from '@auth/infra/adapter/orm/Orm.adapter.interface';
 
 import { GenerateTokenUseCase } from './GenerateToken.useCase';
 
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@auth/infra/adapter/orm/memory/OrmMemory.adapter';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Integration test for GenerateToken use case', () => {
   let generateTokenUseCase: GenerateTokenUseCase;
   let databaseGateway: IDatabaseGateway;
-  let databaseAdapter: IDatabaseAdapter;
+  let databaseAdapter: IOrmAdapter;
 
   beforeEach(() => {
-    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+    OrmMemoryAdapter.reset(TOKENS_MOCK);
 
-    databaseAdapter = new DatabaseMemoryAdapter();
+    databaseAdapter = new OrmMemoryAdapter();
     databaseGateway = new DatabaseGateway(databaseAdapter);
     generateTokenUseCase = new GenerateTokenUseCase(databaseGateway);
   });

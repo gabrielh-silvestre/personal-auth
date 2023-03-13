@@ -20,28 +20,27 @@ import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strate
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
 
+import { OrmMongooseAdapter } from './infra/adapter/orm/mongoose/OrmMongoose.adapter';
+import { QueueRmqAdapter } from './infra/adapter/queue/rmq/QueueRmq.adapter';
 import {
   tokenSchema,
   TokenSchema,
-} from './infra/adapter/database/mongoose/MongooseSchema';
-import { DatabaseMongooseAdapter } from './infra/adapter/database/mongoose/DatabaseMongoose.adapter';
-import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
+} from './infra/adapter/orm/mongoose/MongooseSchema';
 
-import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter';
+import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
 import { UserGateway } from './infra/gateway/user/User.gateway';
 
 import {
-  DATABASE_ADAPTER,
+  ORM_ADAPTER,
   DATABASE_GATEWAY,
-  USER_ADAPTER,
+  QUEUE_ADAPTER,
   USER_GATEWAY,
 } from './utils/constants';
 
 @Module({
   imports: [
     CustomJwtModule,
-    RmqModule.register('MAIL'),
-    RmqModule.register('USER'),
+    RmqModule.register('AUTH_QUEUE'),
     MongooseModule.forFeature([
       { name: TokenSchema.name, schema: tokenSchema },
     ]),
@@ -61,16 +60,16 @@ import {
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     {
-      provide: USER_ADAPTER,
-      useClass: UserRmqAdapter,
+      provide: QUEUE_ADAPTER,
+      useClass: QueueRmqAdapter,
     },
     {
       provide: USER_GATEWAY,
       useClass: UserGateway,
     },
     {
-      provide: DATABASE_ADAPTER,
-      useClass: DatabaseMongooseAdapter,
+      provide: ORM_ADAPTER,
+      useClass: OrmMongooseAdapter,
     },
     {
       provide: DATABASE_GATEWAY,
