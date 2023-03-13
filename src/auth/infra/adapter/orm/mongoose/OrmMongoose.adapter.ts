@@ -3,55 +3,32 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import type { IToken } from '@auth/domain/entity/token.interface';
-import type { IDatabaseAdapter } from '../Database.adapter.interface';
-
-import { Token } from '@auth/domain/entity/Token';
+import type { IOrmAdapter, OrmTokenDto } from '../Orm.adapter.interface';
 
 import { TokenDocument, TokenSchema } from './MongooseSchema';
 
 @Injectable()
-export class DatabaseMongooseAdapter implements IDatabaseAdapter {
+export class OrmMongooseAdapter implements IOrmAdapter {
   constructor(
     @InjectModel(TokenSchema.name)
     private readonly model: Model<TokenDocument>,
   ) {}
 
-  private modelToDomain(model: TokenDocument): Token {
-    return new Token(
-      model.id,
-      model.userId,
-      model.expireTime,
-      model.lastRefresh,
-      model.revoked,
-      model.type,
-    );
-  }
-
-  private domainToModel(domain: Token) {
-    return new this.model({
-      id: domain.id,
-      userId: domain.userId,
-      expireTime: domain.expireTime,
-      lastRefresh: domain.lastRefresh,
-      expires: domain.expires,
-      revoked: domain.revoked,
-      type: domain.type,
-    });
-  }
-
-  async findAll(): Promise<Token[]> {
+  async findAll(): Promise<OrmTokenDto[]> {
     const foundTokens = await this.model.find().exec();
 
-    return foundTokens.map((token) => this.modelToDomain(token));
+    return foundTokens;
   }
 
-  async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
+  async findOne<T extends Partial<IToken>>(
+    dto: T,
+  ): Promise<OrmTokenDto | null> {
     const foundToken = await this.model.findOne(dto).exec();
 
-    return !!foundToken ? this.modelToDomain(foundToken) : null;
+    return foundToken || null;
   }
 
-  async create(entity: Token): Promise<void> {
+  async create(entity: OrmTokenDto): Promise<void> {
     const tokenAlreadyExists = await this.findOne({
       userId: entity.userId,
       type: entity.type,
@@ -60,11 +37,11 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
     if (tokenAlreadyExists) {
       await this.update(entity);
     } else {
-      await this.domainToModel(entity).save();
+      await this.model.create(entity);
     }
   }
 
-  async update(entity: Token): Promise<void> {
+  async update(entity: OrmTokenDto): Promise<void> {
     await this.model
       .findOneAndUpdate(
         {

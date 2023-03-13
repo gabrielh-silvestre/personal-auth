@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
-import type { TokenType } from '../entity/token.interface';
+import type { IToken, TokenType } from '../entity/token.interface';
 
 import { Token } from '../entity/Token';
 
@@ -65,5 +65,16 @@ export class TokenFactory {
       default:
         throw new Error('Invalid token type');
     }
+  }
+
+  public static createTokenFromPersistence(dto: IToken): Token {
+    return new Token(
+      dto.id,
+      dto.userId,
+      dto.expireTime,
+      dto.lastRefresh,
+      dto.revoked,
+      dto.type,
+    );
   }
 }
