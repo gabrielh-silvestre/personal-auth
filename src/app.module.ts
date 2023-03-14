@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '@auth/auth.module';
+import { UserModule } from '@user/user.module';
 
 import { MONGO_URI } from '@shared/utils/constants';
 
@@ -21,6 +22,7 @@ import { MONGO_URI } from '@shared/utils/constants';
       inject: [ConfigService],
     }),
     AuthModule,
+    UserModule,
   ],
 })
 export class AppModule {}
