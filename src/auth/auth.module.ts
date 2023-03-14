@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { UserModule } from '@user/user.module';
 import { RmqModule } from '@shared/modules/rmq/rmq.module';
 import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
 
@@ -38,6 +39,7 @@ import {
 
 @Module({
   imports: [
+    UserModule,
     CustomJwtModule,
     RmqModule.register(AUTH_QUEUE),
     MongooseModule.forFeature([{ name: TOKEN_SCHEMA, schema: tokenSchema }]),

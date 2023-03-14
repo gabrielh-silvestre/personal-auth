@@ -62,4 +62,10 @@ export class DatabaseGateway implements IDatabaseGateway {
       DatabaseGateway.convertToPersistence(entity),
     );
   }
+
+  async deleteByUserIdAndType(userId: string, type: TokenType): Promise<void> {
+    const foundToken = await this.ormAdapter.findOne({ userId, type });
+
+    if (foundToken) await this.ormAdapter.delete(foundToken.id);
+  }
 }
