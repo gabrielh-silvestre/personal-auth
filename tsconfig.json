@@ -18,8 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@users/*": ["./src/users/*"],
-      "@tokens/*": ["./src/tokens/*"],
+      "@user/*": ["./src/user/*"],
       "@exceptions/*": ["./src/shared/modules/exceptions/*"],
       "@shared/*": ["./src/shared/*"],
       "@auth/*": ["./src/auth/*"],
