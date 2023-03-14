@@ -17,7 +17,7 @@ export class OrmMemoryAdapter implements IOrmAdapter<OrmUserDto> {
       return objEntries.every(([key, value]) => item[key] === value);
     });
 
-    return foundData;
+    return foundData || null;
   }
 
   async create(data: OrmUserDto): Promise<void> {
