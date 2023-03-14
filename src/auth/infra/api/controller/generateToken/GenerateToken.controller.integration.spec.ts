@@ -3,13 +3,13 @@ import { Test } from '@nestjs/testing';
 import { GenerateTokenUseCase } from '@auth/useCase/generateToken/GenerateToken.useCase';
 import { GenerateTokenController } from './GenerateToken.controller';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { OrmMemoryAdapter } from '@auth/infra/adapter/orm/memory/OrmMemory.adapter';
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
 
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+import { ORM_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
 
 const [{ userId }] = TOKENS_MOCK;
 
@@ -17,15 +17,15 @@ describe('Integration test for GenerateToken controller', () => {
   let generateTokenController: GenerateTokenController;
 
   beforeEach(async () => {
-    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+    OrmMemoryAdapter.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
       controllers: [GenerateTokenController],
       providers: [
         GenerateTokenUseCase,
         {
-          provide: DATABASE_ADAPTER,
-          useClass: DatabaseMemoryAdapter,
+          provide: ORM_ADAPTER,
+          useClass: OrmMemoryAdapter,
         },
         {
           provide: DATABASE_GATEWAY,

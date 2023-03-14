@@ -14,7 +14,16 @@ export class LoginUseCase {
     private readonly databaseGateway: IDatabaseGateway,
   ) {}
 
+  private async resetTokens(userId: string): Promise<void> {
+    Promise.allSettled([
+      this.databaseGateway.deleteByUserIdAndType(userId, 'ACCESS'),
+      this.databaseGateway.deleteByUserIdAndType(userId, 'REFRESH'),
+    ]);
+  }
+
   async execute({ userId }: InputLoginDto): Promise<OutputLoginDto | never> {
+    await this.resetTokens(userId);
+
     const accessToken = TokenFactory.createAccessToken(userId);
     const refreshToken = TokenFactory.createRefreshToken(userId);
 

@@ -2,38 +2,70 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { TokenType } from '@auth/domain/entity/token.interface';
 import type { IDatabaseGateway } from './Database.gateway.interface';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
+import type {
+  IOrmAdapter,
+  OrmTokenDto,
+} from '@shared/infra/adapter/orm/Orm.adapter.interface';
 
 import { Token } from '@auth/domain/entity/Token';
+import { TokenFactory } from '@auth/domain/factory/Token.factory';
 
-import { DATABASE_ADAPTER } from '@auth/utils/constants';
+import { ORM_ADAPTER } from '@auth/utils/constants';
 
 @Injectable()
 export class DatabaseGateway implements IDatabaseGateway {
   constructor(
-    @Inject(DATABASE_ADAPTER)
-    private readonly databaseAdapter: IDatabaseAdapter,
+    @Inject(ORM_ADAPTER)
+    private readonly ormAdapter: IOrmAdapter<OrmTokenDto>,
   ) {}
 
+  private static convertToDomain(dto: OrmTokenDto): Token {
+    return TokenFactory.createTokenFromPersistence(dto);
+  }
+
+  private static convertToPersistence(entity: Token): OrmTokenDto {
+    return {
+      id: entity.id,
+      userId: entity.userId,
+      type: entity.type,
+      expires: entity.expires,
+      expireTime: entity.expireTime,
+      lastRefresh: entity.lastRefresh,
+      revoked: entity.revoked,
+    };
+  }
+
   async find(id: string): Promise<Token> {
-    return this.databaseAdapter.findOne({ id });
+    const foundToken = await this.ormAdapter.findOne({ id });
+    return foundToken ? DatabaseGateway.convertToDomain(foundToken) : null;
   }
 
   async findByUserIdAndType(
     userId: string,
     type: TokenType,
   ): Promise<Token | null> {
-    return this.databaseAdapter.findOne({
+    const foundToken = await this.ormAdapter.findOne({
       userId,
       type,
     });
+
+    return foundToken ? DatabaseGateway.convertToDomain(foundToken) : null;
   }
 
   async create(entity: Token): Promise<void> {
-    await this.databaseAdapter.create(entity);
+    await this.ormAdapter.create(DatabaseGateway.convertToPersistence(entity));
   }
 
   async update(entity: Token): Promise<void> {
-    await this.databaseAdapter.update(entity);
+    await this.ormAdapter.update(
+      entity.id,
+      DatabaseGateway.convertToPersistence(entity),
+    );
+  }
+
+  async deleteByUserIdAndType(userId: string, type: TokenType): Promise<void> {
+    const foundToken = await this.ormAdapter.findOne({ userId, type });
+
+    if (foundToken) await this.ormAdapter.delete(foundToken.id);
   }
 }

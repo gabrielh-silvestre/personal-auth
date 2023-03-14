@@ -1,20 +1,27 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { lastValueFrom } from 'rxjs';
+import { compare } from 'bcrypt';
 
 import type { IUserGateway, OutputUser } from './user.gateway.interface';
-import type { IUserAdapter } from '@auth/infra/adapter/user/User.adapter.interface';
+import type { IUserRepository } from '@user/domain/repository/user.repository.interface';
 
-import { USER_ADAPTER } from '@auth/utils/constants';
+import { USER_REPOSITORY } from '@shared/utils/constants/injectNames';
 
 @Injectable()
 export class UserGateway implements IUserGateway {
   constructor(
-    @Inject(USER_ADAPTER) private readonly userAdapter: IUserAdapter,
+    @Inject(USER_REPOSITORY) private readonly repository: IUserRepository,
   ) {}
 
-  verifyCredentials(email: string, password: string): Promise<OutputUser> {
-    return lastValueFrom(
-      this.userAdapter.send({ email, password }, 'verify_user_credentials'),
-    );
+  async verifyCredentials(
+    email: string,
+    password: string,
+  ): Promise<OutputUser> {
+    const user = await this.repository.findByEmail(email);
+    if (!user) return null;
+
+    const isPasswordValid = await compare(password, user.password);
+    if (!isPasswordValid) return null;
+
+    return { id: user.id };
   }
 }
