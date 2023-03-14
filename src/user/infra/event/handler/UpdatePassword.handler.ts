@@ -18,7 +18,6 @@ export class UpdatePasswordHandler implements IEventHandler {
 
   @EventPattern('UserChangedPassword')
   handle(@Payload() event: IEvent<UpdatePasswordEventPayload>): void {
-    console.log('UserChangedPassword event received', event);
     this.updatePasswordUseCase.execute(event.payload);
   }
 }
