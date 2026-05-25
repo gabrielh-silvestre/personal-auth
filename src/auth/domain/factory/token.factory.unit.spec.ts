@@ -83,6 +83,6 @@ describe('Test domain Token factory', () => {
         'INVALID_TYPE' as TokenType,
         VALID_USER_ID,
       ),
-    ).toThrowError('Invalid token type');
+    ).toThrow('Invalid token type');
   });
 });

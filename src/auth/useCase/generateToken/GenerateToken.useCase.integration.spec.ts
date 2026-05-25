@@ -34,6 +34,6 @@ describe('Integration test for GenerateToken use case', () => {
   it('should throw an exception when token type is invalid', async () => {
     await expect(
       generateTokenUseCase.execute({ userId: '1', type: 'invalid' as any }),
-    ).rejects.toThrowError('Invalid token type');
+    ).rejects.toThrow('Invalid token type');
   });
 });

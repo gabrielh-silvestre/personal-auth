@@ -36,13 +36,13 @@ describe('Integration test for VerifyToken use case', () => {
   it('should throw an exception when token does not exist', async () => {
     await expect(
       verifyTokenUseCase.execute({ tokenId: 'invalid' }),
-    ).rejects.toThrowError('Invalid token');
+    ).rejects.toThrow('Invalid token');
   });
 
   it('should throw an exception when token is expired', async () => {
     TOKEN.revoke();
 
-    await expect(verifyTokenUseCase.execute({ tokenId })).rejects.toThrowError(
+    await expect(verifyTokenUseCase.execute({ tokenId })).rejects.toThrow(
       'Invalid token',
     );
   });

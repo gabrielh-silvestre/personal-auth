@@ -80,7 +80,7 @@ describe('Unit test domain Token entity', () => {
       'RECOVER_PASSWORD',
     );
 
-    expect(() => token.refresh()).toThrowError(
+    expect(() => token.refresh()).toThrow(
       'Only refresh tokens can be refreshed',
     );
   });
