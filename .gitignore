@@ -44,3 +44,17 @@ t.ts
 
 # stryker temp files
 .stryker-tmp
+
+# AI Tools
+## Claude Code
+.claude/settings.local.json
+
+## oh-my-claudecode (OMC) / OMX — runtime state, ephemeral
+.omc/
+.omx/
+
+## OpenAI Codex CLI
+.codex/
+
+## AI-generated agent documentation
+AGENTS.md
