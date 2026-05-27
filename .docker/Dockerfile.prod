@@ -27,4 +27,9 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json .
 
-CMD ["npm", "run", "start:prod"]
+# OpenTelemetry: default OFF so existing deployments are byte-identical.
+# Operators can flip OTEL_ENABLED=true via environment to enable the
+# preload-driven OTLP pipeline without rebuilding the image.
+ENV OTEL_ENABLED=false
+
+CMD ["sh", "-c", "if [ \"$OTEL_ENABLED\" = \"true\" ]; then node -r ./dist/shared/modules/telemetry/instrumentation.js dist/main; else node dist/main; fi"]
