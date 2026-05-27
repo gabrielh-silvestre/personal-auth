@@ -94,23 +94,26 @@ export const withExtractedAmqpContext = <T>(
   spanName: string,
   fn: () => Promise<T>,
 ): Promise<T> => {
+  // AMQP headers can hold Buffer | number | object values per the protocol;
+  // propagation.extract only consumes string values, so non-string headers
+  // are silently ignored (causes no error, just no parent context extracted).
   const carrier = (properties?.headers ?? {}) as Record<string, string>;
   const parentCtx = propagation.extract(context.active(), carrier);
   const tracer = trace.getTracer(TracerNames.RMQ);
-  return context.with(parentCtx, async () => {
-    const span = tracer.startSpan(spanName, undefined, parentCtx);
-    const scopedCtx = trace.setSpan(parentCtx, span);
-    try {
-      return await context.with(scopedCtx, fn);
-    } catch (error) {
-      span.recordException(error as Error);
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: (error as Error)?.message,
-      });
-      throw error;
-    } finally {
-      span.end();
-    }
-  });
+  return context.with(parentCtx, () =>
+    tracer.startActiveSpan(spanName, async (span) => {
+      try {
+        return await fn();
+      } catch (error) {
+        span.recordException(error as Error);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: (error as Error)?.message,
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    }),
+  );
 };

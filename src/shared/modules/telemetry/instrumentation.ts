@@ -1,5 +1,7 @@
 // Preload entrypoint for OpenTelemetry. Loaded via
-//   node -r ./dist/src/shared/modules/telemetry/instrumentation.js dist/src/main
+//   node -r ./dist/shared/modules/telemetry/instrumentation.js dist/main
+// Nest's build emits to ./dist with sourceRoot=src stripped, so both the
+// preload module and the app entry sit at dist/, not dist/src/.
 // Never imported as a module (the ESLint rule in .eslintrc.js enforces this).
 //
 // Lazy-require discipline: the only thing that may execute before the

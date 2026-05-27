@@ -46,7 +46,7 @@ describe('telemetry preload', () => {
         require('${PRELOAD_PATH}');
         const keys = Object.keys(require.cache);
         const offenders = keys.filter((k) =>
-          /@opentelemetry\\/(sdk-(trace|metrics|logs|node)|exporter-)/.test(k),
+          /@opentelemetry\\//.test(k),
         );
         console.log(JSON.stringify(offenders));
       `;
