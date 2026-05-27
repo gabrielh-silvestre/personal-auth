@@ -1,4 +1,5 @@
 import {
+  SpanStatusCode,
   trace,
   type AttributeValue,
   type Span,
@@ -31,9 +32,19 @@ export class Telemetry {
     trace.getActiveSpan()?.setStatus(status);
   }
 
-  /** No-op when no active span / no global provider. */
+  /**
+   * Records the exception on the active span AND sets status to ERROR.
+   * Backends like Tempo/Jaeger/Grafana filter and alert on
+   * span.status.code=ERROR; recording the exception event without flipping
+   * status leaves error spans invisible to dashboards.
+   * No-op when no active span / no global provider.
+   */
   static recordExceptionIfActive(error: unknown): void {
-    trace.getActiveSpan()?.recordException(error as Error);
+    const span = trace.getActiveSpan();
+    if (!span) return;
+    const err = error instanceof Error ? error : new Error(String(error));
+    span.recordException(err);
+    span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
   }
 
   /**
