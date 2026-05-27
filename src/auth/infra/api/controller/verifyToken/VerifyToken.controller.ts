@@ -23,7 +23,6 @@ export class VerifyTokenController {
     const { userId } = await this.verifyTokenUseCase.execute({
       tokenId: data.user.tokenId,
     });
-
     return { userId };
   }
 }

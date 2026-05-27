@@ -8,6 +8,8 @@ import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
+import { TelemetryTokenType } from '@shared/modules/telemetry/metadata';
+
 @Controller()
 export class GenerateTokenController {
   constructor(
@@ -20,10 +22,10 @@ export class GenerateTokenController {
     type: GenerateTokenType;
   }): Promise<string> {
     const tokenId = await this.generateTokenUseCase.execute(data);
-
     return this.jwtAccess.sign({ tokenId, userId: data.userId });
   }
 
+  @TelemetryTokenType('recover')
   @UseFilters(new ExceptionFilterRpc())
   @MessagePattern('auth.generate_recover_token')
   async handleRecoverToken(
