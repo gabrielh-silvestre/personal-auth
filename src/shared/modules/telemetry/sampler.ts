@@ -1,3 +1,4 @@
+import { diag } from '@opentelemetry/api';
 import {
   AlwaysOffSampler,
   AlwaysOnSampler,
@@ -7,6 +8,15 @@ import {
 } from '@opentelemetry/sdk-trace-base';
 
 import type { TelemetryEnv } from './env';
+
+const KNOWN_SAMPLERS = new Set([
+  'always_on',
+  'always_off',
+  'traceidratio',
+  'parentbased_always_on',
+  'parentbased_always_off',
+  'parentbased_traceidratio',
+]);
 
 const parseRatio = (raw: string): number | undefined => {
   if (raw === '') return undefined;
@@ -19,6 +29,11 @@ export const buildSampler = (
   env: Pick<TelemetryEnv, 'OTEL_TRACES_SAMPLER' | 'OTEL_TRACES_SAMPLER_ARG'>,
 ): Sampler => {
   const name = env.OTEL_TRACES_SAMPLER.toLowerCase();
+  if (!KNOWN_SAMPLERS.has(name)) {
+    diag.warn(
+      `[telemetry] Unknown OTEL_TRACES_SAMPLER="${env.OTEL_TRACES_SAMPLER}"; falling back to parentbased_always_on.`,
+    );
+  }
   switch (name) {
     case 'always_on':
       return new AlwaysOnSampler();
