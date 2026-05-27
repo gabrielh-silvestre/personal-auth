@@ -32,4 +32,8 @@ COPY --from=builder /app/package.json .
 # preload-driven OTLP pipeline without rebuilding the image.
 ENV OTEL_ENABLED=false
 
-CMD ["sh", "-c", "if [ \"$OTEL_ENABLED\" = \"true\" ]; then node -r ./dist/shared/modules/telemetry/instrumentation.js dist/main; else node dist/main; fi"]
+# `exec` replaces the shell PID 1 with node so SIGTERM/SIGINT are delivered
+# directly to the Node process. Without it, signals stop at `sh` and the Nest
+# beforeApplicationShutdown hook (which flushes OTel exporters) never fires
+# on `docker stop`, dropping spans/metrics at teardown.
+CMD ["sh", "-c", "if [ \"$OTEL_ENABLED\" = \"true\" ]; then exec node -r ./dist/shared/modules/telemetry/instrumentation.js dist/main; else exec node dist/main; fi"]

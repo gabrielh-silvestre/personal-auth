@@ -17,15 +17,6 @@ set -euo pipefail
 PORT="${PORT:-3001}"
 APP_PID=""
 
-cleanup() {
-  if [[ -n "${APP_PID}" ]]; then
-    kill "${APP_PID}" 2>/dev/null || true
-  fi
-  docker compose --profile observability down -v >/dev/null 2>&1 || \
-    docker-compose --profile observability down -v >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
 dc() {
   if docker compose version >/dev/null 2>&1; then
     docker compose "$@"
@@ -34,8 +25,26 @@ dc() {
   fi
 }
 
+# cleanup: give the Nest shutdown hook time to flush OTel before we tear
+# down the collector, and avoid `-v` so we don't nuke named volumes from
+# an existing dev stack (Mongo/Rabbit data) on the developer's machine.
+cleanup() {
+  if [[ -n "${APP_PID}" ]]; then
+    kill -TERM "${APP_PID}" 2>/dev/null || true
+    wait "${APP_PID}" 2>/dev/null || true
+  fi
+  dc --profile observability down >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
 echo "[verify-otel] Bringing up otel-collector, mongo, rabbitmq..."
 dc --profile observability up -d otel-collector mongo rabbitmq
+
+echo "[verify-otel] Waiting for otel-collector OTLP/gRPC port 4317..."
+if ! timeout 30 bash -c 'until (echo >/dev/tcp/127.0.0.1/4317) >/dev/null 2>&1; do sleep 1; done'; then
+  echo "[verify-otel] otel-collector did not open :4317 within 30s." >&2
+  exit 1
+fi
 
 echo "[verify-otel] Building app..."
 npm run build >/dev/null
