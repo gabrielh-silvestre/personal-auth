@@ -14,6 +14,10 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // Required so TelemetryShutdownService.beforeApplicationShutdown fires
+  // and the OTel providers drain BEFORE the process exits.
+  app.enableShutdownHooks();
+
   app.useGlobalFilters(new GlobalExceptionRestFilter());
   app.use(cookieParser());
 
