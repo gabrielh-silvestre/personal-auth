@@ -8,7 +8,9 @@ import {
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 import { Test } from '@nestjs/testing';
-import { from } from 'rxjs';
+import { Reflector } from '@nestjs/core';
+import { from, firstValueFrom } from 'rxjs';
+import type { CallHandler, ExecutionContext } from '@nestjs/common';
 
 import { LoginController } from '@auth/infra/api/controller/login/Login.controller';
 import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
@@ -21,6 +23,7 @@ import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
 
 import { AttributeKeys, Transport } from '../constants';
+import { TelemetryInterceptor } from '../interceptor/Telemetry.interceptor';
 
 const [{ userId }] = TOKENS_MOCK;
 
@@ -29,6 +32,7 @@ describe('telemetry pipeline (integration)', () => {
   let provider: BasicTracerProvider;
   let cm: AsyncLocalStorageContextManager;
   let loginController: LoginController;
+  let interceptor: TelemetryInterceptor;
 
   beforeAll(() => {
     exporter = new InMemorySpanExporter();
@@ -76,12 +80,27 @@ describe('telemetry pipeline (integration)', () => {
     }).compile();
 
     loginController = moduleRef.get<LoginController>(LoginController);
+    interceptor = new TelemetryInterceptor(new Reflector());
   });
 
   it('REST handler emits a span carrying auth.userId and auth.transport=rest', async () => {
     const tracer = trace.getTracer('integration-test');
+    const req = { user: { userId } } as Request;
+
+    const ctx = {
+      getType: () => 'http',
+      getClass: () => LoginController,
+      getHandler: () => LoginController.prototype.handleRest,
+      switchToHttp: () => ({ getRequest: () => req }),
+      switchToRpc: () => ({ getContext: () => ({}), getData: () => ({}) }),
+    } as unknown as ExecutionContext;
+
+    const handler: CallHandler = {
+      handle: () => from(loginController.handleRest(req)),
+    };
+
     await tracer.startActiveSpan('TEST.outer', async (outer) => {
-      await loginController.handleRest({ user: { userId } } as Request);
+      await firstValueFrom(interceptor.intercept(ctx, handler));
       outer.end();
     });
 
@@ -98,8 +117,25 @@ describe('telemetry pipeline (integration)', () => {
 
   it('gRPC handler tags the active span with auth.transport=grpc', async () => {
     const tracer = trace.getTracer('integration-test');
+    const req = { user: { userId } } as Request;
+
+    const ctx = {
+      getType: () => 'rpc',
+      getClass: () => LoginController,
+      getHandler: () => LoginController.prototype.handleGrpc,
+      switchToHttp: () => ({ getRequest: () => req }),
+      switchToRpc: () => ({
+        getContext: () => ({}),
+        getData: () => ({ user: { userId } }),
+      }),
+    } as unknown as ExecutionContext;
+
+    const handler: CallHandler = {
+      handle: () => from(loginController.handleGrpc(req)),
+    };
+
     await tracer.startActiveSpan('TEST.outer', async (outer) => {
-      await loginController.handleGrpc({ user: { userId } } as Request);
+      await firstValueFrom(interceptor.intercept(ctx, handler));
       outer.end();
     });
 

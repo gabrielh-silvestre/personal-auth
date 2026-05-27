@@ -89,6 +89,12 @@ export const recordCustomException = (error: unknown): void => {
   if (Object.keys(attrs).length > 0) span.setAttributes(attrs);
 };
 
+/**
+ * @deprecated Since the introduction of `TelemetryInterceptor` (TelemetryModule),
+ * AMQP W3C traceparent extraction happens automatically at the interceptor boundary.
+ * Kept exported for ad-hoc use in infra adapters that need manual extraction outside
+ * the Nest request lifecycle. Do not use in controllers.
+ */
 export const withExtractedAmqpContext = <T>(
   properties: { headers?: Record<string, unknown> } | undefined,
   spanName: string,

@@ -22,9 +22,6 @@ import { RefreshTokenGuard } from '../../guard/RefreshToken.guard';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
 
-import { Telemetry } from '@shared/modules/telemetry/telemetry';
-import { AttributeKeys, Transport } from '@shared/modules/telemetry/constants';
-
 type ResponseRefresh = {
   access: string;
   refresh: string;
@@ -53,8 +50,6 @@ export class RefreshController {
       userId,
     });
 
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_USER_ID]: userId });
-
     return { access, refresh };
   }
 
@@ -64,7 +59,6 @@ export class RefreshController {
   async handleRest(
     @Request() data: IRequest,
   ): Promise<ResponseRefresh | never> {
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_TRANSPORT]: Transport.REST });
     return this.handle(data.user);
   }
 
@@ -72,7 +66,6 @@ export class RefreshController {
   @UseGuards(RefreshTokenGuard)
   @GrpcMethod('AuthService', 'RefreshToken')
   async handleGrpc(@Body() data: IRequest): Promise<ResponseRefresh | never> {
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_TRANSPORT]: Transport.GRPC });
     return this.handle(data.user);
   }
 }

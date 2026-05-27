@@ -21,9 +21,6 @@ import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
 import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
 
-import { Telemetry } from '@shared/modules/telemetry/telemetry';
-import { AttributeKeys, Transport } from '@shared/modules/telemetry/constants';
-
 type ResponseLogin = {
   access: string;
   refresh: string;
@@ -50,8 +47,6 @@ export class LoginController {
       userId,
     });
 
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_USER_ID]: userId });
-
     return { access, refresh };
   }
 
@@ -59,7 +54,6 @@ export class LoginController {
   @Post('/login')
   @UseInterceptors(new ParseHalJsonInterceptor<ResponseLogin>())
   async handleRest(@Request() data: IRequest): Promise<ResponseLogin | never> {
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_TRANSPORT]: Transport.REST });
     return this.handle({ userId: data.user.userId });
   }
 
@@ -67,7 +61,6 @@ export class LoginController {
   @UseFilters(new ExceptionFilterRpc())
   @GrpcMethod('AuthService', 'LoginUser')
   async handleGrpc(@Payload() data: IRequest): Promise<ResponseLogin | never> {
-    Telemetry.setAttributes({ [AttributeKeys.AUTH_TRANSPORT]: Transport.GRPC });
     return this.handle({ userId: data.user.userId });
   }
 }
