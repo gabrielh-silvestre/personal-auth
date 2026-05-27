@@ -1,5 +1,10 @@
 import { Controller, UseFilters } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 
 import type { GenerateTokenType } from '@auth/useCase/generateToken/GenerateToken.dto';
 
@@ -7,6 +12,10 @@ import { GenerateTokenUseCase } from '@auth/useCase/generateToken/GenerateToken.
 import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
 
 import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
+
+import { Telemetry } from '@shared/modules/telemetry/telemetry';
+import { AttributeKeys, Transport } from '@shared/modules/telemetry/constants';
+import { withExtractedAmqpContext } from '@shared/modules/telemetry/helpers';
 
 @Controller()
 export class GenerateTokenController {
@@ -21,6 +30,12 @@ export class GenerateTokenController {
   }): Promise<string> {
     const tokenId = await this.generateTokenUseCase.execute(data);
 
+    Telemetry.setAttributes({
+      [AttributeKeys.AUTH_USER_ID]: data.userId,
+      [AttributeKeys.AUTH_TOKEN_TYPE]: data.type,
+      [AttributeKeys.AUTH_TRANSPORT]: Transport.RMQ,
+    });
+
     return this.jwtAccess.sign({ tokenId, userId: data.userId });
   }
 
@@ -28,7 +43,12 @@ export class GenerateTokenController {
   @MessagePattern('auth.generate_recover_token')
   async handleRecoverToken(
     @Payload() { userId }: { userId: string },
+    @Ctx() ctx?: RmqContext,
   ): Promise<string | never> {
-    return this.handle({ userId, type: 'recover' });
+    return withExtractedAmqpContext(
+      ctx?.getMessage?.()?.properties,
+      'GenerateTokenController.handleRecoverToken',
+      () => this.handle({ userId, type: 'recover' }),
+    );
   }
 }
