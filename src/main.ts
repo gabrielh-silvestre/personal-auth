@@ -1,3 +1,5 @@
+import './shared/modules/telemetry/instrumentation';
+
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import * as cookieParser from 'cookie-parser';
@@ -21,11 +23,12 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionRestFilter());
   app.use(cookieParser());
 
-  const authRmqService = app.get<RmqService>(RmqService);
-
-  app.connectMicroservice<MicroserviceOptions>(
-    authRmqService.getOptions('AUTH', true),
-  );
+  if (process.env.RABBITMQ_ENABLED === 'true') {
+    const authRmqService = app.get<RmqService>(RmqService);
+    app.connectMicroservice<MicroserviceOptions>(
+      authRmqService.getOptions('AUTH', true),
+    );
+  }
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
@@ -33,8 +36,8 @@ async function bootstrap() {
       url: GRPC_URL,
       package: ['proto.tokens', 'proto.auth'],
       protoPath: [
-        join(__dirname, '../auth/infra/proto/token.proto'),
-        join(__dirname, '../auth/infra/proto/auth.proto'),
+        join(__dirname, 'auth/infra/proto/token.proto'),
+        join(__dirname, 'auth/infra/proto/auth.proto'),
       ],
     },
   });

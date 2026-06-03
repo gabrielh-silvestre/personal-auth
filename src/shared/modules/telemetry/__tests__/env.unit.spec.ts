@@ -5,7 +5,7 @@ describe('loadTelemetryEnv', () => {
   it('returns sane defaults when env is empty', () => {
     const env = loadTelemetryEnv({});
 
-    expect(env.OTEL_ENABLED).toBe(false);
+    expect(env.OTEL_ENABLED).toBe(true);
     expect(env.OTEL_SERVICE_NAME).toBe('personal-auth');
     expect(env.OTEL_SERVICE_VERSION).toBe('0.0.0');
     expect(env.OTEL_EXPORTER_OTLP_ENDPOINT).toBe(DefaultConfig.OTLP_ENDPOINT);
@@ -23,14 +23,12 @@ describe('loadTelemetryEnv', () => {
     expect(env.NODE_ENV).toBe('local');
   });
 
-  it('parses OTEL_ENABLED as boolean (case-insensitive truthy only)', () => {
+  it('parses OTEL_ENABLED as opt-out boolean (disabled only when explicitly "false")', () => {
     expect(loadTelemetryEnv({ OTEL_ENABLED: 'true' }).OTEL_ENABLED).toBe(true);
     expect(loadTelemetryEnv({ OTEL_ENABLED: 'TRUE' }).OTEL_ENABLED).toBe(true);
-    expect(loadTelemetryEnv({ OTEL_ENABLED: 'false' }).OTEL_ENABLED).toBe(
-      false,
-    );
-    expect(loadTelemetryEnv({ OTEL_ENABLED: '1' }).OTEL_ENABLED).toBe(false);
-    expect(loadTelemetryEnv({ OTEL_ENABLED: '' }).OTEL_ENABLED).toBe(false);
+    expect(loadTelemetryEnv({ OTEL_ENABLED: '1' }).OTEL_ENABLED).toBe(true);
+    expect(loadTelemetryEnv({ OTEL_ENABLED: '' }).OTEL_ENABLED).toBe(true);
+    expect(loadTelemetryEnv({ OTEL_ENABLED: 'false' }).OTEL_ENABLED).toBe(false);
   });
 
   it('parses comma-separated OTEL_NODE_DISABLED_INSTRUMENTATIONS, trimming entries', () => {

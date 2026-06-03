@@ -37,7 +37,7 @@ const parsePositiveInt = (
 export const loadTelemetryEnv = (
   source: NodeJS.ProcessEnv = process.env,
 ): TelemetryEnv => ({
-  OTEL_ENABLED: truthy(source.OTEL_ENABLED),
+  OTEL_ENABLED: source.OTEL_ENABLED !== 'false',
   OTEL_SERVICE_NAME: source.OTEL_SERVICE_NAME ?? 'personal-auth',
   OTEL_SERVICE_VERSION: source.OTEL_SERVICE_VERSION ?? '0.0.0',
   OTEL_EXPORTER_OTLP_ENDPOINT:
