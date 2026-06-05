@@ -11,6 +11,8 @@ import {
 import { Exception } from '@exceptions/entity/Exception';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 
+import { Telemetry } from '@shared/modules/telemetry/telemetry';
+
 @Catch(Error)
 export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
   private readonly logger: Logger = new Logger();
@@ -43,6 +45,8 @@ export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
   }
 
   catch(exception: Error, host: ArgumentsHost) {
+    Telemetry.recordExceptionIfActive(exception);
+
     const requestType = host.getType();
 
     if (requestType === 'http') {

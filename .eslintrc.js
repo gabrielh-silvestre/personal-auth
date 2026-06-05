@@ -15,11 +15,39 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'test/eslint-fixtures/**'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
   },
+  overrides: [
+    {
+      files: ['src/**/*.ts', 'test/**/*.ts'],
+      excludedFiles: ['src/shared/modules/telemetry/**'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: ['@opentelemetry/*'],
+                message:
+                  'Import @opentelemetry only inside src/shared/modules/telemetry/.',
+              },
+              {
+                group: [
+                  '**/shared/modules/telemetry/instrumentation',
+                  '@shared/modules/telemetry/instrumentation',
+                ],
+                message:
+                  'The preload must not be imported. Load it with `node -r` only.',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 };

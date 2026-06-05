@@ -3,9 +3,10 @@ import { map, Observable } from 'rxjs';
 
 import type { RestResponseCreateUser } from '@shared/infra/rest/Response.type';
 
-export class ParseHalJsonInterceptor<T>
-  implements NestInterceptor<T, RestResponseCreateUser<T>>
-{
+export class ParseHalJsonInterceptor<T> implements NestInterceptor<
+  T,
+  RestResponseCreateUser<T>
+> {
   intercept(
     context: ExecutionContext,
     next: CallHandler<T>,

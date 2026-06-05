@@ -41,8 +41,8 @@ describe('Integration test for Refresh use case', () => {
   });
 
   it('should throw an error when the token is invalid', async () => {
-    await expect(
-      refreshUseCase.execute({ userId: accessId }),
-    ).rejects.toThrow('Invalid token');
+    await expect(refreshUseCase.execute({ userId: accessId })).rejects.toThrow(
+      'Invalid token',
+    );
   });
 });

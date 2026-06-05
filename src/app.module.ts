@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 
 import { MONGO_URI } from '@shared/utils/constants';
 
+import { TelemetryModule } from '@shared/modules/telemetry/Telemetry.module';
+import { TelemetryShutdownModule } from '@shared/modules/telemetry/telemetry-shutdown.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +27,8 @@ import { MONGO_URI } from '@shared/utils/constants';
       inject: [ConfigService],
     }),
     AuthModule,
+    TelemetryModule,
+    TelemetryShutdownModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: .docker/Dockerfile.dev
-    command: npm run start:dev
+    command: npm run start:dev:obs
     restart: on-failure
-    mem_limit: 512m
+    mem_limit: 768m
     volumes:
       - .:/app
       - /app/node_modules
@@ -16,9 +16,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     environment:
+      - NODE_OPTIONS=--max-old-space-size=600
       - PORT=${PORT}
       - GRPC_URL=backend:50051
 
@@ -30,6 +29,19 @@ services:
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRES_IN=${JWT_REFRESH_TOKEN_EXPIRES_IN}
 
+      - OTEL_ENABLED=${OTEL_ENABLED:-true}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME:-personal-auth}
+      - OTEL_SERVICE_VERSION=${OTEL_SERVICE_VERSION:-0.0.0}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://jaeger:4317}
+      - OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:-http://jaeger:4318/v1/logs}
+      - OTEL_TRACES_SAMPLER=${OTEL_TRACES_SAMPLER:-parentbased_always_on}
+      - OTEL_TRACES_SAMPLER_ARG=${OTEL_TRACES_SAMPLER_ARG:-}
+      - OTEL_LOG_LEVEL=${OTEL_LOG_LEVEL:-info}
+      - OTEL_METRIC_EXPORT_INTERVAL_MS=${OTEL_METRIC_EXPORT_INTERVAL_MS:-60000}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES:-deployment.environment=local}
+      - OTEL_NODE_DISABLED_INSTRUMENTATIONS=${OTEL_NODE_DISABLED_INSTRUMENTATIONS:-}
+
+      - RABBITMQ_ENABLED=${RABBITMQ_ENABLED:-false}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
@@ -76,7 +88,31 @@ services:
     networks:
       - personal-network
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    mem_limit: 256m
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    restart: unless-stopped
+    networks:
+      - personal-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.103.0
+    # profiles: ["observability"]
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=${DD_SITE:-us5.datadoghq.com}
+    networks:
+      - personal-network
+
 networks:
   personal-network:
-    name: personal-network
     driver: bridge

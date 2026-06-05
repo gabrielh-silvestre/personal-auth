@@ -1,3 +1,5 @@
+import './shared/modules/telemetry/instrumentation';
+
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import * as cookieParser from 'cookie-parser';
@@ -7,21 +9,29 @@ import { AppModule } from './app.module';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
+import { OtelLoggerService } from '@shared/modules/telemetry/logger/OtelLogger.service';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;
   const GRPC_URL = process.env.GRPC_URL || 'localhost:50051';
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new OtelLoggerService(),
+  });
+
+  // Required so TelemetryShutdownService.beforeApplicationShutdown fires
+  // and the OTel providers drain BEFORE the process exits.
+  app.enableShutdownHooks();
 
   app.useGlobalFilters(new GlobalExceptionRestFilter());
   app.use(cookieParser());
 
-  const authRmqService = app.get<RmqService>(RmqService);
-
-  app.connectMicroservice<MicroserviceOptions>(
-    authRmqService.getOptions('AUTH', true),
-  );
+  if (process.env.RABBITMQ_ENABLED === 'true') {
+    const authRmqService = app.get<RmqService>(RmqService);
+    app.connectMicroservice<MicroserviceOptions>(
+      authRmqService.getOptions('AUTH', true),
+    );
+  }
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
@@ -29,8 +39,8 @@ async function bootstrap() {
       url: GRPC_URL,
       package: ['proto.tokens', 'proto.auth'],
       protoPath: [
-        join(__dirname, '../auth/infra/proto/token.proto'),
-        join(__dirname, '../auth/infra/proto/auth.proto'),
+        join(__dirname, 'auth/infra/proto/token.proto'),
+        join(__dirname, 'auth/infra/proto/auth.proto'),
       ],
     },
   });
