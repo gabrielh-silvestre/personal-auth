@@ -9,12 +9,15 @@ import { AppModule } from './app.module';
 
 import { RmqService } from '@shared/modules/rmq/rmq.service';
 import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
+import { OtelLoggerService } from '@shared/modules/telemetry/logger/OtelLogger.service';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;
   const GRPC_URL = process.env.GRPC_URL || 'localhost:50051';
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new OtelLoggerService(),
+  });
 
   // Required so TelemetryShutdownService.beforeApplicationShutdown fires
   // and the OTel providers drain BEFORE the process exits.
