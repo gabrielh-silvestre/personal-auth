@@ -1,15 +1,18 @@
 import { Test } from '@nestjs/testing';
 
-import { GenerateTokenUseCase } from '@auth/useCase/generateToken/GenerateToken.useCase';
-import { GenerateTokenController } from './GenerateToken.controller';
+import { GenerateTokenUseCase } from '@auth/useCase/generateToken/GenerateToken.useCase.js';
+import { GenerateTokenController } from './GenerateToken.controller.js';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter.js';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.js';
 
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service.js';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
+import {
+  DATABASE_ADAPTER,
+  DATABASE_GATEWAY,
+} from '@auth/utils/constants/index.js';
 
 const [{ userId }] = TOKENS_MOCK;
 
@@ -34,7 +37,7 @@ describe('Integration test for GenerateToken controller', () => {
         {
           provide: JwtAccessService,
           useValue: {
-            sign: jest.fn().mockReturnValue('access'),
+            sign: vi.fn().mockReturnValue('access'),
           },
         },
       ],

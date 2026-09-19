@@ -1,4 +1,4 @@
-import type { IToken, TokenType } from './token.interface';
+import type { IToken, TokenType } from './token.interface.js';
 
 export class Token implements IToken {
   private _id: string;

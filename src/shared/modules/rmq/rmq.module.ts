@@ -2,9 +2,9 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { RmqService } from './rmq.service';
+import { RmqService } from './rmq.service.js';
 
-import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants';
+import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants/index.js';
 
 @Module({
   providers: [RmqService],

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto';
+import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto.js';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
 @Injectable()
 export class AuthenticateGuard extends AuthGuard('access-token') {

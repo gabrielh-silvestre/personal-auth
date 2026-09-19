@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import type { IToken, TokenType } from '@auth/domain/entity/token.interface';
+import type { IToken, TokenType } from '@auth/domain/entity/token.interface.js';
 
 @Schema()
 export class TokenSchema implements IToken {

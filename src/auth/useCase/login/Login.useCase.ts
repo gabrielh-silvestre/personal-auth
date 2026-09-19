@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputLoginDto, OutputLoginDto } from './Login.dto';
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type { InputLoginDto, OutputLoginDto } from './Login.dto.js';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/database.gateway.interface.js';
 
-import { TokenFactory } from '@auth/domain/factory/Token.factory';
+import { TokenFactory } from '@auth/domain/factory/Token.factory.js';
 
-import { DATABASE_GATEWAY } from '@auth/utils/constants';
+import { DATABASE_GATEWAY } from '@auth/utils/constants/index.js';
 
 @Injectable()
 export class LoginUseCase {

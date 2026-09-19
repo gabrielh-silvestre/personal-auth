@@ -1,9 +1,9 @@
 import { status } from '@grpc/grpc-js';
-import { HttpStatus } from '@nestjs/common/enums';
+import { HttpStatus } from '@nestjs/common';
 
-import type { IException } from '../entity/exception.interface';
+import type { IException } from '../entity/exception.interface.js';
 
-import { Exception } from '../entity/Exception';
+import { Exception } from '../entity/Exception.js';
 
 export class ExceptionFactory {
   static notFound(message: string): IException {

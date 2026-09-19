@@ -3,13 +3,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import type {
   InputVerifyTokenDto,
   OutputVerifyTokenDto,
-} from './VerifyToken.dto';
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+} from './VerifyToken.dto.js';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/database.gateway.interface.js';
 
-import { Token } from '@auth/domain/entity/Token';
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { Token } from '@auth/domain/entity/Token.js';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
-import { DATABASE_GATEWAY } from '@auth/utils/constants';
+import { DATABASE_GATEWAY } from '@auth/utils/constants/index.js';
 
 @Injectable()
 export class VerifyTokenUseCase {

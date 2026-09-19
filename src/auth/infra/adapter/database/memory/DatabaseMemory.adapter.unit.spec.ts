@@ -1,10 +1,10 @@
 import { v4 as uuid } from 'uuid';
 
-import { TokenFactory } from '@auth/domain/factory/Token.factory';
+import { TokenFactory } from '@auth/domain/factory/Token.factory.js';
 
-import { DatabaseMemoryAdapter } from './DatabaseMemory.adapter';
+import { DatabaseMemoryAdapter } from './DatabaseMemory.adapter.js';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
 
 describe('Unit test infra in memory Task repository', () => {
   beforeEach(() => {

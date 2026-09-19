@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import type { IToken } from '@auth/domain/entity/token.interface';
-import type { IDatabaseAdapter } from '../Database.adapter.interface';
+import type { IToken } from '@auth/domain/entity/token.interface.js';
+import type { IDatabaseAdapter } from '../database.adapter.interface.js';
 
-import { Token } from '@auth/domain/entity/Token';
+import { Token } from '@auth/domain/entity/Token.js';
 
-import { TokenDocument, TokenSchema } from './MongooseSchema';
+import { TokenDocument, TokenSchema } from './MongooseSchema.js';
 
 @Injectable()
 export class DatabaseMongooseAdapter implements IDatabaseAdapter {
@@ -48,7 +48,7 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
     const foundToken = await this.model.findOne(dto).exec();
 
-    return !!foundToken ? this.modelToDomain(foundToken) : null;
+    return foundToken ? this.modelToDomain(foundToken) : null;
   }
 
   async create(entity: Token): Promise<void> {

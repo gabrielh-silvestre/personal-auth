@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants';
+import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants/index.js';
 
 @Injectable()
 export class JwtAccessService {

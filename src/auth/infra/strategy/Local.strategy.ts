@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 
-import type { IUserGateway } from '../gateway/user/user.gateway.interface';
+import type { IUserGateway } from '../gateway/user/user.gateway.interface.js';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
-import { USER_GATEWAY } from '@auth/utils/constants';
+import { USER_GATEWAY } from '@auth/utils/constants/index.js';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

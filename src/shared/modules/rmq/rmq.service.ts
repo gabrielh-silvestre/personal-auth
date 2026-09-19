@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RmqContext, RmqOptions, Transport } from '@nestjs/microservices';
 
-import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants';
+import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants/index.js';
 
 @Injectable()
 export class RmqService {

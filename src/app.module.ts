@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common/decorators';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { AuthModule } from '@auth/auth.module';
+import { AuthModule } from '@auth/auth.module.js';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 
-import { MONGO_URI } from '@shared/utils/constants';
+import { MONGO_URI } from '@shared/utils/constants/index.js';
 
 @Module({
   imports: [

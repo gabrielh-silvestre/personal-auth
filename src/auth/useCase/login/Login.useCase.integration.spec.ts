@@ -1,12 +1,12 @@
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/database.gateway.interface.js';
+import type { IDatabaseAdapter } from '@auth/infra/adapter/database/database.adapter.interface.js';
 
-import { LoginUseCase } from './Login.useCase';
+import { LoginUseCase } from './Login.useCase.js';
 
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.js';
+import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter.js';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
 
 const [{ userId }] = TOKENS_MOCK;
 

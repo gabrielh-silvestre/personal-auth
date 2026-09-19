@@ -8,8 +8,8 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import { Exception } from '@exceptions/entity/Exception';
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { Exception } from '@exceptions/entity/Exception.js';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
 @Catch(Error)
 export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {

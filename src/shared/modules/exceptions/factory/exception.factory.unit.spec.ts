@@ -1,4 +1,4 @@
-import { ExceptionFactory } from './Exception.factory';
+import { ExceptionFactory } from './Exception.factory.js';
 
 const VALID_MESSAGE = 'message';
 

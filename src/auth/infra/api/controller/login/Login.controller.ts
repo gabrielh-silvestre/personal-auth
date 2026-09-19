@@ -10,16 +10,16 @@ import {
 } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 
-import type { InputLoginDto } from '@auth/useCase/login/Login.dto';
+import type { InputLoginDto } from '@auth/useCase/login/Login.dto.js';
 
-import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
+import { LoginUseCase } from '@auth/useCase/login/Login.useCase.js';
 
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
-import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service.js';
+import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service.js';
 
-import { CredentialsGuard } from '../../guard/CredentialsGuard.guard';
-import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor';
-import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
+import { CredentialsGuard } from '../../guard/CredentialsGuard.guard.js';
+import { ParseHalJsonInterceptor } from '@shared/infra/interceptor/Parse.hal-json.interceptor.js';
+import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc.js';
 
 type ResponseLogin = {
   access: string;

@@ -1,41 +1,41 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { RmqModule } from '@shared/modules/rmq/rmq.module';
-import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module';
+import { RmqModule } from '@shared/modules/rmq/rmq.module.js';
+import { CustomJwtModule } from '@shared/modules/jwt/Jwt.module.js';
 
-import { LoginController } from './infra/api/controller/login/Login.controller';
-import { LoginUseCase } from './useCase/login/Login.useCase';
+import { LoginController } from './infra/api/controller/login/Login.controller.js';
+import { LoginUseCase } from './useCase/login/Login.useCase.js';
 
-import { RefreshController } from './infra/api/controller/refresh/Refresh.controller';
-import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
+import { RefreshController } from './infra/api/controller/refresh/Refresh.controller.js';
+import { RefreshUseCase } from './useCase/refresh/Refresh.useCase.js';
 
-import { VerifyTokenController } from './infra/api/controller/verifyToken/VerifyToken.controller';
-import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase';
+import { VerifyTokenController } from './infra/api/controller/verifyToken/VerifyToken.controller.js';
+import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase.js';
 
-import { GenerateTokenController } from './infra/api/controller/generateToken/GenerateToken.controller';
-import { GenerateTokenUseCase } from './useCase/generateToken/GenerateToken.useCase';
+import { GenerateTokenController } from './infra/api/controller/generateToken/GenerateToken.controller.js';
+import { GenerateTokenUseCase } from './useCase/generateToken/GenerateToken.useCase.js';
 
-import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
-import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
-import { LocalStrategy } from './infra/strategy/Local.strategy';
+import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy.js';
+import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy.js';
+import { LocalStrategy } from './infra/strategy/Local.strategy.js';
 
 import {
   tokenSchema,
   TokenSchema,
-} from './infra/adapter/database/mongoose/MongooseSchema';
-import { DatabaseMongooseAdapter } from './infra/adapter/database/mongoose/DatabaseMongoose.adapter';
-import { DatabaseGateway } from './infra/gateway/database/Database.gateway';
+} from './infra/adapter/database/mongoose/MongooseSchema.js';
+import { DatabaseMongooseAdapter } from './infra/adapter/database/mongoose/DatabaseMongoose.adapter.js';
+import { DatabaseGateway } from './infra/gateway/database/Database.gateway.js';
 
-import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter';
-import { UserGateway } from './infra/gateway/user/User.gateway';
+import { UserRmqAdapter } from './infra/adapter/user/rmq/UserRmq.adapter.js';
+import { UserGateway } from './infra/gateway/user/User.gateway.js';
 
 import {
   DATABASE_ADAPTER,
   DATABASE_GATEWAY,
   USER_ADAPTER,
   USER_GATEWAY,
-} from './utils/constants';
+} from './utils/constants/index.js';
 
 @Module({
   imports: [

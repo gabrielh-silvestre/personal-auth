@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputGenerateTokenDto } from './GenerateToken.dto';
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type { InputGenerateTokenDto } from './GenerateToken.dto.js';
+import type { IDatabaseGateway } from '@auth/infra/gateway/database/database.gateway.interface.js';
 
-import { TokenFactory } from '@auth/domain/factory/Token.factory';
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { TokenFactory } from '@auth/domain/factory/Token.factory.js';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
-import { DATABASE_GATEWAY } from '@auth/utils/constants';
+import { DATABASE_GATEWAY } from '@auth/utils/constants/index.js';
 
 @Injectable()
 export class GenerateTokenUseCase {

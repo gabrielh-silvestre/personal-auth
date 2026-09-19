@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants';
+import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants/index.js';
 
 @Injectable()
 export class JwtRefreshService {
@@ -30,7 +30,9 @@ export class JwtRefreshService {
         TOKEN_SECRET('REFRESH_TOKEN'),
         'secret',
       ),
-      maxAge: this.configService.get<number>(TOKEN_EXPIRES_IN('REFRESH_TOKEN')),
+      maxAge: this.configService.get<number>(
+        TOKEN_EXPIRES_IN('REFRESH_TOKEN'),
+      ),
     }) as T;
   }
 }

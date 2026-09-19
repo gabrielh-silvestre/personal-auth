@@ -1,8 +1,8 @@
 import { v4 as uuid } from 'uuid';
 
-import type { TokenType } from '../entity/token.interface';
+import type { TokenType } from '../entity/token.interface.js';
 
-import { Token } from '../entity/Token';
+import { Token } from '../entity/Token.js';
 
 export class TokenFactory {
   private static ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day

@@ -1,10 +1,10 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ExecutionContext, Injectable, Optional } from '@nestjs/common';
+import { AuthGuard, AuthModuleOptions } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto';
+import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto.js';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
 export type InputCredentialsDto = {
   email: string;
@@ -13,6 +13,14 @@ export type InputCredentialsDto = {
 
 @Injectable()
 export class CredentialsGuard extends AuthGuard('local') {
+  // Nest 12's DI reads @Optional() metadata with getOwnMetadata (no prototype
+  // fallback), so a subclass with no constructor of its own is treated as
+  // requiring AuthModuleOptions. Redeclaring the constructor re-attaches the
+  // metadata directly on this class.
+  constructor(@Optional() options?: AuthModuleOptions) {
+    super(options);
+  }
+
   private convertGrpcCredentialsToHttpBody(context: ExecutionContext): void {
     const { email, password } = context
       .switchToRpc()

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
 @Injectable()
 export class RefreshTokenGuard extends AuthGuard('refresh-token') {
