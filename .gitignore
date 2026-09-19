@@ -61,3 +61,4 @@ t.ts
 .gitnexus
 
 graphify-out/
+/.vitest
