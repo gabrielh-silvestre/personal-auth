@@ -13,20 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres:14.3-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: database
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
       mongo:
         image: mongo:5.0.4
         ports:
@@ -39,38 +25,26 @@ jobs:
 
     steps:
       - name: Verify git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install node on version
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-
-      # - name: Cache node_modules
-      #   id: coverage-cache
-      #   uses: actions/cache@v2
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-coverage-cache--build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
-        # if: steps.coverage-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run tests and generate coverage
         run: npm run test:cov
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
           MONGO_URI: mongodb://localhost:27017/database
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

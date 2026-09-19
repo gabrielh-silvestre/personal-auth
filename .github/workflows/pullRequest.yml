@@ -10,12 +10,13 @@ jobs:
 
     steps:
       - name: Verify git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install node on version
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -28,20 +29,6 @@ jobs:
     needs: Automatic-Tests
 
     services:
-      postgres:
-        image: postgres:14.3-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: database
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
       mongo:
         image: mongo:5.0.4
         ports:
@@ -54,17 +41,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run all tests
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database
           MONGO_URI: mongodb://localhost:27017/database
         run: npm run test:all
