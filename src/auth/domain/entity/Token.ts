@@ -1,5 +1,7 @@
 import type { IToken, TokenType } from './token.interface.js';
 
+import { DomainError } from '../error/DomainError.js';
+
 export class Token implements IToken {
   private _id: string;
   private _userId: string;
@@ -32,7 +34,7 @@ export class Token implements IToken {
 
   refresh(): void {
     if (this._type !== 'REFRESH') {
-      throw new Error('Only refresh tokens can be refreshed');
+      throw new DomainError('Only refresh tokens can be refreshed');
     }
 
     this._lastRefresh = new Date();

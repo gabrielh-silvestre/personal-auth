@@ -8,6 +8,7 @@ import {
   Logger,
 } from '@nestjs/common';
 
+import { DomainError } from '@auth/domain/error/DomainError.js';
 import { Exception } from '@exceptions/entity/Exception.js';
 import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
 
@@ -18,6 +19,10 @@ export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {
   private normalizeError(error: Error) {
     if (error instanceof Exception) {
       return error;
+    }
+
+    if (error instanceof DomainError) {
+      return ExceptionFactory.invalidArgument(error.message);
     }
 
     if (error instanceof HttpException) {
