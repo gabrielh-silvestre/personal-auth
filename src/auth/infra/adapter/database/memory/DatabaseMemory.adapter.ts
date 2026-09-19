@@ -14,7 +14,10 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
   }
 
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
-    const objEntries = Object.entries(dto);
+    const objEntries = Object.entries(dto) as [
+      keyof IToken,
+      IToken[keyof IToken],
+    ][];
 
     const foundToken = DatabaseMemoryAdapter.TOKENS.find((token) => {
       return objEntries.every(([key, value]) => token[key] === value);

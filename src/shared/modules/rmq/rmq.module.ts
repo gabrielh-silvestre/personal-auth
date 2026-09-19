@@ -2,7 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { RmqService } from './rmq.service.js';
+import { getRequiredEnv, RmqService } from './rmq.service.js';
 
 import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants/index.js';
 
@@ -21,8 +21,8 @@ export class RmqModule {
             useFactory: (configService: ConfigService) => ({
               transport: Transport.RMQ,
               options: {
-                urls: [configService.get<string>(RABBITMQ_URL)],
-                queue: configService.get<string>(RABBITMQ_QUEUE(name)),
+                urls: [getRequiredEnv(configService, RABBITMQ_URL)],
+                queue: getRequiredEnv(configService, RABBITMQ_QUEUE(name)),
               },
             }),
             inject: [ConfigService],

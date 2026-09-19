@@ -1,3 +1,5 @@
+export const NODE_ENV = 'NODE_ENV';
+
 export const MONGO_URI = 'MONGO_URI';
 
 export const JWT_SECRET = 'JWT_SECRET';

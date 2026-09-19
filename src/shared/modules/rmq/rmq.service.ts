@@ -4,6 +4,19 @@ import { RmqContext, RmqOptions, Transport } from '@nestjs/microservices';
 
 import { RABBITMQ_QUEUE, RABBITMQ_URL } from '@shared/utils/constants/index.js';
 
+export function getRequiredEnv(
+  configService: ConfigService,
+  key: string,
+): string {
+  const value = configService.get<string>(key);
+
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+
+  return value;
+}
+
 @Injectable()
 export class RmqService {
   constructor(private readonly configService: ConfigService) {}
@@ -12,8 +25,8 @@ export class RmqService {
     return {
       transport: Transport.RMQ,
       options: {
-        urls: [this.configService.get<string>(RABBITMQ_URL)],
-        queue: this.configService.get<string>(RABBITMQ_QUEUE(queue)),
+        urls: [getRequiredEnv(this.configService, RABBITMQ_URL)],
+        queue: getRequiredEnv(this.configService, RABBITMQ_QUEUE(queue)),
         noAck,
         persistent: true,
       },
