@@ -56,8 +56,7 @@ t.ts
 ## OpenAI Codex CLI
 .codex/
 
-## AI-generated agent documentation
-AGENTS.md
+## GitNexus index
 .gitnexus
 
 graphify-out/

@@ -5,191 +5,79 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Dev
 npm run start:dev          # watch mode
-docker-compose up          # full local stack (NestJS + MongoDB + RabbitMQ)
-
-# Build
+docker-compose up          # NestJS + MongoDB 7 + RabbitMQ 3.13 (ports: $PORT, 50051 gRPC, 27017, 5672/15672)
 npm run build
-
-# Lint / Format
-npm run lint
+npm run lint               # eslint --fix
 npm run format
 
-# Tests
 npm run test:unit          # *.unit.spec.ts
 npm run test:integration   # *.integration.spec.ts
-npm run test:all           # unit + integration + e2e
-npm run test:e2e           # REST e2e via supertest
-npm run test:cov           # coverage (feeds SonarCloud)
-npm run test:mutations     # Stryker incremental mutation testing
+npm run test:all           # everything under src/ and test/ (test/jest-all.config.js)
+npm run test:e2e           # *.e2e-spec.ts (test/jest-e2e.config.js)
+npm run test:cov           # coverage of src/auth/** only, feeds SonarCloud via jest-sonar-reporter
+npm run test:mutations     # Stryker incremental; mutates only domain/ and useCase/
+
+npx jest path/to/file.spec.ts --no-coverage   # single file
 ```
 
-To run a single test file: `npx jest path/to/file.spec.ts --no-coverage`
+CI: `.github/workflows/main.yml` runs `test:cov` + SonarCloud on PRs to `main`; `pullRequest.yml` runs `npm run test` on PRs to `dev`.
+
+## What the service is
+
+Token issuer for a microservice system. It does **not** own users: credentials are checked by an external user service over RabbitMQ (`verify_user_credentials` on the `USER` queue, via `UserRmqAdapter` → `UserGateway` → `LocalStrategy`).
+
+Tokens are persisted (Mongo) as `Token` aggregates; the signed JWT only carries `{ tokenId, userId }`. Validity (expiry, `revoked`) lives in the stored entity, not only in the JWT.
 
 ## Architecture
 
-Clean / Hexagonal architecture in three strict layers:
+`src/auth` is split in three layers, dependencies pointing inward:
 
-```
-domain  →  useCase  →  infra
-```
+- `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No Nest imports.
+- `useCase/` — `login`, `refresh`, `verifyToken`, `generateToken`; each exposes `execute(input)` and depends only on `DATABASE_GATEWAY`.
+- `infra/` — adapters, gateways, controllers, guards, Passport strategies, `.proto` files.
 
-- **`domain/`** — Pure TypeScript. `Token` aggregate, `TokenFactory` (static, env-driven expiry), `ITokenRepository` interface. Zero framework imports.
-- **`useCase/`** — Orchestration. `login`, `refresh`, `verifyToken`, `generateToken`. Each has `execute(input): Promise<output>`. Depends only on gateway interfaces and domain.
-- **`infra/`** — Adapters (memory + Mongoose), gateways, HTTP/gRPC/RMQ controllers, Passport strategies, proto files.
+DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`. `TOKEN_ADAPTER`/`TOKEN_GATEWAY` are declared but unused.
 
-The mandatory DI chain is: **adapter → gateway → use case**. Use cases never import adapters. Gateways are the only seam where the storage/transport implementation is visible.
+`src/shared` holds cross-cutting pieces: `ExceptionFactory` (each error carries a gRPC status + HTTP status pair), `JwtAccessService`/`JwtRefreshService`, `RmqModule.register(name)`, REST/RPC exception filters, `ParseHalJsonInterceptor`.
 
-## Triple Transport
+Path aliases that resolve: `@auth/*`, `@shared/*`, `@exceptions/*` (= `src/shared/modules/exceptions/*`). `@users`, `@tokens`, `@mail` in `tsconfig.json` point to directories that don't exist.
 
-`src/main.ts` wires three transports on a single Nest app:
+## Transports
 
-| Transport | Binding |
-|-----------|---------|
-| REST (HTTP) | Express, `@Post` controllers |
-| gRPC | `token.proto` + `auth.proto` via `@GrpcMethod` |
-| RabbitMQ | `AUTH` queue via `@MessagePattern` |
+`src/main.ts` runs one Nest app with REST + an RMQ microservice (`AUTH` queue) + a gRPC microservice (`proto.tokens`, `proto.auth`, default `localhost:50051`). Each controller exposes its use case only on some transports:
 
-A single controller class exposes the **same use case** through all three transports. Adding a new transport for an existing use case means extending the controller — not the use case.
+| Use case | REST | gRPC | RMQ pattern |
+|---|---|---|---|
+| login | `POST /auth/login` | `AuthService.LoginUser` | — |
+| refresh | `GET /auth/refresh` | `AuthService.RefreshToken` | — |
+| verifyToken | — | — | `auth.verify_token` |
+| generateToken (recover password) | — | — | `auth.generate_recover_token` |
 
-## Dependency Injection Tokens
+`token.proto` declares `TokenService.RevokeToken`, but nothing implements it.
 
-String tokens are declared in `src/auth/utils/constants/injectNames.ts`:
+To add a transport, add another handler method on the same controller that calls the shared private `handle()`.
 
-- `DATABASE_ADAPTER` / `DATABASE_GATEWAY`
-- `USER_ADAPTER` / `USER_GATEWAY`
+Transport glue you must preserve:
 
-Always use these constants with `@Inject(TOKEN)`. Swap implementations by changing `useClass` in `auth.module.ts` only.
+- `CredentialsGuard` copies gRPC `{ email, password }` into the HTTP request body so `passport-local` works for gRPC.
+- JWT strategies extract the token from, in order: `req.token` (gRPC), cookie `Access`/`Refresh`, Bearer header (access only).
+- `GlobalExceptionRestFilter` is global (REST). RPC handlers need `@UseFilters(new ExceptionFilterRpc())` per method.
+- `ParseHalJsonInterceptor` wraps REST responses in `{ _links, data }`; apply per REST route only, never globally (it would wrap gRPC/RMQ replies).
 
-## Path Aliases
+## Token behavior
 
-| Alias | Resolves to |
-|-------|-------------|
-| `@auth/*` | `src/auth/*` |
-| `@shared/*` | `src/shared/*` |
-| `@exceptions/*` | `src/shared/modules/exceptions/*` |
+- One token per `userId + type` in Mongo: `DatabaseMongooseAdapter.create` upserts on that pair, so a new login replaces the previous session.
+- Refresh is non-rotational: it looks up the user's `REFRESH` token, calls `refresh()` (same id, new `lastRefresh`), and issues a new access token.
+- **Two independent expiry configs:** JWT signing reads `JWT_{ACCESS,REFRESH}_TOKEN_{SECRET,EXPIRES_IN}`; the persisted entity reads `ACCESS_TOKEN_EXPIRE_TIME`, `REFRESH_TOKEN_EXPIRE_TIME`, `RECOVER_PASSWORD_TOKEN_EXPIRE_TIME` in `TokenFactory` (default 1d/7d/1d). All in ms.
+- RMQ queue names come from `RABBITMQ_{AUTH,USER,MAIL}_QUEUE` (`RABBITMQ_QUEUE(name)`); these are not in `.env.example`.
 
-## Exception Handling
+## Tests
 
-Domain errors are created via `ExceptionFactory` and carry paired gRPC/HTTP status codes. Two separate filters normalize them per transport:
+- Integration specs (use cases and controllers) build a `Test.createTestingModule` with `DatabaseMemoryAdapter` + real `DatabaseGateway`, reset state with `DatabaseMemoryAdapter.reset(TOKENS_MOCK)`, and stub JWT services with `useValue`.
+- `DatabaseMemoryAdapter` stores tokens in a **static** array and its `create` matches on `userId` only (Mongo uses `userId + type`). Login's access and refresh tokens overwrite each other in memory, so don't use the memory adapter to assert Mongo semantics.
+- E2E suites under `test/` are mostly commented out.
 
-- `GlobalExceptionRestFilter` — registered globally in `main.ts` for REST.
-- `ExceptionFilterRpc` — applied per-handler via `@UseFilters(new ExceptionFilterRpc())` on gRPC/RMQ methods.
+## GitNexus
 
-**Decorator order is critical on RPC handlers**: `@UseFilters` must wrap `@UseGuards` — reversing them bypasses exception handling.
-
-## Key Patterns
-
-- `ParseHalJsonInterceptor` is per-route only — never register globally (breaks gRPC/RMQ).
-- `CredentialsGuard` bridges gRPC credentials into HTTP format for Passport local strategy — do not remove.
-- Token refresh reuses the same token ID (non-rotational), extending expiry to preserve session continuity.
-- `TokenFactory` uses a `switch` on `TokenType` for extension; expiry windows come from env vars (milliseconds).
-- In-memory adapter matches on `userId` only; Mongoose adapter uses `userId + type` composite — behavior differs, test migrations carefully.
-
-## Testing Conventions
-
-- Unit tests: `*.unit.spec.ts` — no I/O, no mocks beyond Jest.
-- Integration tests: `*.useCase.integration.spec.ts` — wire `DatabaseGateway` against `DatabaseMemoryAdapter`.
-- E2E tests: bootstrap full `AppModule` with `cookie-parser` and `GlobalExceptionRestFilter` active; mirror `connectMicroservice` calls from `main.ts` when testing gRPC/RMQ transports.
-
-## Environment
-
-Copy `.env.example` to `.env`. Key variables: `PORT`, `MONGO_URI`, `RABBITMQ_URL`, JWT secret/expiry pairs per token type (access, refresh, recover-password) in milliseconds.
-
-<!-- gitnexus:start -->
-# GitNexus — Code Intelligence
-
-This project is indexed by GitNexus as **personal-auth** (390 symbols, 805 relationships, 23 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
-
-> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
-
-## Always Do
-
-- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
-- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
-- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
-- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
-
-## When Debugging
-
-1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
-2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
-3. `READ gitnexus://repo/personal-auth/process/{processName}` — trace the full execution flow step by step
-4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
-
-## When Refactoring
-
-- **Renaming**: MUST use `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` first. Review the preview — graph edits are safe, text_search edits need manual review. Then run with `dry_run: false`.
-- **Extracting/Splitting**: MUST run `gitnexus_context({name: "target"})` to see all incoming/outgoing refs, then `gitnexus_impact({target: "target", direction: "upstream"})` to find all external callers before moving code.
-- After any refactor: run `gitnexus_detect_changes({scope: "all"})` to verify only expected files changed.
-
-## Never Do
-
-- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
-- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
-- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
-- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
-
-## Tools Quick Reference
-
-| Tool | When to use | Command |
-|------|-------------|---------|
-| `query` | Find code by concept | `gitnexus_query({query: "auth validation"})` |
-| `context` | 360-degree view of one symbol | `gitnexus_context({name: "validateUser"})` |
-| `impact` | Blast radius before editing | `gitnexus_impact({target: "X", direction: "upstream"})` |
-| `detect_changes` | Pre-commit scope check | `gitnexus_detect_changes({scope: "staged"})` |
-| `rename` | Safe multi-file rename | `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` |
-| `cypher` | Custom graph queries | `gitnexus_cypher({query: "MATCH ..."})` |
-
-## Impact Risk Levels
-
-| Depth | Meaning | Action |
-|-------|---------|--------|
-| d=1 | WILL BREAK — direct callers/importers | MUST update these |
-| d=2 | LIKELY AFFECTED — indirect deps | Should test |
-| d=3 | MAY NEED TESTING — transitive | Test if critical path |
-
-## Resources
-
-| Resource | Use for |
-|----------|---------|
-| `gitnexus://repo/personal-auth/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/personal-auth/clusters` | All functional areas |
-| `gitnexus://repo/personal-auth/processes` | All execution flows |
-| `gitnexus://repo/personal-auth/process/{name}` | Step-by-step execution trace |
-
-## Self-Check Before Finishing
-
-Before completing any code modification task, verify:
-1. `gitnexus_impact` was run for all modified symbols
-2. No HIGH/CRITICAL risk warnings were ignored
-3. `gitnexus_detect_changes()` confirms changes match expected scope
-4. All d=1 (WILL BREAK) dependents were updated
-
-## Keeping the Index Fresh
-
-After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
-
-```bash
-npx gitnexus analyze
-```
-
-If the index previously included embeddings, preserve them by adding `--embeddings`:
-
-```bash
-npx gitnexus analyze --embeddings
-```
-
-To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
-
-> Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
-
-## CLI
-
-- Re-index: `npx gitnexus analyze`
-- Check freshness: `npx gitnexus status`
-- Generate docs: `npx gitnexus wiki`
-
-<!-- gitnexus:end -->
+Indexed as `personal-auth`. Before editing a symbol run `gitnexus_impact({target, direction: "upstream"})` and report HIGH/CRITICAL risk; treat `risk: UNKNOWN` as unresolved, not safe. Run `gitnexus_detect_changes()` before committing. Reindex with `npx gitnexus analyze --index-only`; without `--index-only` it re-injects its own block into `CLAUDE.md`/`AGENTS.md`.
