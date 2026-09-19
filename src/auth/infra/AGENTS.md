@@ -10,7 +10,7 @@ The only layer where storage/transport implementations are visible — adapters,
 ### adapter/database
 | File | Description |
 |------|-------------|
-| `Database.adapter.interface.ts` | `IDatabaseAdapter`: `findAll`, `findOne<T>`, `create`, `update`, `delete` |
+| `database.adapter.interface.ts` | `IDatabaseAdapter`: `findAll`, `findOne<T>`, `create`, `update`, `delete` |
 | `memory/DatabaseMemory.adapter.ts` | In-process array-backed adapter; static `TOKENS` shared across instances, `reset()` for tests. `create` matches existing rows by `userId` only |
 | `memory/DatabaseMemory.adapter.unit.spec.ts` | Unit spec exercising all five methods against `TOKENS_MOCK` |
 | `mongoose/DatabaseMongoose.adapter.ts` | Maps `Token` ↔ `TokenDocument`. `create` checks for an existing `userId` + `type` composite before inserting (falls back to `update`) — **differs from the memory adapter's userId-only match** |
@@ -19,13 +19,13 @@ The only layer where storage/transport implementations are visible — adapters,
 ### adapter/user
 | File | Description |
 |------|-------------|
-| `User.adapter.interface.ts` | `IUserAdapter.send<T>(data, pattern): Observable<OutputUser>` |
+| `user.adapter.interface.ts` | `IUserAdapter.send<T>(data, pattern): Observable<OutputUser>` |
 | `rmq/UserRmq.adapter.ts` | Wraps a `ClientProxy` (`@Inject('USER')`) to call the external user service over RMQ |
 
 ### gateway
 | File | Description |
 |------|-------------|
-| `database/Database.gateway.interface.ts` | `IDatabaseGateway = ITokenRepository` (domain interface re-exported as the infra-facing type) |
+| `database/database.gateway.interface.ts` | `IDatabaseGateway = ITokenRepository` (domain interface re-exported as the infra-facing type) |
 | `database/Database.gateway.ts` | Implements `find`, `findByUserIdAndType`, `create`, `update` by delegating to the injected `IDatabaseAdapter` (`DATABASE_ADAPTER` token) |
 | `user/user.gateway.interface.ts` | `IUserGateway.verifyCredentials(email, password): Promise<OutputUser>` |
 | `user/User.gateway.ts` | Implements it by calling `IUserAdapter.send(..., 'verify_user_credentials')` via `lastValueFrom` |
@@ -64,7 +64,7 @@ One folder per use case (`generateToken/`, `login/`, `refresh/`, `verifyToken/`)
 - `CredentialsGuard`'s gRPC→HTTP body bridge is load-bearing for `Local.strategy.ts` to work over gRPC; don't remove it when touching login.
 
 ### Testing Requirements
-- Controller specs build a real Nest `Test.createTestingModule` with `DatabaseMemoryAdapter` + `DatabaseGateway` wired to the real `DATABASE_ADAPTER`/`DATABASE_GATEWAY` tokens, and stub only the JWT services (`useValue` with `jest.fn()`).
+- Controller specs build a real Nest `Test.createTestingModule` with `DatabaseMemoryAdapter` + `DatabaseGateway` wired to the real `DATABASE_ADAPTER`/`DATABASE_GATEWAY` tokens, and stub only the JWT services (`useValue` with `vi.fn()`).
 - Reset shared state per test with `DatabaseMemoryAdapter.reset(TOKENS_MOCK)` in `beforeEach` — it's a static array, stale data leaks across tests otherwise.
 
 ### Common Patterns

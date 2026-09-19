@@ -36,7 +36,7 @@ Orchestration layer of the `domain → useCase → infra` chain. Each subfolder 
 ## Dependencies
 ### Internal
 - `@auth/domain/entity/Token`, `@auth/domain/factory/Token.factory` — pure domain, no framework imports.
-- `@auth/infra/gateway/database/Database.gateway.interface` (type-only import) — the only infra seam use cases see.
+- `@auth/infra/gateway/database/database.gateway.interface` (type-only import) — the only infra seam use cases see.
 - `@exceptions/factory/Exception.factory` — paired HTTP/gRPC status codes.
 - `@auth/utils/constants` — `DATABASE_GATEWAY` DI token.
 
