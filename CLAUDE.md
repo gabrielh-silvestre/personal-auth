@@ -23,6 +23,23 @@ npx jest path/to/file.spec.ts --no-coverage   # single file
 
 CI: `.github/workflows/main.yml` runs `test:cov` + SonarCloud on PRs to `main`; `pullRequest.yml` runs `npm run test` on PRs to `dev`.
 
+## Branches
+
+**Never work on `main` directly.** `dev` is the integration branch; feature branches
+branch off `dev` and merge back into it through a PR. `main` receives only merges
+from `dev`.
+
+Three layers enforce this, and each fails differently:
+
+- `.claude/hooks/no-main-edits.cjs` (wired in `.claude/settings.json`) refuses
+  `Edit`/`Write`/`NotebookEdit` and `git commit` while the active worktree is on
+  `main`. Paths under `.omc/` and `.ignore/` pass — they are git-ignored.
+- `.husky/pre-commit` rejects any commit made on `main`, including from the
+  terminal. `git commit --no-verify` is the deliberate escape hatch.
+- GitHub branch protection on `main` blocks direct pushes.
+
+Worktrees and branches go through Worktrunk: `wt switch -c <name> -b dev`.
+
 ## What the service is
 
 Token issuer for a microservice system. It does **not** own users: credentials are checked by an external user service over RabbitMQ (`verify_user_credentials` on the `USER` queue, via `UserRmqAdapter` → `UserGateway` → `LocalStrategy`).
