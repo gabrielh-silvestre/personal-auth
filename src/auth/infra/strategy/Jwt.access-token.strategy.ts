@@ -15,7 +15,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
   constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => (req as any).token, // Recover token from gRPC request
+        (req) => (req as any).token, // Recover the JWT from the RMQ message root (see AuthenticatedRmqMessage) — no gRPC route uses this strategy
         (req) => req?.cookies?.Access,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),

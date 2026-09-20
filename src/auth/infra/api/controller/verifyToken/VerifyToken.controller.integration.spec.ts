@@ -1,7 +1,8 @@
-import type { Request } from 'express';
 import type { RmqContext } from '@nestjs/microservices';
 import { Test } from '@nestjs/testing';
 import { vi } from 'vitest';
+
+import type { AuthenticatedRmqMessage } from '#auth/infra/strategy/AuthenticatedRmqMessage.dto';
 
 import { VerifyTokenController } from '#auth/infra/api/controller/verifyToken/VerifyToken.controller';
 import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
@@ -55,8 +56,9 @@ describe('Integration test for VerifyToken controller', () => {
     it('with RMQ message', async () => {
       const response = await verifyTokenController.handle(
         {
-          user: { tokenId },
-        } as Request,
+          token: 'x',
+          user: { userId: 'user-1', tokenId },
+        } as AuthenticatedRmqMessage,
         rmqContext,
       );
 
@@ -73,8 +75,9 @@ describe('Integration test for VerifyToken controller', () => {
       await expect(
         verifyTokenController.handle(
           {
-            user: { tokenId: invalidTokenId },
-          } as Request,
+            token: 'x',
+            user: { userId: 'user-1', tokenId: invalidTokenId },
+          } as AuthenticatedRmqMessage,
           rmqContext,
         ),
       ).rejects.toThrow();

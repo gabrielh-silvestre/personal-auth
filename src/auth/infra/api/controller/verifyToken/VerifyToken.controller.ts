@@ -1,5 +1,3 @@
-import type { Request } from 'express';
-
 import { Controller, UseFilters, UseGuards } from '@nestjs/common';
 import {
   Ctx,
@@ -8,6 +6,7 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 
+import type { AuthenticatedRmqMessage } from '#auth/infra/strategy/AuthenticatedRmqMessage.dto';
 import type { OutputVerifyTokenDto } from '#auth/useCase/verifyToken/VerifyToken.dto';
 
 import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
@@ -27,7 +26,7 @@ export class VerifyTokenController {
   @UseFilters(new ExceptionFilterRpc())
   @MessagePattern('auth.verify_token')
   async handle(
-    @Payload() data: Request,
+    @Payload() data: AuthenticatedRmqMessage,
     @Ctx() context: RmqContext,
   ): Promise<OutputVerifyTokenDto | never> {
     try {
