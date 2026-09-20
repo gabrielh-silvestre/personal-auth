@@ -16,6 +16,8 @@ import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase';
 import { RevokeTokenController } from './infra/api/controller/revokeToken/RevokeToken.controller';
 import { RevokeTokenUseCase } from './useCase/revokeToken/RevokeToken.useCase';
 
+import { TokenFactory } from './domain/factory/Token.factory';
+
 import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
@@ -56,6 +58,7 @@ import {
     RefreshUseCase,
     VerifyTokenUseCase,
     RevokeTokenUseCase,
+    TokenFactory,
     LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,

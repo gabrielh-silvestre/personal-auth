@@ -12,11 +12,12 @@ export class LoginUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
     private readonly databaseGateway: IDatabaseGateway,
+    private readonly tokenFactory: TokenFactory,
   ) {}
 
   async execute({ userId }: InputLoginDto): Promise<OutputLoginDto | never> {
-    const accessToken = TokenFactory.createAccessToken(userId);
-    const refreshToken = TokenFactory.createRefreshToken(userId);
+    const accessToken = this.tokenFactory.createAccessToken(userId);
+    const refreshToken = this.tokenFactory.createRefreshToken(userId);
 
     await this.databaseGateway.create(accessToken);
     await this.databaseGateway.create(refreshToken);

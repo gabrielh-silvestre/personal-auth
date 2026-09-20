@@ -1,8 +1,11 @@
 import type { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 
 import { RefreshController } from './Refresh.controller';
 import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase';
+
+import { TokenFactory } from '@auth/domain/factory/Token.factory';
 
 import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
@@ -29,6 +32,15 @@ describe('Integration test for Refresh controller', () => {
       controllers: [RefreshController],
       providers: [
         RefreshUseCase,
+        {
+          provide: TokenFactory,
+          useValue: new TokenFactory(
+            new ConfigService({
+              ACCESS_TOKEN_EXPIRE_TIME: '86400000',
+              REFRESH_TOKEN_EXPIRE_TIME: '604800000',
+            }),
+          ),
+        },
         {
           provide: DATABASE_ADAPTER,
           useClass: DatabaseMemoryAdapter,

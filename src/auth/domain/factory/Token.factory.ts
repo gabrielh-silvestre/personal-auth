@@ -1,17 +1,20 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';
-
-import type { TokenType } from '../entity/token.interface';
 
 import { Token } from '../entity/Token';
 
-export class TokenFactory {
-  private static ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
-  private static REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
+const DEFAULT_ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
+const DEFAULT_REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
 
-  public static createAccessToken(userId: string): Token {
+@Injectable()
+export class TokenFactory {
+  constructor(private readonly configService: ConfigService) {}
+
+  createAccessToken(userId: string): Token {
     const tokenExpireTime =
-      Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) ||
-      TokenFactory.ACCESS_TOKEN_EXPIRE_TIME;
+      Number(this.configService.get<string>('ACCESS_TOKEN_EXPIRE_TIME')) ||
+      DEFAULT_ACCESS_TOKEN_EXPIRE_TIME;
 
     return new Token(
       uuid(),
@@ -23,10 +26,10 @@ export class TokenFactory {
     );
   }
 
-  public static createRefreshToken(userId: string): Token {
+  createRefreshToken(userId: string): Token {
     const tokenExpireTime =
-      Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) ||
-      TokenFactory.REFRESH_TOKEN_EXPIRE_TIME;
+      Number(this.configService.get<string>('REFRESH_TOKEN_EXPIRE_TIME')) ||
+      DEFAULT_REFRESH_TOKEN_EXPIRE_TIME;
 
     return new Token(
       uuid(),
@@ -36,16 +39,5 @@ export class TokenFactory {
       false,
       'REFRESH',
     );
-  }
-
-  public static createTokenFromType(type: TokenType, userId: string): Token {
-    switch (type) {
-      case 'ACCESS':
-        return TokenFactory.createAccessToken(userId);
-      case 'REFRESH':
-        return TokenFactory.createRefreshToken(userId);
-      default:
-        throw new Error('Invalid token type');
-    }
   }
 }

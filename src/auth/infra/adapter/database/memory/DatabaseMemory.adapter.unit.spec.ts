@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { v4 as uuid } from 'uuid';
 
 import { TokenFactory } from '@auth/domain/factory/Token.factory';
@@ -7,6 +8,8 @@ import { DatabaseMemoryAdapter } from './DatabaseMemory.adapter';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 describe('Unit test infra in memory Task repository', () => {
+  const tokenFactory = new TokenFactory(new ConfigService({}));
+
   beforeEach(() => {
     DatabaseMemoryAdapter.reset(TOKENS_MOCK);
   });
@@ -31,7 +34,7 @@ describe('Unit test infra in memory Task repository', () => {
 
   it('should create a access token', async () => {
     const tokenRepository = new DatabaseMemoryAdapter();
-    const newToken = TokenFactory.createAccessToken(uuid());
+    const newToken = tokenFactory.createAccessToken(uuid());
 
     await tokenRepository.create(newToken);
 
@@ -61,7 +64,7 @@ describe('Unit test infra in memory Task repository', () => {
 
     expect(foundToken?.isValid()).toBeFalsy();
 
-    const newToken = TokenFactory.createAccessToken(uuid());
+    const newToken = tokenFactory.createAccessToken(uuid());
 
     await tokenRepository.update(newToken);
 

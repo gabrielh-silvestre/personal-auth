@@ -15,6 +15,7 @@ export class RefreshUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
     private readonly databaseGateway: IDatabaseGateway,
+    private readonly tokenFactory: TokenFactory,
   ) {}
 
   private async findValidRefreshToken(userId: string): Promise<Token | null> {
@@ -35,7 +36,7 @@ export class RefreshUseCase {
     const refreshToken = await this.findValidRefreshToken(userId);
     if (!refreshToken) throw ExceptionFactory.unauthorized('Invalid token');
 
-    const accessToken = TokenFactory.createAccessToken(userId);
+    const accessToken = this.tokenFactory.createAccessToken(userId);
 
     refreshToken.refresh();
 
