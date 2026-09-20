@@ -10,6 +10,7 @@ import { TokenFactory } from '@auth/domain/factory/Token.factory';
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
 import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 
+import { MongoLikeDatabaseAdapter } from '@shared/utils/mocks/MongoLikeDatabaseAdapter.mock';
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
 const [{ userId }] = TOKENS_MOCK;
@@ -43,5 +44,23 @@ describe('Integration test for Login use case', () => {
       refreshTokenId: expect.any(String),
       userId: expect.any(String),
     });
+  });
+
+  it('should replace the previous session on a new login', async () => {
+    const mongoLikeAdapter = new MongoLikeDatabaseAdapter();
+    const gateway = new DatabaseGateway(mongoLikeAdapter);
+    const useCase = new LoginUseCase(gateway, tokenFactory);
+
+    const firstLogin = await useCase.execute({ userId: 'same-user' });
+    const secondLogin = await useCase.execute({ userId: 'same-user' });
+
+    expect(secondLogin.accessTokenId).not.toBe(firstLogin.accessTokenId);
+    expect(secondLogin.refreshTokenId).not.toBe(firstLogin.refreshTokenId);
+
+    const access = await gateway.findByUserIdAndType('same-user', 'ACCESS');
+    const refresh = await gateway.findByUserIdAndType('same-user', 'REFRESH');
+
+    expect(access?.id).toBe(secondLogin.accessTokenId);
+    expect(refresh?.id).toBe(secondLogin.refreshTokenId);
   });
 });
