@@ -1,7 +1,7 @@
 import { NestInterceptor, CallHandler, ExecutionContext } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 
-import type { RestResponseCreateUser } from '@shared/infra/rest/Response.type.js';
+import type { RestResponseCreateUser } from '#shared/infra/rest/Response.type';
 
 export class ParseHalJsonInterceptor<T> implements NestInterceptor<
   T,

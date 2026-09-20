@@ -3,10 +3,10 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import cookieParser from 'cookie-parser';
 import { join } from 'node:path';
 
-import { AppModule } from './app.module.js';
+import { AppModule } from '#app/app.module';
 
-import { RmqService } from '@shared/modules/rmq/rmq.service.js';
-import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter.js';
+import { RmqService } from '#shared/modules/rmq/rmq.service';
+import { GlobalExceptionRestFilter } from '#shared/infra/GlobalException.filter';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;

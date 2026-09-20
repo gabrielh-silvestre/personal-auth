@@ -1,3 +1,3 @@
-import { ITokenRepository } from '@auth/domain/repository/token.repository.interface.js';
+import { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 
 export type IDatabaseGateway = ITokenRepository;

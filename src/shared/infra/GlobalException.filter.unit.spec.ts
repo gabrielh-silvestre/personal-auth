@@ -1,9 +1,9 @@
 import type { ArgumentsHost } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 
-import { DomainError } from '@auth/domain/error/DomainError.js';
+import { DomainError } from '#auth/domain/error/DomainError';
 
-import { GlobalExceptionRestFilter } from './GlobalException.filter.js';
+import { GlobalExceptionRestFilter } from '#shared/infra/GlobalException.filter';
 
 function fakeHttpHost(): {
   host: ArgumentsHost;

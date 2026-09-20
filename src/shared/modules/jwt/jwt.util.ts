@@ -4,7 +4,7 @@ import {
   NODE_ENV,
   TOKEN_EXPIRES_IN,
   TOKEN_SECRET,
-} from '@shared/utils/constants/index.js';
+} from '#shared/utils/constants/index';
 
 const FALLBACK_SECRET = 'secret';
 

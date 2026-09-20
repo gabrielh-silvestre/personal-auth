@@ -1,6 +1,6 @@
-import type { TokenType } from '../entity/token.interface.js';
+import type { TokenType } from '#auth/domain/entity/token.interface';
 
-import { TokenFactory } from './Token.factory.js';
+import { TokenFactory } from '#auth/domain/factory/Token.factory';
 
 const VALID_USER_ID = '5f4d2e2e-2b9a-4da3-9d5b-1b8e7b3dcb6d';
 

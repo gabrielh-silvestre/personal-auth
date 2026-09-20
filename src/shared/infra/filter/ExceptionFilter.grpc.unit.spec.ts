@@ -1,9 +1,9 @@
 import { firstValueFrom } from 'rxjs';
 
-import { DomainError } from '@auth/domain/error/DomainError.js';
-import { Exception } from '@exceptions/entity/Exception.js';
+import { DomainError } from '#auth/domain/error/DomainError';
+import { Exception } from '#exceptions/entity/Exception';
 
-import { ExceptionFilterRpc } from './ExceptionFilter.grpc.js';
+import { ExceptionFilterRpc } from '#shared/infra/filter/ExceptionFilter.grpc';
 
 describe('Unit test ExceptionFilterRpc', () => {
   it('should map a DomainError to an Exception instead of leaking the raw error', async () => {

@@ -2,9 +2,9 @@ import { ExecutionContext, Injectable, Optional } from '@nestjs/common';
 import { AuthGuard, AuthModuleOptions } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 
-import type { TokenPayloadDto } from '@auth/infra/strategy/JwtPayload.dto.js';
+import type { TokenPayloadDto } from '#auth/infra/strategy/JwtPayload.dto';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
+import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
 
 export type InputCredentialsDto = {
   email: string;

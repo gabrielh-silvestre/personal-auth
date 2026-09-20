@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 
-import { getJwtExpiresIn, getJwtSecret } from './jwt.util.js';
+import { getJwtExpiresIn, getJwtSecret } from '#shared/modules/jwt/jwt.util';
 
 function fakeConfigService(
   values: Record<string, string | number>,

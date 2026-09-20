@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 
-import { getRequiredEnv } from './rmq.service.js';
+import { getRequiredEnv } from '#shared/modules/rmq/rmq.service';
 
 function fakeConfigService(values: Record<string, string>): ConfigService {
   return { get: (key: string) => values[key] } as ConfigService;

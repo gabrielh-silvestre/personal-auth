@@ -3,12 +3,12 @@ import type { Request } from 'express';
 import { Controller, UseFilters, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-import type { OutputVerifyTokenDto } from '@auth/useCase/verifyToken/VerifyToken.dto.js';
+import type { OutputVerifyTokenDto } from '#auth/useCase/verifyToken/VerifyToken.dto';
 
-import { VerifyTokenUseCase } from '@auth/useCase/verifyToken/VerifyToken.useCase.js';
+import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
 
-import { AuthenticateGuard } from '../../guard/Authenticate.guard.js';
-import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc.js';
+import { AuthenticateGuard } from '#auth/infra/api/guard/Authenticate.guard';
+import { ExceptionFilterRpc } from '#shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller()
 export class VerifyTokenController {

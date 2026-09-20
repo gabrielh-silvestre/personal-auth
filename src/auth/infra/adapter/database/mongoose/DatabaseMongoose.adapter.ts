@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import type { IToken } from '@auth/domain/entity/token.interface.js';
-import type { IDatabaseAdapter } from '../database.adapter.interface.js';
+import type { IToken } from '#auth/domain/entity/token.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { Token } from '@auth/domain/entity/Token.js';
+import { Token } from '#auth/domain/entity/Token';
 
-import { TokenDocument, TokenSchema } from './MongooseSchema.js';
+import { TokenDocument, TokenSchema } from '#auth/infra/adapter/database/mongoose/MongooseSchema';
 
 @Injectable()
 export class DatabaseMongooseAdapter implements IDatabaseAdapter {

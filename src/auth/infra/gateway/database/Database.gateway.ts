@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { TokenType } from '@auth/domain/entity/token.interface.js';
-import type { IDatabaseGateway } from './database.gateway.interface.js';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/database.adapter.interface.js';
+import type { TokenType } from '#auth/domain/entity/token.interface';
+import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { Token } from '@auth/domain/entity/Token.js';
+import { Token } from '#auth/domain/entity/Token';
 
-import { DATABASE_ADAPTER } from '@auth/utils/constants/index.js';
+import { DATABASE_ADAPTER } from '#auth/utils/constants/index';
 
 @Injectable()
 export class DatabaseGateway implements IDatabaseGateway {

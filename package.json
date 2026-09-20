@@ -6,6 +6,24 @@
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
+  "imports": {
+    "#app/*": {
+      "development": "./src/*.ts",
+      "default": "./dist/*.js"
+    },
+    "#auth/*": {
+      "development": "./src/auth/*.ts",
+      "default": "./dist/auth/*.js"
+    },
+    "#shared/*": {
+      "development": "./src/shared/*.ts",
+      "default": "./dist/shared/*.js"
+    },
+    "#exceptions/*": {
+      "development": "./src/shared/modules/exceptions/*.ts",
+      "default": "./dist/shared/modules/exceptions/*.js"
+    }
+  },
   "scripts": {
     "prepare": "husky",
     "prebuild": "rimraf dist tsconfig.build.tsbuildinfo",

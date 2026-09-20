@@ -8,9 +8,9 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import { DomainError } from '@auth/domain/error/DomainError.js';
-import { Exception } from '@exceptions/entity/Exception.js';
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
+import { DomainError } from '#auth/domain/error/DomainError';
+import { Exception } from '#exceptions/entity/Exception';
+import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
 
 @Catch(Error)
 export class GlobalExceptionRestFilter implements ExceptionFilter<Error> {

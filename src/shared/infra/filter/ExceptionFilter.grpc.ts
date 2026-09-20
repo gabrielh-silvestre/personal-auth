@@ -1,9 +1,9 @@
 import { Catch, RpcExceptionFilter } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 
-import { DomainError } from '@auth/domain/error/DomainError.js';
-import { Exception } from '@exceptions/entity/Exception.js';
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory.js';
+import { DomainError } from '#auth/domain/error/DomainError';
+import { Exception } from '#exceptions/entity/Exception';
+import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
 
 @Catch(Exception, DomainError)
 export class ExceptionFilterRpc implements RpcExceptionFilter<

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { getJwtExpiresIn, getJwtSecret } from './jwt.util.js';
+import { getJwtExpiresIn, getJwtSecret } from '#shared/modules/jwt/jwt.util';
 
 @Injectable()
 export class JwtAccessService {

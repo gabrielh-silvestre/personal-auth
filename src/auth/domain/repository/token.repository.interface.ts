@@ -1,6 +1,6 @@
-import type { TokenType } from '../entity/token.interface.js';
+import type { TokenType } from '#auth/domain/entity/token.interface';
 
-import { Token } from '../entity/Token.js';
+import { Token } from '#auth/domain/entity/Token';
 
 export interface ITokenRepository {
   create(entity: Token): Promise<void>;

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
-import { JwtAccessService } from './JwtAccess.service.js';
-import { JwtRefreshService } from './JwtRefresh.service.js';
+import { JwtAccessService } from '#shared/modules/jwt/JwtAccess.service';
+import { JwtRefreshService } from '#shared/modules/jwt/JwtRefresh.service';
 
 @Module({
   imports: [JwtModule],

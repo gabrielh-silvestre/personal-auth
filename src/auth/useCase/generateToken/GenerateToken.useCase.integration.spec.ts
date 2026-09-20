@@ -1,12 +1,12 @@
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/database.gateway.interface.js';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/database.adapter.interface.js';
+import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { GenerateTokenUseCase } from './GenerateToken.useCase.js';
+import { GenerateTokenUseCase } from '#auth/useCase/generateToken/GenerateToken.useCase';
 
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.js';
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter.js';
+import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
+import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
 
 describe('Integration test for GenerateToken use case', () => {
   let generateTokenUseCase: GenerateTokenUseCase;

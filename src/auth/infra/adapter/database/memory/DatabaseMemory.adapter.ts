@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import type { IToken } from '@auth/domain/entity/token.interface.js';
-import type { IDatabaseAdapter } from '../database.adapter.interface.js';
+import type { IToken } from '#auth/domain/entity/token.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { Token } from '@auth/domain/entity/Token.js';
+import { Token } from '#auth/domain/entity/Token';
 
 @Injectable()
 export class DatabaseMemoryAdapter implements IDatabaseAdapter {

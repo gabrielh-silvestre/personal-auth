@@ -1,6 +1,6 @@
-import type { IToken, TokenType } from './token.interface.js';
+import type { IToken, TokenType } from '#auth/domain/entity/token.interface';
 
-import { DomainError } from '../error/DomainError.js';
+import { DomainError } from '#auth/domain/error/DomainError';
 
 export class Token implements IToken {
   private _id: string;

@@ -1,17 +1,17 @@
 import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
-import { VerifyTokenController } from './VerifyToken.controller.js';
-import { VerifyTokenUseCase } from '@auth/useCase/verifyToken/VerifyToken.useCase.js';
+import { VerifyTokenController } from '#auth/infra/api/controller/verifyToken/VerifyToken.controller';
+import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter.js';
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.js';
+import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
+import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
 import {
   DATABASE_ADAPTER,
   DATABASE_GATEWAY,
-} from '@auth/utils/constants/index.js';
+} from '#auth/utils/constants/index';
 
 const [{ id: tokenId }] = TOKENS_MOCK;
 

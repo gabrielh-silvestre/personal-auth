@@ -1,13 +1,17 @@
 import swc from 'unplugin-swc';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths(),
     // Builds the test files with SWC so Nest's decorator metadata still works.
     swc.vite({ module: { type: 'es6' } }),
   ],
+  resolve: {
+    // Picks the "development" branch of package.json #subpath imports,
+    // so #auth/*, #shared/*, #exceptions/*, #app/* resolve to src/**/*.ts
+    // instead of the compiled dist/**/*.js.
+    conditions: ['development'],
+  },
   test: {
     root: './',
     globals: true,

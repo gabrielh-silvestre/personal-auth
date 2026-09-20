@@ -1,20 +1,20 @@
 import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 
-import { RefreshController } from './Refresh.controller.js';
-import { RefreshUseCase } from '@auth/useCase/refresh/Refresh.useCase.js';
+import { RefreshController } from '#auth/infra/api/controller/refresh/Refresh.controller';
+import { RefreshUseCase } from '#auth/useCase/refresh/Refresh.useCase';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter.js';
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.js';
+import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
 
-import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service.js';
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service.js';
+import { JwtRefreshService } from '#shared/modules/jwt/JwtRefresh.service';
+import { JwtAccessService } from '#shared/modules/jwt/JwtAccess.service';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock.js';
+import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
 import {
   DATABASE_ADAPTER,
   DATABASE_GATEWAY,
-} from '@auth/utils/constants/index.js';
+} from '#auth/utils/constants/index';
 
 const [, , , { userId }] = TOKENS_MOCK;
 

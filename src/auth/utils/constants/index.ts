@@ -1,1 +1,1 @@
-export * from './injectNames.js';
+export * from '#auth/utils/constants/injectNames';

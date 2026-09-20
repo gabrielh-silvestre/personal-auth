@@ -1,1 +1,1 @@
-export * from './envVariables.js';
+export * from '#shared/utils/constants/envVariables';

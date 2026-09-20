@@ -2,9 +2,9 @@
 // import { INestApplication } from '@nestjs/common/interfaces';
 // import * as request from 'supertest';
 
-// import { AppModule } from '../../src/app.module.js';
+// import { AppModule } from '#app/app.module';
 
-// import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter.js';
+// import { GlobalExceptionRestFilter } from '#shared/infra/GlobalException.filter';
 // import { from } from 'rxjs';
 
 // const VALID_NEW_USER = {
