@@ -29,3 +29,6 @@ export class TokenSchema implements IToken {
 
 export type TokenDocument = TokenSchema & Document;
 export const tokenSchema = SchemaFactory.createForClass(TokenSchema);
+
+// One token per user per type: enforces the invariant `create()` relies on.
+tokenSchema.index({ userId: 1, type: 1 }, { unique: true });

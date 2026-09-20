@@ -30,18 +30,6 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
     );
   }
 
-  private domainToModel(domain: Token) {
-    return new this.model({
-      id: domain.id,
-      userId: domain.userId,
-      expireTime: domain.expireTime,
-      lastRefresh: domain.lastRefresh,
-      expires: domain.expires,
-      revoked: domain.revoked,
-      type: domain.type,
-    });
-  }
-
   async findAll(): Promise<Token[]> {
     const foundTokens = await this.model.find().exec();
 
@@ -55,16 +43,24 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
   }
 
   async create(entity: Token): Promise<void> {
-    const tokenAlreadyExists = await this.findOne({
-      userId: entity.userId,
-      type: entity.type,
-    });
-
-    if (tokenAlreadyExists) {
-      await this.update(entity);
-    } else {
-      await this.domainToModel(entity).save();
-    }
+    await this.model
+      .findOneAndUpdate(
+        {
+          userId: entity.userId,
+          type: entity.type,
+        },
+        {
+          $set: {
+            id: entity.id,
+            expireTime: entity.expireTime,
+            lastRefresh: entity.lastRefresh,
+            expires: entity.expires,
+            revoked: entity.revoked,
+          },
+        },
+        { upsert: true },
+      )
+      .exec();
   }
 
   async update(entity: Token): Promise<void> {
