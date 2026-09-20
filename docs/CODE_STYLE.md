@@ -27,7 +27,7 @@ prefix and no `class-validator` decorators.
   is a standalone interface, it does not extend anything from `@shared`).
 - `useCase/` depends only on `domain/` and the `gateway/*.interface.ts` type
   from `infra/` (e.g. `Login.useCase.ts` imports the `IDatabaseGateway` type
-  from `@auth/infra/gateway/database/database.gateway.interface.js`, never the
+  from `#auth/infra/gateway/database/database.gateway.interface`, never the
   concrete `Database.gateway.ts`).
 - `infra/` is the only layer where adapters, gateways, controllers, guards,
   strategies and `.proto` files live.
@@ -50,19 +50,28 @@ gateway interface; never touches an adapter directly.
 
 ## Modules and imports (ESM)
 
-`package.json` has `"type": "module"`; TypeScript is `nodenext`. Every
-relative and path-alias import carries an explicit `.js` extension, even
-though the source is `.ts`:
+`package.json` has `"type": "module"`; TypeScript is `nodenext`. There are no
+relative imports and no path aliases — every import goes through a Node
+subpath import, with no extension at all, even though the source is `.ts`:
 
 ```ts
-import { TokenFactory } from '@auth/domain/factory/Token.factory.js';
-import { DATABASE_GATEWAY } from '@auth/utils/constants/index.js';
+import { TokenFactory } from '#auth/domain/factory/Token.factory';
+import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 ```
 
-Aliases that resolve: `@auth/*`, `@shared/*`, `@exceptions/*` (=
-`src/shared/modules/exceptions/*`), declared in `tsconfig.json`'s `paths`.
-`@users`, `@tokens`, `@mail` are declared there too but point at directories
-that don't exist — don't use them.
+Namespaces: `#app/*` (files directly under `src/`), `#auth/*`, `#shared/*`,
+`#exceptions/*` (= `src/shared/modules/exceptions/*`). A new file is always
+imported through its namespace, never `./x`.
+
+The mapping lives in `package.json`'s `imports` field, split per namespace
+into two conditions: `development` → `./src/**/*.ts`, `default` →
+`./dist/**/*.js`. `tsconfig.json`'s `customConditions: ["development"]` and
+`vitest.config.ts`'s `resolve: { conditions: ['development'] }` both pick the
+`development` branch, so tsc and Vitest type-check/run against the `.ts`
+sources; Node at runtime has no such flag, so it falls through to `default`
+and resolves the compiled `dist/**/*.js`. tsc never rewrites these
+specifiers — Node's own resolver does the work, at both type-check and run
+time.
 
 ## Error handling
 

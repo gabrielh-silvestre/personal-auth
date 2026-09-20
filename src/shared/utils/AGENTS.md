@@ -19,6 +19,6 @@ DI/env string tokens and test fixtures shared across bounded contexts. See [CLAU
 
 ## Dependencies
 ### Internal
-- Consumed via `@shared/utils/constants` / `@shared/utils/mocks`.
+- Consumed via `#shared/utils/constants` / `#shared/utils/mocks`.
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

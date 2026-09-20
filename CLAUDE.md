@@ -8,7 +8,8 @@ Code conventions (naming, layer boundaries, DI, error handling, tests, tooling) 
 
 NestJS 12, TypeScript 6, Node 22 (`.nvmrc`, `engines.node >=22`). ESM
 throughout: `package.json` has `"type": "module"`, `tsconfig.json` targets
-`nodenext`, every relative/alias import carries an explicit `.js` extension.
+`nodenext`, every import goes through a Node subpath import (no relative
+imports, no `.js`/`.ts` extension) — see Architecture below.
 `tsconfig.json` has `strictNullChecks: true` and `noImplicitAny: true`.
 Tests run on Vitest (`vitest.config.ts`), not Jest.
 
@@ -51,7 +52,7 @@ DI chain is **adapter → gateway → use case**, wired with string tokens from 
 
 `src/shared` holds cross-cutting pieces: `ExceptionFactory` (each error carries a gRPC status + HTTP status pair), `JwtAccessService`/`JwtRefreshService`, `RmqModule.register(name)`, REST/RPC exception filters, `ParseHalJsonInterceptor`. `RmqService`'s `getRequiredEnv` and `jwt.util.ts`'s `getJwtSecret`/`getJwtExpiresIn` throw at boot naming the missing variable when `NODE_ENV` is not `development`/`test` — no silent fallback outside those two envs.
 
-Path aliases that resolve: `@auth/*`, `@shared/*`, `@exceptions/*` (= `src/shared/modules/exceptions/*`). `@users`, `@tokens`, `@mail` in `tsconfig.json` point to directories that don't exist. Every alias/relative import carries an explicit `.js` extension (ESM/`nodenext`).
+Imports are Node subpath imports, no extension, no relative paths: `#app/*` (files directly under `src/`), `#auth/*`, `#shared/*`, `#exceptions/*` (= `src/shared/modules/exceptions/*`). The mapping lives in `package.json`'s `imports`, condition-split per namespace: `development` → `./src/**/*.ts` (picked by tsc via `customConditions: ["development"]` and by Vitest via `resolve: { conditions: ['development'] }`), `default` → `./dist/**/*.js` (what Node resolves at runtime, no flag needed). tsc does not rewrite the specifiers; Node's resolver does. There used to be tsconfig `paths` aliases (`@auth/*`, `@shared/*`, `@exceptions/*`, plus three phantom ones pointing at non-existent directories) — those are gone.
 
 ## Transports
 

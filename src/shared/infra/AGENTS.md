@@ -22,7 +22,7 @@ Transport-facing adapters shared across the app: the global REST exception filte
 
 ## Dependencies
 ### Internal
-- `GlobalException.filter.ts` and `filter/ExceptionFilter.grpc.ts` both import `Exception`/`ExceptionFactory` from `../modules/exceptions` (see [../modules/AGENTS.md](../modules/AGENTS.md)) via the `@exceptions/*` alias, and `DomainError` from `@auth/domain/error/DomainError.js` — the one place `src/shared` reaches into `src/auth`.
+- `GlobalException.filter.ts` and `filter/ExceptionFilter.grpc.ts` both import `Exception`/`ExceptionFactory` from `../modules/exceptions` (see [../modules/AGENTS.md](../modules/AGENTS.md)) via the `#exceptions/*` subpath import, and `DomainError` from `#auth/domain/error/DomainError` — the one place `src/shared` reaches into `src/auth`.
 ### External
 - `@nestjs/common`, `express` (`Response` type), `rxjs`.
 

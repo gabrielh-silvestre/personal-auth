@@ -73,9 +73,9 @@ One folder per use case (`generateToken/`, `login/`, `refresh/`, `verifyToken/`)
 
 ## Dependencies
 ### Internal
-- `@auth/domain/*` (via `TokenFactory`, `Token`, `ITokenRepository`) and `@auth/useCase/*` (controllers only).
-- `@auth/utils/constants` for all DI tokens (`DATABASE_ADAPTER`, `DATABASE_GATEWAY`, `USER_ADAPTER`, `USER_GATEWAY`).
-- `@shared/modules/jwt/*` (sign/verify), `@shared/infra/filter/ExceptionFilter.grpc`, `@shared/infra/interceptor/Parse.hal-json.interceptor`, `@exceptions/factory/Exception.factory`.
+- `#auth/domain/*` (via `TokenFactory`, `Token`, `ITokenRepository`) and `#auth/useCase/*` (controllers only).
+- `#auth/utils/constants` for all DI tokens (`DATABASE_ADAPTER`, `DATABASE_GATEWAY`, `USER_ADAPTER`, `USER_GATEWAY`).
+- `#shared/modules/jwt/*` (sign/verify), `#shared/infra/filter/ExceptionFilter.grpc`, `#shared/infra/interceptor/Parse.hal-json.interceptor`, `#exceptions/factory/Exception.factory`.
 
 ### External
 - `@nestjs/common`, `@nestjs/microservices`, `@nestjs/mongoose`, `@nestjs/passport`, `@nestjs/config`.

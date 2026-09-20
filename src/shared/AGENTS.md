@@ -26,6 +26,6 @@ Cross-cutting code shared by every bounded context: base domain interfaces, DI/e
 
 ## Dependencies
 ### Internal
-- Consumed via the `@shared/*` path alias (e.g. `@shared/utils/constants`).
+- Consumed via the `#shared/*` subpath import (e.g. `#shared/utils/constants`).
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

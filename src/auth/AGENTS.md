@@ -33,7 +33,7 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 ## Dependencies
 
 ### Internal
-- `@shared/modules/rmq/rmq.module`, `@shared/modules/jwt/Jwt.module`
+- `#shared/modules/rmq/rmq.module`, `#shared/modules/jwt/Jwt.module`
 
 ### External
 - `@nestjs/common`, `@nestjs/mongoose`
