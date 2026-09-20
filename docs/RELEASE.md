@@ -1,7 +1,7 @@
 # Processo de release
 
 Git Flow completo. `main` guarda o que está em produção, `dev` integra o que vai
-para a próxima versão, e uma branch `release/x.y.z` estabiliza a versão antes de
+para a próxima versão, e uma branch `release/<nome>` estabiliza a versão antes de
 ela chegar na `main`.
 
 Nenhum merge acontece localmente: todo merge é um Pull Request no GitHub. Isso
@@ -15,7 +15,7 @@ remover a de origem — não é equivalente ao `git merge`.
 | `main` | permanente | — | — |
 | `dev` | permanente | — | — |
 | `feat/*`, `fix/*`, `chore/*`, `refactor/*` | temporária | `dev` | PR para `dev` |
-| `release/x.y.z` | temporária | `dev` | PR para `main` **e** PR para `dev` |
+| `release/<nome>` | temporária | `dev` | PR para `main` **e** PR para `dev` |
 | `hotfix/x.y.z` | temporária | `main` | PR para `main` **e** PR para `dev` |
 
 Worktrees e branches passam pelo Worktrunk, nunca pelo `git` direto:
@@ -29,7 +29,9 @@ wt remove --force feat/basic-auth -D     # worktree sujo / branch não mergeada
 
 ## Versionamento
 
-A fonte da verdade é o `version` do `package.json`; a tag deriva dele.
+A release é nomeada pelo escopo (`release/hextelemetry`), não pela versão. A
+versão só é decidida no fim, no passo do bump, e a fonte da verdade é o `version`
+do `package.json`; a tag deriva dele.
 
 O tipo do bump sai dos Conventional Commits acumulados desde a última tag:
 
@@ -39,10 +41,10 @@ O tipo do bump sai dos Conventional Commits acumulados desde a última tag:
 | algum `feat` | minor |
 | só `fix`, `chore`, `docs`, `refactor`, `test` | patch |
 
-A tag leva o prefixo `v`, que é o padrão do `npm version` (`v0.0.2`).
+A ordem de entrega das releases também pesa na escolha: a versão é a próxima em
+relação à última tag já publicada.
 
-**Estado atual:** `package.json` em `0.0.1`, nenhuma tag publicada. A próxima
-release é **`0.0.2`**.
+A tag leva o prefixo `v`, que é o padrão do `npm version` (`v<x.y.z>`).
 
 ## Fluxo de feature
 
@@ -53,30 +55,34 @@ release é **`0.0.2`**.
 
 ## Fluxo de release
 
-1. `wt switch -c release/0.0.2 -b dev`
-2. Bump sem tag, porque a tag só nasce depois do merge:
-   ```bash
-   npm version 0.0.2 --no-git-tag-version
-   ```
-3. `git commit -am "chore: release 0.0.2"`
-4. Só correções entram na branch de release. Funcionalidade nova continua indo
-   para `dev` e fica para a próxima versão — é justamente isso que a branch de
+`<nome>` é o escopo da release (ex.: `hextelemetry`). Funcionalidade entra por
+`feat/*` → PR para `dev`; a branch de release sai da `dev` e só recebe correções
+e o bump.
+
+1. `wt switch -c release/<nome> -b dev`
+2. Só correções entram na branch de release. Funcionalidade nova continua indo
+   para `dev` e fica para outra release — é justamente isso que a branch de
    release compra.
-5. PR de `release/0.0.2` para **`main`**. O `main.yml` roda `test:cov` +
+3. Decida a versão `<x.y.z>` pelos Conventional Commits acumulados desde a última
+   tag e pela ordem de entrega (tabela em Versionamento).
+4. Bump sem tag, porque a tag só nasce depois do merge:
+   ```bash
+   npm version <x.y.z> --no-git-tag-version
+   ```
+5. Commit `chore: release <x.y.z>`, imediatamente antes do PR para a `main`.
+6. PR de `release/<nome>` para **`main`**. O `main.yml` roda `test:cov` +
    SonarCloud; o check `Coverage` precisa passar. Merge.
-6. Tag no commit de merge, na `main`:
+7. Tag no commit de merge, na `main`, e release no GitHub com as notas geradas a
+   partir dos PRs incluídos:
    ```bash
    git fetch origin main
-   git tag -a v0.0.2 origin/main -m "0.0.2"
-   git push origin v0.0.2
+   git tag -a v<x.y.z> origin/main -m "<x.y.z>"
+   git push origin v<x.y.z>
+   gh release create v<x.y.z> --generate-notes
    ```
-7. Release no GitHub, com as notas geradas a partir dos PRs incluídos:
-   ```bash
-   gh release create v0.0.2 --generate-notes
-   ```
-8. PR de `release/0.0.2` para **`dev`**, levando o bump e as correções de volta.
+8. PR de `release/<nome>` para **`dev`**, levando o bump e as correções de volta.
    Sem esse passo a `dev` fica atrás da `main`.
-9. `wt remove release/0.0.2`
+9. `wt remove release/<nome>`
 
 ## Fluxo de hotfix
 
