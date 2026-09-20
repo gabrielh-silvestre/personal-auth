@@ -22,7 +22,7 @@ NestJS modules shared across bounded contexts: the domain exception type/factory
 ## For AI Agents
 ### Working In This Directory
 - `ExceptionFactory` is the only way domain/useCase code should construct an `Exception` — keeps the gRPC/HTTP status pairing consistent across transports (see `GlobalExceptionRestFilter` and `ExceptionFilterRpc` in `../infra/AGENTS.md`).
-- JWT secret/expiry env vars are read in milliseconds via `TOKEN_SECRET`/`TOKEN_EXPIRES_IN` from `#shared/utils/constants` — see CLAUDE.md's Environment section.
+- JWT secret/expiry env vars are read in milliseconds via `TOKEN_SECRET`/`TOKEN_EXPIRES_IN` from `#shared/utils/constants` — see CLAUDE.md's Token behavior section.
 
 ### Testing Requirements
 - `exceptions/` has unit specs (`*.unit.spec.ts`) covering the entity and factory. `jwt/jwt.util.unit.spec.ts` covers the fail-fast/fallback branches of `getJwtSecret`/`getJwtExpiresIn`; `rmq/rmq.service.unit.spec.ts` covers `getRequiredEnv`. The `JwtAccessService`/`JwtRefreshService`/`RmqModule` classes themselves have no specs of their own; they're exercised indirectly through the `auth` module's integration/e2e suites.

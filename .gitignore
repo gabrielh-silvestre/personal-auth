@@ -54,6 +54,9 @@ t.ts
 .omc/
 .omx/
 
+## Scratch: review drafts, PR bodies, reports — never committed
+.ignore/
+
 ## OpenAI Codex CLI
 .codex/
 

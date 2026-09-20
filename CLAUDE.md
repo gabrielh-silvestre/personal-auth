@@ -109,4 +109,23 @@ Transport glue you must preserve:
 
 ## GitNexus
 
-Indexed as `personal-auth`. Before editing a symbol run `gitnexus_impact({target, direction: "upstream"})` and report HIGH/CRITICAL risk; treat `risk: UNKNOWN` as unresolved, not safe. Run `gitnexus_detect_changes()` before committing. Reindex with `npx gitnexus analyze --index-only`; without `--index-only` it re-injects its own block into `CLAUDE.md`/`AGENTS.md`.
+Indexed as `personal-auth`. Reindex with `npm run reindex` (`gitnexus analyze --index-only`); a bare `gitnexus analyze` rewrites the six `.claude/skills/gitnexus-*` files and re-injects its block into `CLAUDE.md`/`AGENTS.md`.
+
+Impact and pre-commit checks: skill `gitnexus-impact-analysis`.
+
+## Hexlog
+
+Hexlog audits **decisions**, not tooling. Project `personal-auth`; one process per release branch (`release/1.2.0` → `release-1-2-0`); the `bootstrap` process is frozen history. Data is reachable only through `mcp__hexlog__*`.
+
+Register with `agent` = `main` for the main session, or the full subagent name (`naruto-executor-fix-x`) for subagents. Vocabulary is `core` v1.1:
+
+| Who | Registers |
+|---|---|
+| `main` | `release-opened` (also `create_process`), `pr-merged`, `release-closed`, `interview-done`, `plan-approved`, `prd-approved`, `contract-changed`, `docs-updated` |
+| `verifier` | `verify-passed` (only with `local-gate` result), `fix-opened` when verification fails |
+| `executor` | only `plan-diverged` or `obstacle-hit`; both need `target` = the `plan-approved` milestone and non-empty `decisions[]`. Routine execution is never logged |
+| any | a Verdict with `adopt`/`reject`/`defer` for a design decision |
+
+Gates: `local-gate` (lint + `test:all` exit 0), `decisions-justified` (every `plan-diverged`/`obstacle-hit` has `decisions[]` and `target`), plus builtins `no-orphans`, `chain-intact`. Before pushing/opening a PR on a release branch: `no-orphans` + `decisions-justified` must pass. Before tagging `v*`: `verify-passed` present and `chain-intact` passing.
+
+`.claude/settings.json` enforces both rules above with read-only `agent` hooks (they call `mcp__hexlog__*`; the store is not readable from a shell) on `git push`, `git tag` and `create_pull_request`. Off a `release/*` branch they pass. If hexlog is unreachable they block; remove the hook entry rather than bypass.

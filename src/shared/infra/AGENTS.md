@@ -17,7 +17,7 @@ Transport-facing adapters shared across the app: the global REST exception filte
 
 ## For AI Agents
 ### Working In This Directory
-- `ParseHalJsonInterceptor` must stay per-route (`@UseInterceptors`) — global registration breaks gRPC/RMQ responses (see CLAUDE.md's Key Patterns).
+- `ParseHalJsonInterceptor` must stay per-route (`@UseInterceptors`) — global registration breaks gRPC/RMQ responses (see CLAUDE.md's Transports section).
 - On RPC handlers, `@UseFilters` must wrap `@UseGuards`, or exception handling is bypassed.
 
 ## Dependencies
