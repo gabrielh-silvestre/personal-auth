@@ -9,6 +9,33 @@
             "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/no-main-edits.cjs\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "agent",
+            "if": "Bash(git push*)",
+            "prompt": "Hexlog audit gate (push). READ-ONLY: never call register or evaluate_gate. 1) Find the current git branch by reading .git/HEAD (if .git is a file, read the gitdir it points to, then its HEAD). If it is not refs/heads/release/*, respond {\"ok\": true}. 2) Process slug = branch name with 'release/' turned into 'release-' and every '.' or '/' turned into '-' (release/1.2.0 -> release-1-2-0). Project is 'personal-auth'. 3) With mcp__hexlog__list confirm the process exists; if not, block: no release-opened/create_process. 4) With mcp__hexlog__state (sections orphans, chain) block if orphans is non-empty or chain.ok is false. 5) With mcp__hexlog__events (type=milestone, milestoneType=plan-diverged, then obstacle-hit) block if any such event lacks a non-empty data.decisions[] or a data.target. Otherwise respond {\"ok\": true}. Blocking reasons must name the failing check and the event id. Hook input: $ARGUMENTS",
+            "timeout": 90
+          },
+          {
+            "type": "agent",
+            "if": "Bash(git tag*)",
+            "prompt": "Hexlog audit gate (release tag). READ-ONLY: never call register or evaluate_gate. 1) Read the tool input; if the tag name does not start with 'v', respond {\"ok\": true}. 2) Find the current branch by reading .git/HEAD (if .git is a file, follow its gitdir). Process slug = branch with 'release/' turned into 'release-' and '.' or '/' turned into '-'; project 'personal-auth'. If the branch is not release/*, block: release tags are cut from a release branch. 3) With mcp__hexlog__list confirm the process exists. 4) With mcp__hexlog__events (type=milestone, milestoneType=verify-passed) block if there is none. 5) With mcp__hexlog__chain block if ok is false. Otherwise respond {\"ok\": true}. Blocking reasons must name the failing check. Hook input: $ARGUMENTS",
+            "timeout": 90
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__github-official__create_pull_request",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Hexlog audit gate (PR). READ-ONLY: never call register or evaluate_gate. 1) Read the tool input head branch; if it is not release/*, respond {\"ok\": true}. 2) Process slug = branch with 'release/' turned into 'release-' and '.' or '/' turned into '-'; project 'personal-auth'. 3) With mcp__hexlog__list confirm the process exists; if not, block. 4) With mcp__hexlog__state (sections orphans, chain) block if orphans is non-empty or chain.ok is false. 5) With mcp__hexlog__events (type=milestone, milestoneType=plan-diverged, then obstacle-hit) block if any lacks a non-empty data.decisions[] or a data.target. Otherwise respond {\"ok\": true}. Blocking reasons must name the failing check and the event id. Hook input: $ARGUMENTS",
+            "timeout": 90
+          }
+        ]
       }
     ]
   }

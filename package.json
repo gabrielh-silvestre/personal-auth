@@ -26,6 +26,7 @@
   },
   "scripts": {
     "prepare": "husky",
+    "reindex": "gitnexus analyze --index-only",
     "prebuild": "rimraf dist tsconfig.build.tsbuildinfo",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
