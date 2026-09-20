@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
 import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
 
@@ -5,6 +7,7 @@ import { VerifyTokenUseCase } from './VerifyToken.useCase';
 
 import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
 import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { Token } from '@auth/domain/entity/Token';
 
 import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
 
@@ -40,10 +43,11 @@ describe('Integration test for VerifyToken use case', () => {
   });
 
   it('should throw an exception when token is expired', async () => {
-    TOKEN.revoke();
+    const expiredToken = new Token(uuid(), TOKEN.userId, -1000, new Date(), false, 'ACCESS');
+    await databaseAdapter.create(expiredToken);
 
-    await expect(verifyTokenUseCase.execute({ tokenId })).rejects.toThrow(
-      'Invalid token',
-    );
+    await expect(
+      verifyTokenUseCase.execute({ tokenId: expiredToken.id }),
+    ).rejects.toThrow('Invalid token');
   });
 });
