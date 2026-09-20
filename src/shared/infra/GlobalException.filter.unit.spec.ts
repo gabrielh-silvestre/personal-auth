@@ -1,9 +1,15 @@
 import type { ArgumentsHost } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 
-import { DomainError } from '#auth/domain/error/DomainError';
-
 import { GlobalExceptionRestFilter } from '#shared/infra/GlobalException.filter';
+
+class FakeDomainError extends Error {
+  readonly domainErrorKind = 'invalidArgument' as const;
+}
+
+class FakeNotFoundError extends Error {
+  readonly domainErrorKind = 'notFound' as const;
+}
 
 function fakeHttpHost(): {
   host: ArgumentsHost;
@@ -29,9 +35,18 @@ describe('Unit test GlobalExceptionRestFilter', () => {
     const filter = new GlobalExceptionRestFilter();
     const { host, status } = fakeHttpHost();
 
-    filter.catch(new DomainError('Invalid token type'), host);
+    filter.catch(new FakeDomainError('Invalid token type'), host);
 
     expect(status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
+  });
+
+  it('should map a DomainError by its kind instead of always defaulting to bad request', () => {
+    const filter = new GlobalExceptionRestFilter();
+    const { host, status } = fakeHttpHost();
+
+    filter.catch(new FakeNotFoundError('Token not found'), host);
+
+    expect(status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
   });
 
   it('should map an unknown error to a generic 500', () => {
