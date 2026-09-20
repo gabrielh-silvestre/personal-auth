@@ -1,4 +1,4 @@
-import { Exception } from './Exception';
+import { Exception } from '#exceptions/entity/Exception';
 
 describe('Unit test domain Exception entity', () => {
   it('should create a new exception', () => {

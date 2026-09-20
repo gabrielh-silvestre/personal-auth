@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputRefreshDto, OutputRefreshDto } from './Refresh.dto';
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
+import type {
+  InputRefreshDto,
+  OutputRefreshDto,
+} from '#auth/useCase/refresh/Refresh.dto';
+import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
 
-import { Token } from '@auth/domain/entity/Token';
-import { TokenFactory } from '@auth/domain/factory/Token.factory';
+import { Token } from '#auth/domain/entity/Token';
+import { TokenFactory } from '#auth/domain/factory/Token.factory';
 
-import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
+import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
 
-import { DATABASE_GATEWAY } from '@auth/utils/constants';
+import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 
 @Injectable()
 export class RefreshUseCase {

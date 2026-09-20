@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { TokenType } from '@auth/domain/entity/token.interface';
-import type { IDatabaseGateway } from './Database.gateway.interface';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
+import type { TokenType } from '#auth/domain/entity/token.interface';
+import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { Token } from '@auth/domain/entity/Token';
+import { Token } from '#auth/domain/entity/Token';
 
-import { DATABASE_ADAPTER } from '@auth/utils/constants';
+import { DATABASE_ADAPTER } from '#auth/utils/constants/index';
 
 @Injectable()
 export class DatabaseGateway implements IDatabaseGateway {
@@ -15,7 +15,7 @@ export class DatabaseGateway implements IDatabaseGateway {
     private readonly databaseAdapter: IDatabaseAdapter,
   ) {}
 
-  async find(id: string): Promise<Token> {
+  async find(id: string): Promise<Token | null> {
     return this.databaseAdapter.findOne({ id });
   }
 

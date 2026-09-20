@@ -1,4 +1,4 @@
-import type { IException } from './exception.interface';
+import type { IException } from '#exceptions/entity/exception.interface';
 
 export class Exception extends Error implements IException {
   private _code: number;
