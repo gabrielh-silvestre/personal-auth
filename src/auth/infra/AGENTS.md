@@ -50,7 +50,6 @@ One folder per use case (`generateToken/`, `login/`, `refresh/`, `verifyToken/`)
 | File | Description |
 |------|-------------|
 | `proto/auth.proto` | `AuthService` (`LoginUser`, `RefreshToken`) — backs the gRPC handlers in `login/` and `refresh/` controllers |
-| `proto/token.proto` | `TokenService.RevokeToken` — loaded in `main.ts` but **no `@GrpcMethod` implements it anywhere in `src/`**; dead/unused proto contract |
 | `strategy/Jwt.access-token.strategy.ts` | Passport `'access-token'`; extracts JWT from `req.token` (gRPC bridge), `cookies.Access`, or bearer header |
 | `strategy/Jwt.refresh-token.strategy.ts` | Passport `'refresh-token'`; same gRPC bridge + `cookies.Refresh` |
 | `strategy/JwtPayload.dto.ts` | `TokenPayloadDto` (`userId`, `tokenId`) — shared payload shape for both JWT strategies |

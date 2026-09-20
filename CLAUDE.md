@@ -24,15 +24,14 @@ npm run format
 
 npm run test:unit          # *.unit.spec.ts
 npm run test:integration   # *.integration.spec.ts
-npm run test:all           # everything under src/ and test/ (vitest.config.ts)
-npm run test:e2e           # *.e2e-spec.ts
+npm run test:all           # every *.spec.ts under src/ (vitest.config.ts)
 npm run test:cov           # coverage of src/auth/** only, feeds SonarCloud via vitest-sonar-reporter
 npm run test:mutations     # Stryker incremental; mutates only domain/ and useCase/
 
 npx vitest run path/to/file.spec.ts --no-coverage   # single file
 ```
 
-CI: `.github/workflows/main.yml` runs `test:cov` + SonarCloud on PRs to `main`; `pullRequest.yml` runs `npm run test` on PRs to `dev`. Both run on Node 22 via `actions/setup-node@v4`. Commit messages are enforced by commitlint (`commitlint.config.js` + `.husky/commit-msg`): Conventional Commits, subject ≤ 80 chars, no body.
+CI: `.github/workflows/main.yml` is the only workflow — on PRs to `main` it runs `test:cov`, then a build + boot smoke check, on Node 22 via `actions/setup-node@v5`. The SonarCloud step is commented out until the `SONAR_TOKEN` is rotated. Commit messages are enforced by commitlint (`commitlint.config.js` + `.husky/commit-msg`): Conventional Commits, subject ≤ 80 chars, no body.
 
 ## What the service is
 
@@ -44,11 +43,11 @@ Tokens are persisted (Mongo) as `Token` aggregates; the signed JWT only carries 
 
 `src/auth` is split in three layers, dependencies pointing inward:
 
-- `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No framework imports, no `@shared` imports either: `ITokenRepository` is a standalone interface, it does not extend `@shared`'s `IRepository<T>`. Throws `DomainError` (`src/auth/domain/error/DomainError.ts`) on invalid state, never `ExceptionFactory`.
+- `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No framework imports, no `@shared` imports either: `ITokenRepository` is a standalone interface that extends nothing. Throws `DomainError` (`src/auth/domain/error/DomainError.ts`) on invalid state, never `ExceptionFactory`.
 - `useCase/` — `login`, `refresh`, `verifyToken`, `generateToken`; each exposes `execute(input)` and depends only on `DATABASE_GATEWAY`.
 - `infra/` — adapters, gateways, controllers, guards, Passport strategies, `.proto` files. The three interface files here are camelCase: `database.adapter.interface.ts`, `user.adapter.interface.ts`, `database.gateway.interface.ts`.
 
-DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`. `TOKEN_ADAPTER`/`TOKEN_GATEWAY` are declared but unused.
+DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`.
 
 `src/shared` holds cross-cutting pieces: `ExceptionFactory` (each error carries a gRPC status + HTTP status pair), `JwtAccessService`/`JwtRefreshService`, `RmqModule.register(name)`, REST/RPC exception filters, `ParseHalJsonInterceptor`. `RmqService`'s `getRequiredEnv` and `jwt.util.ts`'s `getJwtSecret`/`getJwtExpiresIn` throw at boot naming the missing variable when `NODE_ENV` is not `development`/`test` — no silent fallback outside those two envs.
 
@@ -56,7 +55,7 @@ Imports are Node subpath imports, no extension, no relative paths: `#app/*` (fil
 
 ## Transports
 
-`src/main.ts` runs one Nest app with REST + an RMQ microservice (`AUTH` queue) + a gRPC microservice (`proto.tokens`, `proto.auth`, default `localhost:50051`). Each controller exposes its use case only on some transports:
+`src/main.ts` runs one Nest app with REST + an RMQ microservice (`AUTH` queue) + a gRPC microservice (`proto.auth`, default `localhost:50051`). Each controller exposes its use case only on some transports:
 
 | Use case | REST | gRPC | RMQ pattern |
 |---|---|---|---|
@@ -64,8 +63,6 @@ Imports are Node subpath imports, no extension, no relative paths: `#app/*` (fil
 | refresh | `GET /auth/refresh` | `AuthService.RefreshToken` | — |
 | verifyToken | — | — | `auth.verify_token` |
 | generateToken (recover password) | — | — | `auth.generate_recover_token` |
-
-`token.proto` declares `TokenService.RevokeToken`, but nothing implements it.
 
 To add a transport, add another handler method on the same controller that calls the shared private `handle()`.
 
@@ -87,7 +84,7 @@ Transport glue you must preserve:
 
 - Integration specs all wire `DatabaseMemoryAdapter` + real `DatabaseGateway` and reset state with `DatabaseMemoryAdapter.reset(TOKENS_MOCK)`. Use-case specs construct the classes directly (`new DatabaseGateway(new DatabaseMemoryAdapter())`); controller specs go through `Test.createTestingModule` and stub the JWT services with `useValue`.
 - `DatabaseMemoryAdapter` stores tokens in a **static** array and its `create` matches on `userId` only (Mongo uses `userId + type`). Login's access and refresh tokens overwrite each other in memory, so don't use the memory adapter to assert Mongo semantics.
-- E2E suites under `test/` are mostly commented out.
+- There is no e2e suite: the only one was a stub and was removed. All specs live next to the code under `src/`.
 
 ## GitNexus
 
