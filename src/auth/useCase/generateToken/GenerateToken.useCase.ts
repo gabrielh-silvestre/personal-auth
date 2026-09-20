@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Trace } from '@hex/hextelemetry';
 
 import type { InputGenerateTokenDto } from './GenerateToken.dto';
 import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
@@ -9,6 +10,7 @@ import { ExceptionFactory } from '@exceptions/factory/Exception.factory';
 import { DATABASE_GATEWAY } from '@auth/utils/constants';
 
 @Injectable()
+@Trace()
 export class GenerateTokenUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
