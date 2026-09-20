@@ -1,0 +1,7 @@
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$branch" = "main" ]; then
+  echo "pre-commit: commit direto na main esta bloqueado." >&2
+  echo "Crie ou use uma branch: wt switch -c <nome> -b main" >&2
+  exit 1
+fi

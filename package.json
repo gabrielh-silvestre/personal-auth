@@ -14,17 +14,16 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-
     "test": "jest",
     "test:unit": "jest \".*\\.unit.spec\\.ts\"",
     "test:integration": "jest \".*\\.integration.spec\\.ts\"",
     "test:all": "jest --forceExit --config ./test/jest-all.config.js",
     "test:e2e": "jest --config ./test/jest-e2e.config.js",
-
     "test:cov": "jest --coverage --forceExit --config ./test/jest-all.config.js",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch",
-    "test:mutations": "stryker run --incremental"
+    "test:mutations": "stryker run --incremental",
+    "prepare": "husky"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",
@@ -75,6 +74,7 @@
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-sonar-reporter": "^2.0.0",
     "prettier": "^3.8.3",
