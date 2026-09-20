@@ -24,8 +24,7 @@ npm run format
 
 npm run test:unit          # *.unit.spec.ts
 npm run test:integration   # *.integration.spec.ts
-npm run test:all           # everything under src/ and test/ (vitest.config.ts)
-npm run test:e2e           # *.e2e-spec.ts
+npm run test:all           # every *.spec.ts under src/ (vitest.config.ts)
 npm run test:cov           # coverage of src/auth/** only, feeds SonarCloud via vitest-sonar-reporter
 npm run test:mutations     # Stryker incremental; mutates only domain/ and useCase/
 
@@ -56,7 +55,7 @@ Imports are Node subpath imports, no extension, no relative paths: `#app/*` (fil
 
 ## Transports
 
-`src/main.ts` runs one Nest app with REST + an RMQ microservice (`AUTH` queue) + a gRPC microservice (`proto.tokens`, `proto.auth`, default `localhost:50051`). Each controller exposes its use case only on some transports:
+`src/main.ts` runs one Nest app with REST + an RMQ microservice (`AUTH` queue) + a gRPC microservice (`proto.auth`, default `localhost:50051`). Each controller exposes its use case only on some transports:
 
 | Use case | REST | gRPC | RMQ pattern |
 |---|---|---|---|
@@ -64,8 +63,6 @@ Imports are Node subpath imports, no extension, no relative paths: `#app/*` (fil
 | refresh | `GET /auth/refresh` | `AuthService.RefreshToken` | — |
 | verifyToken | — | — | `auth.verify_token` |
 | generateToken (recover password) | — | — | `auth.generate_recover_token` |
-
-`token.proto` declares `TokenService.RevokeToken`, but nothing implements it.
 
 To add a transport, add another handler method on the same controller that calls the shared private `handle()`.
 
@@ -87,7 +84,7 @@ Transport glue you must preserve:
 
 - Integration specs all wire `DatabaseMemoryAdapter` + real `DatabaseGateway` and reset state with `DatabaseMemoryAdapter.reset(TOKENS_MOCK)`. Use-case specs construct the classes directly (`new DatabaseGateway(new DatabaseMemoryAdapter())`); controller specs go through `Test.createTestingModule` and stub the JWT services with `useValue`.
 - `DatabaseMemoryAdapter` stores tokens in a **static** array and its `create` matches on `userId` only (Mongo uses `userId + type`). Login's access and refresh tokens overwrite each other in memory, so don't use the memory adapter to assert Mongo semantics.
-- E2E suites under `test/` are mostly commented out.
+- There is no e2e suite: the only one was a stub and was removed. All specs live next to the code under `src/`.
 
 ## GitNexus
 

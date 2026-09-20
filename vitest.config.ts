@@ -16,7 +16,7 @@ export default defineConfig({
     root: './',
     globals: true,
     environment: 'node',
-    include: ['{src,test}/**/*.{spec,e2e-spec}.ts'],
+    include: ['src/**/*.spec.ts'],
     reporters: [
       'default',
       ['vitest-sonar-reporter', { outputFile: 'coverage/test-report.xml' }],
@@ -24,7 +24,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/auth/**/*.ts'],
-      exclude: ['src/auth/**/*.spec.ts', 'src/auth/**/*.e2e-spec.ts'],
+      exclude: ['src/auth/**/*.spec.ts'],
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
     },

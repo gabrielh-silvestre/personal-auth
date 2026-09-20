@@ -23,7 +23,7 @@ follow when touching any of this are in [docs/CODE_STYLE.md](docs/CODE_STYLE.md)
 ## Transports
 
 One Nest app exposes REST + an RMQ microservice (`AUTH` queue) + gRPC
-(`proto.tokens`, `proto.auth`):
+(`proto.auth`):
 
 | Use case | REST | gRPC | RMQ pattern |
 |---|---|---|---|
@@ -71,11 +71,9 @@ npm run build
 npm run lint                # eslint --fix
 npm run format
 
-npm run test                # everything except *.e2e-spec.ts
+npm run test                # every *.spec.ts under src/
 npm run test:unit           # *.unit.spec.ts
 npm run test:integration    # *.integration.spec.ts
-npm run test:all            # everything under src/ and test/
-npm run test:e2e            # *.e2e-spec.ts
 npm run test:cov            # coverage of src/auth/** only, feeds SonarCloud
 npm run test:mutations      # Stryker incremental; mutates only domain/ and useCase/
 

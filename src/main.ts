@@ -27,11 +27,8 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       url: GRPC_URL,
-      package: ['proto.tokens', 'proto.auth'],
-      protoPath: [
-        join(import.meta.dirname, 'auth/infra/proto/token.proto'),
-        join(import.meta.dirname, 'auth/infra/proto/auth.proto'),
-      ],
+      package: 'proto.auth',
+      protoPath: join(import.meta.dirname, 'auth/infra/proto/auth.proto'),
     },
   });
 
