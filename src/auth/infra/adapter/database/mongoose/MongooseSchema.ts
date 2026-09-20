@@ -28,3 +28,5 @@ export class TokenSchema implements IToken {
 
 export type TokenDocument = TokenSchema & Document;
 export const tokenSchema = SchemaFactory.createForClass(TokenSchema);
+
+tokenSchema.index({ userId: 1, type: 1 }, { unique: true });
