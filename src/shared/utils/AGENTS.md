@@ -9,7 +9,7 @@ DI/env string tokens and test fixtures shared across bounded contexts. See [CLAU
 ## Key Files
 | File | Description |
 |------|--------------|
-| `constants/envVariables.ts` | `NODE_ENV`, `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `RABBITMQ_URL`, plus the `TOKEN_SECRET(name)` / `TOKEN_EXPIRES_IN(name)` / `RABBITMQ_QUEUE(name)` builders |
+| `constants/envVariables.ts` | `NODE_ENV`, `MONGO_URI`, `RABBITMQ_URL`, plus the `TOKEN_SECRET(name)` / `TOKEN_EXPIRES_IN(name)` / `RABBITMQ_QUEUE(name)` builders |
 | `constants/index.ts` | Barrel re-export of `envVariables.ts` |
 | `mocks/tokens.mock.ts` | `TOKENS_MOCK` — fixture array of `Token` entities built via `TokenFactory`, imported across `src/auth` unit/integration specs |
 

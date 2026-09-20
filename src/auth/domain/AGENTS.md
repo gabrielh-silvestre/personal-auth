@@ -15,7 +15,7 @@ Pure TypeScript layer: the `Token` aggregate, its factory, and the repository co
 | `error/DomainError.ts` | `DomainError extends Error` — the only error type thrown from this layer; translated to `ExceptionFactory.invalidArgument` by `GlobalExceptionRestFilter`/`ExceptionFilterRpc` outside domain |
 | `factory/Token.factory.ts` | `TokenFactory` — static, env-driven expiry (`ACCESS_TOKEN_EXPIRE_TIME`, `RECOVER_PASSWORD_TOKEN_EXPIRE_TIME`, `REFRESH_TOKEN_EXPIRE_TIME` ms, each with a hardcoded fallback). `createAccessToken`/`createRecoverPasswordToken`/`createRefreshToken` build a `Token` with a fresh `uuid()` id; `createTokenFromType(type, userId)` switches over `TokenType` and throws `DomainError` on an unknown type |
 | `factory/token.factory.unit.spec.ts` | Unit tests for `TokenFactory` |
-| `repository/token.repository.interface.ts` | `ITokenRepository` — standalone interface (does **not** extend `@shared`'s `IRepository<T>` anymore), `create`/`update`/`find` plus `findByUserIdAndType(userId, type): Promise<Token \| null>` |
+| `repository/token.repository.interface.ts` | `ITokenRepository` — standalone interface, extends nothing from `@shared`: `create`/`update`/`find` plus `findByUserIdAndType(userId, type): Promise<Token \| null>` |
 
 ## For AI Agents
 

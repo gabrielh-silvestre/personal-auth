@@ -22,9 +22,9 @@ prefix and no `class-validator` decorators.
 `domain → useCase → infra`, dependencies point inward only:
 
 - `domain/` (e.g. `src/auth/domain/entity/Token.ts`) imports nothing from
-  `@shared`, `@nestjs/*`, or any adapter — not even `@shared`'s own
-  `IRepository<T>` (`src/auth/domain/repository/token.repository.interface.ts`
-  is a standalone interface, it does not extend anything from `@shared`).
+  `@shared`, `@nestjs/*`, or any adapter: its own contract
+  (`src/auth/domain/repository/token.repository.interface.ts`) is a standalone
+  interface that extends nothing.
 - `useCase/` depends only on `domain/` and the `gateway/*.interface.ts` type
   from `infra/` (e.g. `Login.useCase.ts` imports the `IDatabaseGateway` type
   from `#auth/infra/gateway/database/database.gateway.interface`, never the

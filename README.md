@@ -82,9 +82,9 @@ npm run test:mutations      # Stryker incremental; mutates only domain/ and useC
 npx vitest run path/to/file.spec.ts --no-coverage   # single file
 ```
 
-Tests run on Vitest. CI: `.github/workflows/main.yml` runs `test:cov` +
-SonarCloud on PRs to `main`; `pullRequest.yml` runs `npm run test` on PRs to
-`dev`.
+Tests run on Vitest. CI: `.github/workflows/main.yml` runs `test:cov` plus a
+build + boot smoke check on PRs to `main`. The SonarCloud step is commented out
+until the `SONAR_TOKEN` is rotated.
 
 Commit messages are enforced by commitlint (Conventional Commits, subject
 ≤ 80 chars, no body) via a `commit-msg` husky hook.

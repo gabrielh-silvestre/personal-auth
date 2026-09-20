@@ -32,7 +32,7 @@ npm run test:mutations     # Stryker incremental; mutates only domain/ and useCa
 npx vitest run path/to/file.spec.ts --no-coverage   # single file
 ```
 
-CI: `.github/workflows/main.yml` runs `test:cov` + SonarCloud on PRs to `main`; `pullRequest.yml` runs `npm run test` on PRs to `dev`. Both run on Node 22 via `actions/setup-node@v4`. Commit messages are enforced by commitlint (`commitlint.config.js` + `.husky/commit-msg`): Conventional Commits, subject ≤ 80 chars, no body.
+CI: `.github/workflows/main.yml` is the only workflow — on PRs to `main` it runs `test:cov`, then a build + boot smoke check, on Node 22 via `actions/setup-node@v5`. The SonarCloud step is commented out until the `SONAR_TOKEN` is rotated. Commit messages are enforced by commitlint (`commitlint.config.js` + `.husky/commit-msg`): Conventional Commits, subject ≤ 80 chars, no body.
 
 ## What the service is
 
@@ -44,11 +44,11 @@ Tokens are persisted (Mongo) as `Token` aggregates; the signed JWT only carries 
 
 `src/auth` is split in three layers, dependencies pointing inward:
 
-- `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No framework imports, no `@shared` imports either: `ITokenRepository` is a standalone interface, it does not extend `@shared`'s `IRepository<T>`. Throws `DomainError` (`src/auth/domain/error/DomainError.ts`) on invalid state, never `ExceptionFactory`.
+- `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No framework imports, no `@shared` imports either: `ITokenRepository` is a standalone interface that extends nothing. Throws `DomainError` (`src/auth/domain/error/DomainError.ts`) on invalid state, never `ExceptionFactory`.
 - `useCase/` — `login`, `refresh`, `verifyToken`, `generateToken`; each exposes `execute(input)` and depends only on `DATABASE_GATEWAY`.
 - `infra/` — adapters, gateways, controllers, guards, Passport strategies, `.proto` files. The three interface files here are camelCase: `database.adapter.interface.ts`, `user.adapter.interface.ts`, `database.gateway.interface.ts`.
 
-DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`. `TOKEN_ADAPTER`/`TOKEN_GATEWAY` are declared but unused.
+DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`.
 
 `src/shared` holds cross-cutting pieces: `ExceptionFactory` (each error carries a gRPC status + HTTP status pair), `JwtAccessService`/`JwtRefreshService`, `RmqModule.register(name)`, REST/RPC exception filters, `ParseHalJsonInterceptor`. `RmqService`'s `getRequiredEnv` and `jwt.util.ts`'s `getJwtSecret`/`getJwtExpiresIn` throw at boot naming the missing variable when `NODE_ENV` is not `development`/`test` — no silent fallback outside those two envs.
 

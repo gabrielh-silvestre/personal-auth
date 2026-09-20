@@ -22,7 +22,7 @@ NestJS token-issuing service (REST + gRPC + RabbitMQ on one app). Commands, arch
 | `src/auth/` | The auth bounded context: domain, use cases, infra (see [src/auth/AGENTS.md](src/auth/AGENTS.md)) |
 | `src/shared/` | Cross-cutting modules: exceptions, JWT, RMQ, filters, interceptors (see [src/shared/AGENTS.md](src/shared/AGENTS.md)) |
 | `test/` | E2E suites, run by Vitest (see [test/AGENTS.md](test/AGENTS.md)) |
-| `.github/workflows/` | CI: `main.yml` (PRs to `main`, coverage + SonarCloud), `pullRequest.yml` (PRs to `dev`, `npm run test`) |
+| `.github/workflows/` | CI: `main.yml` (PRs to `main`, coverage + build/boot smoke) |
 | `.docker/` | `Dockerfile.dev` / `Dockerfile.prod` |
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
