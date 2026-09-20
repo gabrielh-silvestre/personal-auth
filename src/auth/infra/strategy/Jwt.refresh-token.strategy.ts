@@ -5,9 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import type { TokenPayloadDto } from './JwtPayload.dto';
+import type { TokenPayloadDto } from '#auth/infra/strategy/JwtPayload.dto';
 
-import { TOKEN_SECRET } from '@shared/utils/constants';
+import { getJwtSecret } from '#shared/modules/jwt/jwt.util';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
@@ -21,10 +21,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
         (req: Request) => req?.cookies?.Refresh,
       ]),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>(
-        TOKEN_SECRET('REFRESH_TOKEN'),
-        'secret',
-      ),
+      secretOrKey: getJwtSecret(configService, 'REFRESH_TOKEN'),
     });
   }
 

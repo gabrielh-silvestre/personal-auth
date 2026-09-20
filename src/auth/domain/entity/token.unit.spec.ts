@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
-import { Token } from './Token';
+import { Token } from '#auth/domain/entity/Token';
 
 const LAST_REFRESH = new Date();
 const EXPIRE_TIME = 10000;

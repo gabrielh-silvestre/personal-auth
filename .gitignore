@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+*.tsbuildinfo
 
 # Logs
 logs
@@ -56,6 +57,8 @@ t.ts
 ## OpenAI Codex CLI
 .codex/
 
-## AI-generated agent documentation
-AGENTS.md
+## GitNexus index
 .gitnexus
+
+graphify-out/
+/.vitest

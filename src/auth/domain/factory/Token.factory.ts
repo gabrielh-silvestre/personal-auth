@@ -1,8 +1,9 @@
 import { v4 as uuid } from 'uuid';
 
-import type { TokenType } from '../entity/token.interface';
+import type { TokenType } from '#auth/domain/entity/token.interface';
 
-import { Token } from '../entity/Token';
+import { Token } from '#auth/domain/entity/Token';
+import { DomainError } from '#auth/domain/error/DomainError';
 
 export class TokenFactory {
   private static ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
@@ -63,7 +64,7 @@ export class TokenFactory {
       case 'REFRESH':
         return TokenFactory.createRefreshToken(userId);
       default:
-        throw new Error('Invalid token type');
+        throw new DomainError('Invalid token type');
     }
   }
 }

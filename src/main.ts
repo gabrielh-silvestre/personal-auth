@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import * as cookieParser from 'cookie-parser';
-import { join } from 'path';
+import cookieParser from 'cookie-parser';
+import { join } from 'node:path';
 
-import { AppModule } from './app.module';
+import { AppModule } from '#app/app.module';
 
-import { RmqService } from '@shared/modules/rmq/rmq.service';
-import { GlobalExceptionRestFilter } from '@shared/infra/GlobalException.filter';
+import { RmqService } from '#shared/modules/rmq/rmq.service';
+import { GlobalExceptionRestFilter } from '#shared/infra/GlobalException.filter';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 3000;
@@ -27,11 +27,8 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       url: GRPC_URL,
-      package: ['proto.tokens', 'proto.auth'],
-      protoPath: [
-        join(__dirname, '../auth/infra/proto/token.proto'),
-        join(__dirname, '../auth/infra/proto/auth.proto'),
-      ],
+      package: 'proto.auth',
+      protoPath: join(import.meta.dirname, 'auth/infra/proto/auth.proto'),
     },
   });
 

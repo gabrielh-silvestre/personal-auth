@@ -1,1 +1,1 @@
-export * from './injectNames';
+export * from '#auth/utils/constants/injectNames';
