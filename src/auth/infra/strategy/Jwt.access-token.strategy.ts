@@ -20,10 +20,7 @@ export class JwtAccessTokenStrategy extends PassportStrategy(
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>(
-        TOKEN_SECRET('ACCESS_TOKEN'),
-        'secret',
-      ),
+      secretOrKey: configService.get<string>(TOKEN_SECRET('ACCESS_TOKEN')),
     });
   }
 

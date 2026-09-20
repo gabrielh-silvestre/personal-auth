@@ -8,11 +8,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { MONGO_URI } from '@shared/utils/constants';
+import { validateEnv } from '@shared/utils/env-validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnv,
     }),
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({

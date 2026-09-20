@@ -13,24 +13,16 @@ export class JwtAccessService {
 
   public async sign<T = unknown>(data: T): Promise<string | never> {
     return this.jwtService.signAsync(data as object, {
-      secret: this.configService.get<string>(
-        TOKEN_SECRET('ACCESS_TOKEN'),
-        'secret',
-      ),
-      expiresIn: this.configService.get<number>(
-        TOKEN_EXPIRES_IN('ACCESS_TOKEN'),
-        86400000,
-      ),
+      secret: this.configService.get<string>(TOKEN_SECRET('ACCESS_TOKEN')),
+      // Unitless numeric string, jsonwebtoken/ms treats it as milliseconds.
+      expiresIn: this.configService.get(TOKEN_EXPIRES_IN('ACCESS_TOKEN')),
     });
   }
 
   public async verify<T = unknown>(token: string): Promise<T | never> {
     return this.jwtService.verifyAsync(token, {
-      secret: this.configService.get<string>(
-        TOKEN_SECRET('ACCESS_TOKEN'),
-        'secret',
-      ),
-      maxAge: this.configService.get<number>(TOKEN_EXPIRES_IN('ACCESS_TOKEN')),
+      secret: this.configService.get<string>(TOKEN_SECRET('ACCESS_TOKEN')),
+      maxAge: this.configService.get(TOKEN_EXPIRES_IN('ACCESS_TOKEN')),
     }) as T;
   }
 }
