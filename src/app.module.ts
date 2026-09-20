@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TelemetryModule } from '@hex/hextelemetry';
 
 import { AuthModule } from '#auth/auth.module';
 
@@ -24,6 +25,7 @@ import { MONGO_URI } from '#shared/utils/constants/index';
       inject: [ConfigService],
     }),
     AuthModule,
+    TelemetryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

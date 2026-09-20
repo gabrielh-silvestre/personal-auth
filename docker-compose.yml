@@ -8,7 +8,6 @@ services:
     mem_limit: 512m
     volumes:
       - .:/app
-      - /app/node_modules
     ports:
       - ${PORT}:${PORT}
       - 50051:50051
@@ -30,6 +29,8 @@ services:
 
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_EXPIRES_IN=${JWT_REFRESH_TOKEN_EXPIRES_IN}
+
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
 
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_USER=${RABBITMQ_USER}

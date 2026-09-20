@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Trace } from '@hex/hextelemetry';
 
 import type {
   InputRefreshDto,
@@ -14,6 +15,7 @@ import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
 import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 
 @Injectable()
+@Trace()
 export class RefreshUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
