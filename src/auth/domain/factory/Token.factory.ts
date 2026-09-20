@@ -7,7 +7,6 @@ import { DomainError } from '#auth/domain/error/DomainError';
 
 export class TokenFactory {
   private static ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
-  private static RECOVER_PASSWORD_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 1 day
   private static REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
 
   public static createAccessToken(userId: string): Token {
@@ -22,21 +21,6 @@ export class TokenFactory {
       new Date(),
       false,
       'ACCESS',
-    );
-  }
-
-  public static createRecoverPasswordToken(userId: string): Token {
-    const tokenExpireTime =
-      Number(process.env.RECOVER_PASSWORD_TOKEN_EXPIRE_TIME) ||
-      TokenFactory.RECOVER_PASSWORD_TOKEN_EXPIRE_TIME;
-
-    return new Token(
-      uuid(),
-      userId,
-      tokenExpireTime,
-      new Date(),
-      false,
-      'RECOVER_PASSWORD',
     );
   }
 
@@ -59,8 +43,6 @@ export class TokenFactory {
     switch (type) {
       case 'ACCESS':
         return TokenFactory.createAccessToken(userId);
-      case 'RECOVER_PASSWORD':
-        return TokenFactory.createRecoverPasswordToken(userId);
       case 'REFRESH':
         return TokenFactory.createRefreshToken(userId);
       default:

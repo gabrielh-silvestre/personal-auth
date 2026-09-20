@@ -45,22 +45,6 @@ describe('Unit test infra in memory Task repository', () => {
     expect(foundToken?.type).toBe('ACCESS');
   });
 
-  it('should create a recover password token', async () => {
-    const tokenRepository = new DatabaseMemoryAdapter();
-    const newToken = TokenFactory.createRecoverPasswordToken(uuid());
-
-    await tokenRepository.create(newToken);
-
-    const foundToken = await tokenRepository.findOne({ id: newToken.id });
-
-    expect(foundToken).not.toBeNull();
-    expect(foundToken?.id).toBeDefined();
-    expect(foundToken?.userId).toBe(newToken.userId);
-
-    expect(foundToken?.isValid()).toBeTruthy();
-    expect(foundToken?.type).toBe('RECOVER_PASSWORD');
-  });
-
   it('should update a token or create a new one if not found', async () => {
     const tokenRepository = new DatabaseMemoryAdapter();
     const [tokenToUpdate] = TOKENS_MOCK;

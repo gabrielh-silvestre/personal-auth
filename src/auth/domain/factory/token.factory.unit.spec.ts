@@ -29,30 +29,6 @@ describe('Test domain Token factory', () => {
     expect(token.type).toBe('ACCESS');
   });
 
-  it('should create a new recover password token', () => {
-    const token = TokenFactory.createRecoverPasswordToken(VALID_USER_ID);
-
-    expect(token).toBeDefined();
-
-    expect(token.id).toBeDefined();
-    expect(token.userId).toBeDefined();
-    expect(token.lastRefresh).toBeDefined();
-
-    expect(token.expires).toBeDefined();
-    expect(token.revoked).toBeFalsy();
-
-    expect(token.lastRefresh < token.expires).toBeTruthy();
-    expect(token.type).toBe('RECOVER_PASSWORD');
-
-    const recoverPasswordToken = TokenFactory.createTokenFromType(
-      'RECOVER_PASSWORD',
-      VALID_USER_ID,
-    );
-
-    expect(recoverPasswordToken).toBeDefined();
-    expect(recoverPasswordToken.type).toBe('RECOVER_PASSWORD');
-  });
-
   it('should create a new refresh token', () => {
     const token = TokenFactory.createRefreshToken(VALID_USER_ID);
 
