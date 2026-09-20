@@ -21,7 +21,7 @@ Orchestration layer of the `domain → useCase → infra` chain. Each subfolder 
 
 ## For AI Agents
 ### Working In This Directory
-- All four use cases inject `IDatabaseGateway` via the `DATABASE_GATEWAY` token from `@auth/utils/constants` — never a concrete adapter.
+- All four use cases inject `IDatabaseGateway` via the `DATABASE_GATEWAY` token from `#auth/utils/constants` — never a concrete adapter.
 - `Refresh` and `VerifyToken` share the same private-helper pattern: fetch by id/type, return `null` on missing or `!isValid()`, then let `execute` throw `ExceptionFactory.unauthorized('Invalid token')`. Keep that message identical if you touch either — tests assert on it literally.
 - `GenerateToken` is the outlier: it validates input (`type !== 'recover'`) before touching the domain, and throws `nonAcceptable`, not `unauthorized`.
 
@@ -35,10 +35,10 @@ Orchestration layer of the `domain → useCase → infra` chain. Each subfolder 
 
 ## Dependencies
 ### Internal
-- `@auth/domain/entity/Token`, `@auth/domain/factory/Token.factory` — pure domain, no framework imports.
-- `@auth/infra/gateway/database/Database.gateway.interface` (type-only import) — the only infra seam use cases see.
-- `@exceptions/factory/Exception.factory` — paired HTTP/gRPC status codes.
-- `@auth/utils/constants` — `DATABASE_GATEWAY` DI token.
+- `#auth/domain/entity/Token`, `#auth/domain/factory/Token.factory` — pure domain, no framework imports.
+- `#auth/infra/gateway/database/database.gateway.interface` (type-only import) — the only infra seam use cases see.
+- `#exceptions/factory/Exception.factory` — paired HTTP/gRPC status codes.
+- `#auth/utils/constants` — `DATABASE_GATEWAY` DI token.
 
 ### External
 - `@nestjs/common` (`@Inject`, `@Injectable`) only — no other framework coupling.

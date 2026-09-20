@@ -10,7 +10,7 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 | File | Description |
 |------|--------------|
 | `auth.module.ts` | Nest `@Module`: imports `CustomJwtModule` and `RmqModule.register('MAIL'\|'USER')`, registers `TokenSchema` via `MongooseModule.forFeature`; declares the 4 use-case controllers (`Login`, `Refresh`, `VerifyToken`, `GenerateToken`), the 4 use cases, the 3 Passport strategies (`JwtAccessTokenStrategy`, `JwtRefreshTokenStrategy`, `LocalStrategy`), and binds `USER_ADAPTER`/`USER_GATEWAY`/`DATABASE_ADAPTER`/`DATABASE_GATEWAY` to their concrete classes |
-| `utils/constants/injectNames.ts` | DI token strings: `DATABASE_ADAPTER`, `DATABASE_GATEWAY`, `USER_ADAPTER`, `USER_GATEWAY`, `TOKEN_ADAPTER`, `TOKEN_GATEWAY` |
+| `utils/constants/injectNames.ts` | DI token strings: `DATABASE_ADAPTER`, `DATABASE_GATEWAY`, `USER_ADAPTER`, `USER_GATEWAY` |
 | `utils/constants/index.ts` | Barrel re-export of `injectNames.ts` |
 
 ## Subdirectories
@@ -24,7 +24,6 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 
 ### Working In This Directory
 - New inject token → add it to `utils/constants/injectNames.ts`, then bind it in `auth.module.ts`'s `providers` array as `{ provide: TOKEN, useClass: Impl }`. Never reference an adapter class directly outside its gateway.
-- `TOKEN_ADAPTER`/`TOKEN_GATEWAY` are declared in `injectNames.ts` but not currently bound in `auth.module.ts` — no adapter/gateway pair for them exists yet under `infra/`.
 - Adding a transport for an existing use case means extending its controller in `infra/api/controller/**`, not touching the use case or this module (per [CLAUDE.md](../../CLAUDE.md)).
 
 ### Common Patterns
@@ -33,7 +32,7 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 ## Dependencies
 
 ### Internal
-- `@shared/modules/rmq/rmq.module`, `@shared/modules/jwt/Jwt.module`
+- `#shared/modules/rmq/rmq.module`, `#shared/modules/jwt/Jwt.module`
 
 ### External
 - `@nestjs/common`, `@nestjs/mongoose`
