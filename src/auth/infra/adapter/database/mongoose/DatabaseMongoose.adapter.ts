@@ -7,7 +7,10 @@ import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.ada
 
 import { Token } from '#auth/domain/entity/Token';
 
-import { TokenDocument, TokenSchema } from '#auth/infra/adapter/database/mongoose/MongooseSchema';
+import {
+  TokenDocument,
+  TokenSchema,
+} from '#auth/infra/adapter/database/mongoose/MongooseSchema';
 
 @Injectable()
 export class DatabaseMongooseAdapter implements IDatabaseAdapter {

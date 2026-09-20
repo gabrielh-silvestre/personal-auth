@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputLoginDto, OutputLoginDto } from '#auth/useCase/login/Login.dto';
+import type {
+  InputLoginDto,
+  OutputLoginDto,
+} from '#auth/useCase/login/Login.dto';
 import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
 
 import { TokenFactory } from '#auth/domain/factory/Token.factory';

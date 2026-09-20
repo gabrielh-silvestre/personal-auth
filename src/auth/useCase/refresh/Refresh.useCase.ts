@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { InputRefreshDto, OutputRefreshDto } from '#auth/useCase/refresh/Refresh.dto';
+import type {
+  InputRefreshDto,
+  OutputRefreshDto,
+} from '#auth/useCase/refresh/Refresh.dto';
 import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
 
 import { Token } from '#auth/domain/entity/Token';
