@@ -13,6 +13,9 @@ import { RefreshUseCase } from './useCase/refresh/Refresh.useCase';
 import { VerifyTokenController } from './infra/api/controller/verifyToken/VerifyToken.controller';
 import { VerifyTokenUseCase } from './useCase/verifyToken/VerifyToken.useCase';
 
+import { RevokeTokenController } from './infra/api/controller/revokeToken/RevokeToken.controller';
+import { RevokeTokenUseCase } from './useCase/revokeToken/RevokeToken.useCase';
+
 import { JwtAccessTokenStrategy } from './infra/strategy/Jwt.access-token.strategy';
 import { JwtRefreshTokenStrategy } from './infra/strategy/Jwt.refresh-token.strategy';
 import { LocalStrategy } from './infra/strategy/Local.strategy';
@@ -46,11 +49,13 @@ import {
     LoginController,
     RefreshController,
     VerifyTokenController,
+    RevokeTokenController,
   ],
   providers: [
     LoginUseCase,
     RefreshUseCase,
     VerifyTokenUseCase,
+    RevokeTokenUseCase,
     LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
