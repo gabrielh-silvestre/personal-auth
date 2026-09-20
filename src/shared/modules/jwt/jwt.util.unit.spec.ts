@@ -1,6 +1,10 @@
 import type { ConfigService } from '@nestjs/config';
 
-import { getJwtExpiresIn, getJwtSecret } from '#shared/modules/jwt/jwt.util';
+import {
+  assertDistinctJwtSecrets,
+  getJwtExpiresIn,
+  getJwtSecret,
+} from '#shared/modules/jwt/jwt.util';
 
 function fakeConfigService(
   values: Record<string, string | number>,
@@ -18,16 +22,20 @@ describe('Unit test Jwt config helpers', () => {
       expect(getJwtSecret(configService, 'ACCESS_TOKEN')).toBe('my-secret');
     });
 
-    it('should fall back to "secret" when NODE_ENV is development', () => {
+    it('should fall back to a dev secret when NODE_ENV is development', () => {
       const configService = fakeConfigService({ NODE_ENV: 'development' });
 
-      expect(getJwtSecret(configService, 'ACCESS_TOKEN')).toBe('secret');
+      expect(getJwtSecret(configService, 'ACCESS_TOKEN')).toBe(
+        'dev-access-secret',
+      );
     });
 
-    it('should fall back to "secret" when NODE_ENV is test', () => {
+    it('should fall back to a dev secret when NODE_ENV is test', () => {
       const configService = fakeConfigService({ NODE_ENV: 'test' });
 
-      expect(getJwtSecret(configService, 'REFRESH_TOKEN')).toBe('secret');
+      expect(getJwtSecret(configService, 'REFRESH_TOKEN')).toBe(
+        'dev-refresh-secret',
+      );
     });
 
     it('should throw naming the variable when NODE_ENV is production', () => {
@@ -56,22 +64,48 @@ describe('Unit test Jwt config helpers', () => {
       expect(getJwtExpiresIn(configService, 'ACCESS_TOKEN', 1)).toBe(123);
     });
 
-    it('should fall back to the given default when NODE_ENV is test', () => {
+    it('should fall back to the given default (in seconds) when NODE_ENV is test', () => {
       const configService = fakeConfigService({ NODE_ENV: 'test' });
 
-      expect(getJwtExpiresIn(configService, 'ACCESS_TOKEN', 86400000)).toBe(
-        86400000,
-      );
+      expect(getJwtExpiresIn(configService, 'ACCESS_TOKEN', 86400)).toBe(86400);
     });
 
     it('should throw naming the variable when NODE_ENV is production', () => {
       const configService = fakeConfigService({ NODE_ENV: 'production' });
 
       expect(() =>
-        getJwtExpiresIn(configService, 'REFRESH_TOKEN', 604800000),
+        getJwtExpiresIn(configService, 'REFRESH_TOKEN', 604800),
       ).toThrow(
         'Missing required environment variable: JWT_REFRESH_TOKEN_EXPIRES_IN',
       );
+    });
+  });
+
+  describe('assertDistinctJwtSecrets', () => {
+    it('should not throw when the access and refresh secrets differ', () => {
+      const configService = fakeConfigService({
+        JWT_ACCESS_TOKEN_SECRET: 'access-secret',
+        JWT_REFRESH_TOKEN_SECRET: 'refresh-secret',
+      });
+
+      expect(() => assertDistinctJwtSecrets(configService)).not.toThrow();
+    });
+
+    it('should throw when the access and refresh secrets are the same', () => {
+      const configService = fakeConfigService({
+        JWT_ACCESS_TOKEN_SECRET: 'same-secret',
+        JWT_REFRESH_TOKEN_SECRET: 'same-secret',
+      });
+
+      expect(() => assertDistinctJwtSecrets(configService)).toThrow(
+        'JWT_ACCESS_TOKEN_SECRET and JWT_REFRESH_TOKEN_SECRET must be different',
+      );
+    });
+
+    it('should not throw with the dev/test fallback secrets', () => {
+      const configService = fakeConfigService({ NODE_ENV: 'test' });
+
+      expect(() => assertDistinctJwtSecrets(configService)).not.toThrow();
     });
   });
 });
