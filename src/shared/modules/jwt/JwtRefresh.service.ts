@@ -2,27 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { TOKEN_EXPIRES_IN, TOKEN_SECRET } from '@shared/utils/constants';
+import { TokenJwtService } from './TokenJwt.service';
 
 @Injectable()
-export class JwtRefreshService {
-  constructor(
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-  ) {}
-
-  public async sign<T = unknown>(data: T): Promise<string | never> {
-    return this.jwtService.signAsync(data as object, {
-      secret: this.configService.get<string>(TOKEN_SECRET('REFRESH_TOKEN')),
-      // Unitless numeric string, jsonwebtoken/ms treats it as milliseconds.
-      expiresIn: this.configService.get(TOKEN_EXPIRES_IN('REFRESH_TOKEN')),
-    });
-  }
-
-  public async verify<T = unknown>(token: string): Promise<T | never> {
-    return this.jwtService.verifyAsync(token, {
-      secret: this.configService.get<string>(TOKEN_SECRET('REFRESH_TOKEN')),
-      maxAge: this.configService.get(TOKEN_EXPIRES_IN('REFRESH_TOKEN')),
-    }) as T;
+export class JwtRefreshService extends TokenJwtService {
+  constructor(jwtService: JwtService, configService: ConfigService) {
+    super(jwtService, configService, 'REFRESH_TOKEN');
   }
 }
