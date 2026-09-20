@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node --require @hex/hextelemetry/bootstrap dist/src/main",
+    "start:prod": "node --require @hex/hextelemetry/bootstrap dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:unit": "jest \".*\\.unit.spec\\.ts\"",
