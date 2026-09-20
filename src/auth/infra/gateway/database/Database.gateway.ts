@@ -15,7 +15,7 @@ export class DatabaseGateway implements IDatabaseGateway {
     private readonly databaseAdapter: IDatabaseAdapter,
   ) {}
 
-  async find(id: string): Promise<Token> {
+  async find(id: string): Promise<Token | null> {
     return this.databaseAdapter.findOne({ id });
   }
 
