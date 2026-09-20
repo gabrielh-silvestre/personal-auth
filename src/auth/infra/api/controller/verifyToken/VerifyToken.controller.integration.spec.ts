@@ -1,5 +1,7 @@
 import type { Request } from 'express';
+import type { RmqContext } from '@nestjs/microservices';
 import { Test } from '@nestjs/testing';
+import { vi } from 'vitest';
 
 import { VerifyTokenController } from '#auth/infra/api/controller/verifyToken/VerifyToken.controller';
 import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
@@ -7,6 +9,7 @@ import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCas
 import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
 
+import { RmqService } from '#shared/modules/rmq/rmq.service';
 import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
 import {
   DATABASE_ADAPTER,
@@ -14,9 +17,11 @@ import {
 } from '#auth/utils/constants/index';
 
 const [{ id: tokenId }] = TOKENS_MOCK;
+const rmqContext = {} as RmqContext;
 
 describe('Integration test for VerifyToken controller', () => {
   let verifyTokenController: VerifyTokenController;
+  let rmqService: RmqService;
 
   beforeEach(async () => {
     DatabaseMemoryAdapter.reset(TOKENS_MOCK);
@@ -33,22 +38,49 @@ describe('Integration test for VerifyToken controller', () => {
           provide: DATABASE_GATEWAY,
           useClass: DatabaseGateway,
         },
+        {
+          provide: RmqService,
+          useValue: { ack: vi.fn(), nack: vi.fn() },
+        },
       ],
     }).compile();
 
     verifyTokenController = module.get<VerifyTokenController>(
       VerifyTokenController,
     );
+    rmqService = module.get<RmqService>(RmqService);
   });
 
   describe('should verify token', () => {
     it('with RMQ message', async () => {
-      const response = await verifyTokenController.handle({
-        user: { tokenId },
-      } as Request);
+      const response = await verifyTokenController.handle(
+        {
+          user: { tokenId },
+        } as Request,
+        rmqContext,
+      );
 
       expect(response).not.toBeNull();
       expect(response).toStrictEqual({ userId: expect.any(String) });
+      expect(rmqService.ack).toHaveBeenCalledWith(rmqContext);
+    });
+  });
+
+  describe('should nack without requeue when the use case fails', () => {
+    it('with RMQ message', async () => {
+      const invalidTokenId = 'non-existent-token-id';
+
+      await expect(
+        verifyTokenController.handle(
+          {
+            user: { tokenId: invalidTokenId },
+          } as Request,
+          rmqContext,
+        ),
+      ).rejects.toThrow();
+
+      expect(rmqService.nack).toHaveBeenCalledWith(rmqContext);
+      expect(rmqService.ack).not.toHaveBeenCalled();
     });
   });
 });

@@ -44,6 +44,6 @@ export class RmqService {
     const channel = context.getChannelRef();
     const originalMessage = context.getMessage();
 
-    channel.nack(originalMessage);
+    channel.nack(originalMessage, false, false);
   }
 }
