@@ -34,32 +34,6 @@ describe('Unit test domain Token entity', () => {
     expect(token.lastRefresh < token.expires).toBeTruthy();
   });
 
-  it('should create a new recover password token', () => {
-    const token = new Token(
-      uuid(),
-      uuid(),
-      EXPIRE_TIME,
-      LAST_REFRESH,
-      false,
-      'RECOVER_PASSWORD',
-    );
-
-    expect(token).toBeDefined();
-
-    expect(token.id).toBeDefined();
-    expect(token.userId).toBeDefined();
-    expect(token.lastRefresh).toBeDefined();
-
-    expect(token.expires).toBeDefined();
-    expect(token.revoked).toBeFalsy();
-
-    expect(token.lastRefresh).toBeInstanceOf(Date);
-    expect(token.expires).toBeInstanceOf(Date);
-
-    expect(token.lastRefresh < token.expires).toBeTruthy();
-    expect(token.type).toBe('RECOVER_PASSWORD');
-  });
-
   it('should refresh a access token', async () => {
     const token = new Token(uuid(), uuid(), 0, LAST_REFRESH, false, 'REFRESH');
     const firstRefresh = token.expires;
@@ -70,14 +44,14 @@ describe('Unit test domain Token entity', () => {
     expect(token.expires > firstRefresh).toBeTruthy();
   });
 
-  it('should not refresh a password recover token', () => {
+  it('should not refresh a non-refresh token', () => {
     const token = new Token(
       uuid(),
       uuid(),
       EXPIRE_TIME,
       LAST_REFRESH,
       false,
-      'RECOVER_PASSWORD',
+      'ACCESS',
     );
 
     expect(() => token.refresh()).toThrow(

@@ -17,7 +17,7 @@ Quem um Token identifica. Pode ser uma pessoa ou um serviço.
 _Avoid_: usuário, user, conta, identidade, principal
 
 **Propósito** (`purpose`):
-Para que um Token serve: acessar, renovar outro token, ou recuperar senha.
+Para que um Token serve: acessar ou renovar outro token.
 _Avoid_: tipo de token, categoria
 
 **Origem** (`origin`):
