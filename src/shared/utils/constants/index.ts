@@ -1,1 +1,1 @@
-export * from './envVariables';
+export * from '#shared/utils/constants/envVariables';

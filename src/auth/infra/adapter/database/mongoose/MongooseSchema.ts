@@ -1,29 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import type { IToken, TokenType } from '@auth/domain/entity/token.interface';
+import type { IToken, TokenType } from '#auth/domain/entity/token.interface';
 
 @Schema()
 export class TokenSchema implements IToken {
+  // Populated by Mongoose's schema machinery, not this class's constructor.
   @Prop({ required: true, index: true, type: String, unique: true })
-  id: string;
+  id!: string;
 
   @Prop({ required: true, index: true, type: String })
-  userId: string;
+  userId!: string;
 
   @Prop({ required: true, type: Number })
-  expireTime: number;
+  expireTime!: number;
 
   @Prop({ required: true, type: Date })
-  lastRefresh: Date;
+  lastRefresh!: Date;
 
   @Prop({ required: true, type: Date })
-  expires: Date;
+  expires!: Date;
 
   @Prop({ required: true, type: Boolean })
-  revoked: boolean;
+  revoked!: boolean;
 
   @Prop({ required: true, type: String })
-  type: TokenType;
+  type!: TokenType;
 }
 
 export type TokenDocument = TokenSchema & Document;

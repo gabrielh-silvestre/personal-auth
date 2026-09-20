@@ -1,6 +1,6 @@
-import type { IToken } from '@auth/domain/entity/token.interface';
+import type { IToken } from '#auth/domain/entity/token.interface';
 
-import { Token } from '@auth/domain/entity/Token';
+import { Token } from '#auth/domain/entity/Token';
 
 export interface IDatabaseAdapter {
   findAll(): Promise<Token[]>;

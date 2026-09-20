@@ -1,7 +1,6 @@
-export const MONGO_URI = 'MONGO_URI';
+export const NODE_ENV = 'NODE_ENV';
 
-export const JWT_SECRET = 'JWT_SECRET';
-export const JWT_EXPIRES_IN = 'JWT_EXPIRES_IN';
+export const MONGO_URI = 'MONGO_URI';
 
 export const TOKEN_SECRET = (name: string) => `JWT_${name}_SECRET`;
 export const TOKEN_EXPIRES_IN = (name: string) => `JWT_${name}_EXPIRES_IN`;

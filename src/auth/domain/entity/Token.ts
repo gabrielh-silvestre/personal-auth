@@ -1,4 +1,6 @@
-import type { IToken, TokenType } from './token.interface';
+import type { IToken, TokenType } from '#auth/domain/entity/token.interface';
+
+import { DomainError } from '#auth/domain/error/DomainError';
 
 export class Token implements IToken {
   private _id: string;
@@ -32,7 +34,7 @@ export class Token implements IToken {
 
   refresh(): void {
     if (this._type !== 'REFRESH') {
-      throw new Error('Only refresh tokens can be refreshed');
+      throw new DomainError('Only refresh tokens can be refreshed');
     }
 
     this._lastRefresh = new Date();

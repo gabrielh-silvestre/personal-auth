@@ -1,12 +1,12 @@
-import type { IDatabaseGateway } from '@auth/infra/gateway/database/Database.gateway.interface';
-import type { IDatabaseAdapter } from '@auth/infra/adapter/database/Database.adapter.interface';
+import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
-import { RefreshUseCase } from './Refresh.useCase';
+import { RefreshUseCase } from '#auth/useCase/refresh/Refresh.useCase';
 
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
+import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
 
 const [, , { userId: accessId }, { userId }] = TOKENS_MOCK;
 
@@ -41,8 +41,8 @@ describe('Integration test for Refresh use case', () => {
   });
 
   it('should throw an error when the token is invalid', async () => {
-    await expect(
-      refreshUseCase.execute({ userId: accessId }),
-    ).rejects.toThrow('Invalid token');
+    await expect(refreshUseCase.execute({ userId: accessId })).rejects.toThrow(
+      'Invalid token',
+    );
   });
 });
