@@ -8,7 +8,6 @@ services:
     mem_limit: 512m
     volumes:
       - .:/app
-      - /app/node_modules
     ports:
       - ${PORT}:${PORT}
       - 50051:50051
