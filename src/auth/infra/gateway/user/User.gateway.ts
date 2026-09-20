@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 
-import type { IUserGateway, OutputUser } from './user.gateway.interface';
-import type { IUserAdapter } from '@auth/infra/adapter/user/User.adapter.interface';
+import type {
+  IUserGateway,
+  OutputUser,
+} from '#auth/infra/gateway/user/user.gateway.interface';
+import type { IUserAdapter } from '#auth/infra/adapter/user/user.adapter.interface';
 
-import { USER_ADAPTER } from '@auth/utils/constants';
+import { USER_ADAPTER } from '#auth/utils/constants/index';
 
 @Injectable()
 export class UserGateway implements IUserGateway {

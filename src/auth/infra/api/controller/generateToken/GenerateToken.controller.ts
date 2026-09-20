@@ -1,12 +1,12 @@
 import { Controller, UseFilters } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-import type { GenerateTokenType } from '@auth/useCase/generateToken/GenerateToken.dto';
+import type { GenerateTokenType } from '#auth/useCase/generateToken/GenerateToken.dto';
 
-import { GenerateTokenUseCase } from '@auth/useCase/generateToken/GenerateToken.useCase';
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
+import { GenerateTokenUseCase } from '#auth/useCase/generateToken/GenerateToken.useCase';
+import { JwtAccessService } from '#shared/modules/jwt/JwtAccess.service';
 
-import { ExceptionFilterRpc } from '@shared/infra/filter/ExceptionFilter.grpc';
+import { ExceptionFilterRpc } from '#shared/infra/filter/ExceptionFilter.grpc';
 
 @Controller()
 export class GenerateTokenController {

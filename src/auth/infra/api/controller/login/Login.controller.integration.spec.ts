@@ -3,17 +3,20 @@ import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { from } from 'rxjs';
 
-import { LoginController } from './Login.controller';
-import { LoginUseCase } from '@auth/useCase/login/Login.useCase';
+import { LoginController } from '#auth/infra/api/controller/login/Login.controller';
+import { LoginUseCase } from '#auth/useCase/login/Login.useCase';
 
-import { DatabaseMemoryAdapter } from '@auth/infra/adapter/database/memory/DatabaseMemory.adapter';
-import { DatabaseGateway } from '@auth/infra/gateway/database/Database.gateway';
+import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
+import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
 
-import { JwtAccessService } from '@shared/modules/jwt/JwtAccess.service';
-import { JwtRefreshService } from '@shared/modules/jwt/JwtRefresh.service';
+import { JwtAccessService } from '#shared/modules/jwt/JwtAccess.service';
+import { JwtRefreshService } from '#shared/modules/jwt/JwtRefresh.service';
 
-import { TOKENS_MOCK } from '@shared/utils/mocks/tokens.mock';
-import { DATABASE_ADAPTER, DATABASE_GATEWAY } from '@auth/utils/constants';
+import { TOKENS_MOCK } from '#shared/utils/mocks/tokens.mock';
+import {
+  DATABASE_ADAPTER,
+  DATABASE_GATEWAY,
+} from '#auth/utils/constants/index';
 
 const [{ userId }] = TOKENS_MOCK;
 
@@ -38,19 +41,19 @@ describe('Integration test for Login controller', () => {
         {
           provide: JwtAccessService,
           useValue: {
-            sign: jest.fn().mockReturnValue('access'),
+            sign: vi.fn().mockReturnValue('access'),
           },
         },
         {
           provide: JwtRefreshService,
           useValue: {
-            sign: jest.fn().mockReturnValue('refresh'),
+            sign: vi.fn().mockReturnValue('refresh'),
           },
         },
         {
           provide: 'USER_SERVICE',
           useValue: {
-            verifyCredentials: jest.fn().mockResolvedValue(from([{ id: '1' }])),
+            verifyCredentials: vi.fn().mockResolvedValue(from([{ id: '1' }])),
           },
         },
       ],
