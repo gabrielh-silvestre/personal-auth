@@ -18,7 +18,7 @@ export class VerifyTokenUseCase {
     private readonly databaseGateway: ITokenRepository,
   ) {}
 
-  private async foundValidToken(tokenId: string): Promise<Token | null> {
+  private async findValidToken(tokenId: string): Promise<Token | null> {
     const foundToken = await this.databaseGateway.find(tokenId);
 
     if (!foundToken) return null;
@@ -30,7 +30,7 @@ export class VerifyTokenUseCase {
   async execute({
     tokenId,
   }: InputVerifyTokenDto): Promise<OutputVerifyTokenDto | never> {
-    const foundToken = await this.foundValidToken(tokenId);
+    const foundToken = await this.findValidToken(tokenId);
 
     if (!foundToken) throw ExceptionFactory.unauthorized('Invalid token');
 
