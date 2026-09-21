@@ -24,7 +24,7 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
 
   async create(entity: Token): Promise<void> {
     const foundToken = DatabaseMemoryAdapter.TOKENS.findIndex(
-      ({ userId }) => userId === entity.userId,
+      ({ userId, type }) => userId === entity.userId && type === entity.type,
     );
 
     if (foundToken === -1) {
