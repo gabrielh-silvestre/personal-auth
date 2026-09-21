@@ -1,19 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 
-import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
+import { createAuthGuard } from '#auth/infra/api/guard/createAuthGuard.guard';
 
 @Injectable()
-export class RefreshTokenGuard extends AuthGuard('refresh-token') {
+export class RefreshTokenGuard extends createAuthGuard<any>('refresh-token') {
   constructor() {
     super();
-  }
-
-  handleRequest<T = any>(err: Error | null, user: T, info: any): T {
-    if (info || err) {
-      throw ExceptionFactory.forbidden(err?.message || info?.message);
-    }
-
-    return user;
   }
 }
