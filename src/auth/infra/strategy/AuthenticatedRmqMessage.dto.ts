@@ -6,7 +6,7 @@ import type { TokenPayloadDto } from '#auth/infra/strategy/JwtPayload.dto';
 // guard attaches `user` to this same message object before the controller runs —
 // in an 'rpc' ExecutionContext, switchToHttp().getRequest() and
 // switchToRpc().getData() resolve to the same reference (see CredentialsGuard's
-// convertGrpcCredentialsToHttpBody for the proof), so the guard's write and the
+// convertRpcCredentialsToHttpBody for the proof), so the guard's write and the
 // controller's read land on one object. No .proto covers this: it never leaves RMQ.
 export interface AuthenticatedRmqMessage {
   token: string;
