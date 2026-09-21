@@ -50,7 +50,7 @@ Three layers enforce this, and each fails differently:
 
 Worktrees and branches go through Worktrunk: `wt switch -c <name> -b dev`.
 
-Releases follow full Git Flow (`release/x.y.z` off `dev`, `hotfix/x.y.z` off
+Releases follow full Git Flow (`release/<nome>` off `dev`, `hotfix/x.y.z` off
 `main`), with the version read from `package.json` and the tag derived from it.
 The step-by-step lives in [docs/RELEASE.md](./docs/RELEASE.md).
 
