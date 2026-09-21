@@ -9,10 +9,6 @@ import { Token } from '#auth/domain/entity/Token';
 export class DatabaseMemoryAdapter implements IDatabaseAdapter {
   private static TOKENS: Token[] = [];
 
-  async findAll(): Promise<Token[]> {
-    return DatabaseMemoryAdapter.TOKENS;
-  }
-
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
     const objEntries = Object.entries(dto) as [
       keyof IToken,
@@ -47,16 +43,6 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
       DatabaseMemoryAdapter.TOKENS.push(entity);
     } else {
       DatabaseMemoryAdapter.TOKENS[foundIndex] = entity;
-    }
-  }
-
-  async delete(id: string): Promise<void> {
-    const foundIndex = DatabaseMemoryAdapter.TOKENS.findIndex(
-      (token) => token.id === id,
-    );
-
-    if (foundIndex !== -1) {
-      DatabaseMemoryAdapter.TOKENS.splice(foundIndex, 1);
     }
   }
 

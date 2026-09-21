@@ -11,13 +11,14 @@ describe('Unit test infra in memory Task repository', () => {
     DatabaseMemoryAdapter.reset(TOKENS_MOCK);
   });
 
-  it('should find all tokens', async () => {
+  it('should reset the store with every mock token', async () => {
     const tokenRepository = new DatabaseMemoryAdapter();
 
-    const foundTokens = await tokenRepository.findAll();
+    const foundTokens = await Promise.all(
+      TOKENS_MOCK.map(({ id }) => tokenRepository.findOne({ id })),
+    );
 
-    expect(foundTokens).toBeInstanceOf(Array);
-    expect(foundTokens).toHaveLength(TOKENS_MOCK.length);
+    expect(foundTokens.every((token) => token !== null)).toBeTruthy();
   });
 
   it('should find a token by id', async () => {
