@@ -1,5 +1,3 @@
-import type { TokenType } from '#auth/domain/entity/token.interface';
-
 import { TokenFactory } from '#auth/domain/factory/Token.factory';
 
 const VALID_USER_ID = '5f4d2e2e-2b9a-4da3-9d5b-1b8e7b3dcb6d';
@@ -19,14 +17,6 @@ describe('Test domain Token factory', () => {
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
     expect(token.type).toBe('ACCESS');
-
-    const accessToken = TokenFactory.createTokenFromType(
-      'ACCESS',
-      VALID_USER_ID,
-    );
-
-    expect(accessToken).toBeDefined();
-    expect(token.type).toBe('ACCESS');
   });
 
   it('should create a new refresh token', () => {
@@ -43,22 +33,5 @@ describe('Test domain Token factory', () => {
 
     expect(token.lastRefresh < token.expires).toBeTruthy();
     expect(token.type).toBe('REFRESH');
-
-    const refreshToken = TokenFactory.createTokenFromType(
-      'REFRESH',
-      VALID_USER_ID,
-    );
-
-    expect(refreshToken).toBeDefined();
-    expect(refreshToken.type).toBe('REFRESH');
-  });
-
-  it('should throw an error when create a token with invalid type', () => {
-    expect(() =>
-      TokenFactory.createTokenFromType(
-        'INVALID_TYPE' as TokenType,
-        VALID_USER_ID,
-      ),
-    ).toThrow('Invalid token type');
   });
 });

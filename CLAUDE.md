@@ -66,7 +66,7 @@ Tokens are persisted (Mongo) as `Token` aggregates; the signed JWT only carries 
 
 - `domain/` — `Token` entity (`isValid()`, `refresh()`), `TokenFactory`, `ITokenRepository`. No framework imports, no `@shared` imports either: `ITokenRepository` is a standalone interface that extends nothing. Throws `DomainError` (`src/auth/domain/error/DomainError.ts`) on invalid state, never `ExceptionFactory`.
 - `useCase/` — `login`, `refresh`, `verifyToken`, `generateToken`; each exposes `execute(input)` and depends only on `DATABASE_GATEWAY`.
-- `infra/` — adapters, gateways, controllers, guards, Passport strategies, `.proto` files. The three interface files here are camelCase: `database.adapter.interface.ts`, `user.adapter.interface.ts`, `database.gateway.interface.ts`.
+- `infra/` — adapters, gateways, controllers, guards, Passport strategies, `.proto` files. The three interface files here are camelCase: `database.adapter.interface.ts`, `user.adapter.interface.ts`, `user.gateway.interface.ts`.
 
 DI chain is **adapter → gateway → use case**, wired with string tokens from `src/auth/utils/constants/injectNames.ts` (`DATABASE_*`, `USER_*`). Swap storage/transport by changing `useClass` in `src/auth/auth.module.ts`.
 

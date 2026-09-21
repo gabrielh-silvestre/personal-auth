@@ -54,7 +54,7 @@ describe('Integration test for VerifyToken controller', () => {
 
   describe('should verify token', () => {
     it('with RMQ message', async () => {
-      const response = await verifyTokenController.handle(
+      const response = await verifyTokenController.handleRmq(
         {
           token: 'x',
           user: { userId: 'user-1', tokenId },
@@ -73,7 +73,7 @@ describe('Integration test for VerifyToken controller', () => {
       const invalidTokenId = 'non-existent-token-id';
 
       await expect(
-        verifyTokenController.handle(
+        verifyTokenController.handleRmq(
           {
             token: 'x',
             user: { userId: 'user-1', tokenId: invalidTokenId },

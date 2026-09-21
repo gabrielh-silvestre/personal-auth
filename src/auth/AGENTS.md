@@ -9,7 +9,7 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 ## Key Files
 | File | Description |
 |------|--------------|
-| `auth.module.ts` | Nest `@Module`: imports `CustomJwtModule` and `RmqModule.register('MAIL'\|'USER')`, registers `TokenSchema` via `MongooseModule.forFeature`; declares the 4 use-case controllers (`Login`, `Refresh`, `VerifyToken`, `GenerateToken`), the 4 use cases, the 3 Passport strategies (`JwtAccessTokenStrategy`, `JwtRefreshTokenStrategy`, `LocalStrategy`), and binds `USER_ADAPTER`/`USER_GATEWAY`/`DATABASE_ADAPTER`/`DATABASE_GATEWAY` to their concrete classes |
+| `auth.module.ts` | Nest `@Module`: imports `CustomJwtModule` and `RmqModule.register('USER')`, registers `TokenSchema` via `MongooseModule.forFeature`; declares the 4 use-case controllers (`Login`, `Refresh`, `VerifyToken`, `RevokeToken`), the 4 use cases, the 3 Passport strategies (`JwtAccessTokenStrategy`, `JwtRefreshTokenStrategy`, `LocalStrategy`), and binds `USER_ADAPTER`/`USER_GATEWAY`/`DATABASE_ADAPTER`/`DATABASE_GATEWAY` to their concrete classes |
 | `utils/constants/injectNames.ts` | DI token strings: `DATABASE_ADAPTER`, `DATABASE_GATEWAY`, `USER_ADAPTER`, `USER_GATEWAY` |
 | `utils/constants/index.ts` | Barrel re-export of `injectNames.ts` |
 
@@ -17,7 +17,7 @@ The auth bounded context. `auth.module.ts` is the Nest wiring point that assembl
 | Directory | Purpose |
 |-----------|---------|
 | `domain/` | `Token` aggregate, `TokenFactory`, `ITokenRepository` — pure TypeScript, zero framework imports (see [domain/AGENTS.md](domain/AGENTS.md)) |
-| `useCase/` | `login`, `refresh`, `verifyToken`, `generateToken` orchestration (see [useCase/AGENTS.md](useCase/AGENTS.md)) |
+| `useCase/` | `login`, `refresh`, `verifyToken`, `revokeToken` orchestration (see [useCase/AGENTS.md](useCase/AGENTS.md)) |
 | `infra/` | Adapters, gateways, HTTP/gRPC/RMQ controllers, Passport strategies, proto files (see [infra/AGENTS.md](infra/AGENTS.md)) |
 
 ## For AI Agents

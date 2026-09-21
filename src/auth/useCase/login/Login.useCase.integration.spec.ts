@@ -1,4 +1,4 @@
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
 import { LoginUseCase } from '#auth/useCase/login/Login.useCase';
@@ -12,7 +12,7 @@ const [{ userId }] = TOKENS_MOCK;
 
 describe('Integration test for Login use case', () => {
   let loginUseCase: LoginUseCase;
-  let databaseGateway: IDatabaseGateway;
+  let databaseGateway: ITokenRepository;
   let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {
@@ -32,5 +32,25 @@ describe('Integration test for Login use case', () => {
       refreshTokenId: expect.any(String),
       userId: expect.any(String),
     });
+  });
+
+  it('should replace the previous session tokens on a second login for the same user', async () => {
+    const firstLogin = await loginUseCase.execute({ userId });
+    const secondLogin = await loginUseCase.execute({ userId });
+
+    expect(secondLogin.accessTokenId).not.toBe(firstLogin.accessTokenId);
+    expect(secondLogin.refreshTokenId).not.toBe(firstLogin.refreshTokenId);
+
+    const accessToken = await databaseAdapter.findOne({
+      userId,
+      type: 'ACCESS',
+    });
+    const refreshToken = await databaseAdapter.findOne({
+      userId,
+      type: 'REFRESH',
+    });
+
+    expect(accessToken?.id).toBe(secondLogin.accessTokenId);
+    expect(refreshToken?.id).toBe(secondLogin.refreshTokenId);
   });
 });

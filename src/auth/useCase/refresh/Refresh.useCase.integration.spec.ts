@@ -1,4 +1,4 @@
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
 import { RefreshUseCase } from '#auth/useCase/refresh/Refresh.useCase';
@@ -12,7 +12,7 @@ const [, , { userId: accessId }, { userId }] = TOKENS_MOCK;
 
 describe('Integration test for Refresh use case', () => {
   let refreshUseCase: RefreshUseCase;
-  let databaseGateway: IDatabaseGateway;
+  let databaseGateway: ITokenRepository;
   let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {

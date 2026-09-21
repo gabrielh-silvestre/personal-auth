@@ -9,10 +9,6 @@ import { Token } from '#auth/domain/entity/Token';
 export class DatabaseMemoryAdapter implements IDatabaseAdapter {
   private static TOKENS: Token[] = [];
 
-  async findAll(): Promise<Token[]> {
-    return DatabaseMemoryAdapter.TOKENS;
-  }
-
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
     const objEntries = Object.entries(dto) as [
       keyof IToken,
@@ -28,7 +24,7 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
 
   async create(entity: Token): Promise<void> {
     const foundToken = DatabaseMemoryAdapter.TOKENS.findIndex(
-      ({ userId }) => userId === entity.userId,
+      ({ userId, type }) => userId === entity.userId && type === entity.type,
     );
 
     if (foundToken === -1) {
@@ -50,18 +46,20 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    const foundIndex = DatabaseMemoryAdapter.TOKENS.findIndex(
-      (token) => token.id === id,
-    );
-
-    if (foundIndex !== -1) {
-      DatabaseMemoryAdapter.TOKENS.splice(foundIndex, 1);
-    }
-  }
-
   static reset(tokens: Token[]): void {
     DatabaseMemoryAdapter.TOKENS.length = 0;
-    DatabaseMemoryAdapter.TOKENS.push(...tokens);
+    DatabaseMemoryAdapter.TOKENS.push(
+      ...tokens.map(
+        (token) =>
+          new Token(
+            token.id,
+            token.userId,
+            token.expireTime,
+            token.lastRefresh,
+            token.revoked,
+            token.type,
+          ),
+      ),
+    );
   }
 }

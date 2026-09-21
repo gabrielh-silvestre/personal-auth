@@ -1,4 +1,4 @@
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
 import { RevokeTokenUseCase } from '#auth/useCase/revokeToken/RevokeToken.useCase';
@@ -13,7 +13,7 @@ const { id: tokenId } = TOKEN;
 
 describe('Integration test for RevokeToken use case', () => {
   let revokeTokenUseCase: RevokeTokenUseCase;
-  let databaseGateway: IDatabaseGateway;
+  let databaseGateway: ITokenRepository;
   let databaseAdapter: IDatabaseAdapter;
 
   beforeEach(() => {

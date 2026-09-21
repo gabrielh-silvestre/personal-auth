@@ -34,7 +34,7 @@ export class LoginController {
     private readonly jwtRefresh: JwtRefreshService,
   ) {}
 
-  async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
+  private async handle(data: InputLoginDto): Promise<ResponseLogin | never> {
     const { accessTokenId, refreshTokenId, userId } =
       await this.loginUseCase.execute(data);
 

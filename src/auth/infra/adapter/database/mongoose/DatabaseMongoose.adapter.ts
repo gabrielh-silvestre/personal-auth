@@ -30,12 +30,6 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
     );
   }
 
-  async findAll(): Promise<Token[]> {
-    const foundTokens = await this.model.find().exec();
-
-    return foundTokens.map((token) => this.modelToDomain(token));
-  }
-
   async findOne<T extends Partial<IToken>>(dto: T): Promise<Token | null> {
     const foundToken = await this.model.findOne(dto).exec();
 
@@ -78,9 +72,5 @@ export class DatabaseMongooseAdapter implements IDatabaseAdapter {
         },
       )
       .exec();
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.model.findOneAndDelete({ id }).exec();
   }
 }

@@ -24,7 +24,7 @@ const userGateway: IUserGateway = {
 
 // Mirrors the real gRPC LoginUser call: in an 'rpc' ExecutionContext,
 // switchToHttp().getRequest() and switchToRpc().getData() resolve to the same
-// object (context.getArgs()[0]) — the guard's convertGrpcCredentialsToHttpBody
+// object (context.getArgs()[0]) — the guard's convertRpcCredentialsToHttpBody
 // relies on that to move the gRPC payload into the shape passport-local expects.
 // Handing out two different objects here would let the guard authenticate
 // against a body no one ever set, passing (or failing) for the wrong reason.

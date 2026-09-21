@@ -4,7 +4,7 @@ import type {
   InputRefreshDto,
   OutputRefreshDto,
 } from '#auth/useCase/refresh/Refresh.dto';
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 
 import { Token } from '#auth/domain/entity/Token';
 import { TokenFactory } from '#auth/domain/factory/Token.factory';
@@ -17,7 +17,7 @@ import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 export class RefreshUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDatabaseGateway,
+    private readonly databaseGateway: ITokenRepository,
   ) {}
 
   private async findValidRefreshToken(userId: string): Promise<Token | null> {
