@@ -68,7 +68,7 @@ Every controller follows the same shape: a `private handle()` holding the logic,
 ### Testing Requirements
 - Controller specs build a real Nest `Test.createTestingModule` with `DatabaseMemoryAdapter` + `DatabaseGateway` wired to the real `DATABASE_ADAPTER`/`DATABASE_GATEWAY` tokens, and stub only the JWT services (`useValue` with `vi.fn()`).
 - Reset shared state per test with `DatabaseMemoryAdapter.reset(TOKENS_MOCK)` in `beforeEach` — it's a static array, stale data leaks across tests otherwise.
-- `reset()` restores the array, **not the objects in it**: it re-pushes the same `Token` references from `TOKENS_MOCK`. A test that calls `TOKEN.revoke()` (or any mutator) on a mock token poisons every later test in the run. Build a local `Token` for a test that needs a specific state instead of mutating the shared mock.
+- `reset()` clones each `Token` from `TOKENS_MOCK` before pushing, so a mutation like `TOKEN.revoke()` on a token fetched from the adapter does not poison later tests — the source mock stays untouched across resets.
 
 ### Common Patterns
 - Guards throw `ExceptionFactory.forbidden(err?.message || info?.message)` from `handleRequest`, never the Passport default. A new JWT-style guard should extend `createAuthGuard(strategy)` rather than copy that method again.

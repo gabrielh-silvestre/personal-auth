@@ -48,6 +48,18 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
 
   static reset(tokens: Token[]): void {
     DatabaseMemoryAdapter.TOKENS.length = 0;
-    DatabaseMemoryAdapter.TOKENS.push(...tokens);
+    DatabaseMemoryAdapter.TOKENS.push(
+      ...tokens.map(
+        (token) =>
+          new Token(
+            token.id,
+            token.userId,
+            token.expireTime,
+            token.lastRefresh,
+            token.revoked,
+            token.type,
+          ),
+      ),
+    );
   }
 }
