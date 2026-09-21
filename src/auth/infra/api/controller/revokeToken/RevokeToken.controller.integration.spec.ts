@@ -54,7 +54,7 @@ describe('Integration test for RevokeToken controller', () => {
 
   describe('should revoke token', () => {
     it('with RMQ message', async () => {
-      const response = await revokeTokenController.handle(
+      const response = await revokeTokenController.handleRmq(
         {
           token: 'x',
           user: { userId: 'user-1', tokenId },
@@ -72,7 +72,7 @@ describe('Integration test for RevokeToken controller', () => {
       const invalidTokenId = 'non-existent-token-id';
 
       await expect(
-        revokeTokenController.handle(
+        revokeTokenController.handleRmq(
           {
             token: 'x',
             user: { userId: 'user-1', tokenId: invalidTokenId },

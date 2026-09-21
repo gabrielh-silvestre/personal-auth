@@ -22,12 +22,9 @@ export class VerifyTokenController {
     private readonly rmqService: RmqService,
   ) {}
 
-  @UseGuards(AuthenticateGuard)
-  @UseFilters(new ExceptionFilterRpc())
-  @MessagePattern('auth.verify_token')
-  async handle(
-    @Payload() data: AuthenticatedRmqMessage,
-    @Ctx() context: RmqContext,
+  private async handle(
+    data: AuthenticatedRmqMessage,
+    context: RmqContext,
   ): Promise<OutputVerifyTokenDto | never> {
     try {
       const { userId } = await this.verifyTokenUseCase.execute({
@@ -42,5 +39,15 @@ export class VerifyTokenController {
 
       throw error;
     }
+  }
+
+  @UseGuards(AuthenticateGuard)
+  @UseFilters(new ExceptionFilterRpc())
+  @MessagePattern('auth.verify_token')
+  async handleRmq(
+    @Payload() data: AuthenticatedRmqMessage,
+    @Ctx() context: RmqContext,
+  ): Promise<OutputVerifyTokenDto | never> {
+    return this.handle(data, context);
   }
 }

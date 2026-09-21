@@ -22,12 +22,9 @@ export class RevokeTokenController {
     private readonly rmqService: RmqService,
   ) {}
 
-  @UseGuards(AuthenticateGuard)
-  @UseFilters(new ExceptionFilterRpc())
-  @MessagePattern('auth.revoke_token')
-  async handle(
-    @Payload() data: AuthenticatedRmqMessage,
-    @Ctx() context: RmqContext,
+  private async handle(
+    data: AuthenticatedRmqMessage,
+    context: RmqContext,
   ): Promise<OutputRevokeTokenDto | never> {
     try {
       const result = await this.revokeTokenUseCase.execute({
@@ -42,5 +39,15 @@ export class RevokeTokenController {
 
       throw error;
     }
+  }
+
+  @UseGuards(AuthenticateGuard)
+  @UseFilters(new ExceptionFilterRpc())
+  @MessagePattern('auth.revoke_token')
+  async handleRmq(
+    @Payload() data: AuthenticatedRmqMessage,
+    @Ctx() context: RmqContext,
+  ): Promise<OutputRevokeTokenDto | never> {
+    return this.handle(data, context);
   }
 }
