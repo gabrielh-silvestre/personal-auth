@@ -4,7 +4,7 @@ import type {
   InputVerifyTokenDto,
   OutputVerifyTokenDto,
 } from '#auth/useCase/verifyToken/VerifyToken.dto';
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 
 import { Token } from '#auth/domain/entity/Token';
 import { ExceptionFactory } from '#exceptions/factory/Exception.factory';
@@ -15,7 +15,7 @@ import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 export class VerifyTokenUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDatabaseGateway,
+    private readonly databaseGateway: ITokenRepository,
   ) {}
 
   private async foundValidToken(tokenId: string): Promise<Token | null> {

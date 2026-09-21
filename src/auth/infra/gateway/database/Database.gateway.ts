@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { TokenType } from '#auth/domain/entity/token.interface';
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 import type { IDatabaseAdapter } from '#auth/infra/adapter/database/database.adapter.interface';
 
 import { Token } from '#auth/domain/entity/Token';
@@ -9,7 +9,7 @@ import { Token } from '#auth/domain/entity/Token';
 import { DATABASE_ADAPTER } from '#auth/utils/constants/index';
 
 @Injectable()
-export class DatabaseGateway implements IDatabaseGateway {
+export class DatabaseGateway implements ITokenRepository {
   constructor(
     @Inject(DATABASE_ADAPTER)
     private readonly databaseAdapter: IDatabaseAdapter,

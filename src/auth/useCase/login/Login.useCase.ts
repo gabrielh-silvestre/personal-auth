@@ -4,7 +4,7 @@ import type {
   InputLoginDto,
   OutputLoginDto,
 } from '#auth/useCase/login/Login.dto';
-import type { IDatabaseGateway } from '#auth/infra/gateway/database/database.gateway.interface';
+import type { ITokenRepository } from '#auth/domain/repository/token.repository.interface';
 
 import { TokenFactory } from '#auth/domain/factory/Token.factory';
 
@@ -14,7 +14,7 @@ import { DATABASE_GATEWAY } from '#auth/utils/constants/index';
 export class LoginUseCase {
   constructor(
     @Inject(DATABASE_GATEWAY)
-    private readonly databaseGateway: IDatabaseGateway,
+    private readonly databaseGateway: ITokenRepository,
   ) {}
 
   async execute({ userId }: InputLoginDto): Promise<OutputLoginDto | never> {
