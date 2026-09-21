@@ -1,5 +1,12 @@
 # Token grava o método que o emitiu
 
+**Status: proposta — não implementada.** Não existe campo `origin` em `Token`,
+`IToken` ou `TokenFactory`. Com a saída da recuperação de senha do escopo do
+serviço (ver [ADR 0002](0002-recuperacao-de-senha-sai-de-escopo.md)), sobram
+login e refresh como Métodos de Autenticação, o que reduz muito o valor de
+rastrear Origem em eixo separado do Propósito. Reavaliar quando um terceiro
+método entrar no Catálogo.
+
 O serviço passa a suportar vários métodos de autenticação, e o modelo atual do Token só registra para que ele serve (acessar, renovar, recuperar senha) — não de onde ele veio. Decidimos que o Token grava também a sua Origem, em campo separado do Propósito, porque sem isso não há como auditar tokens por método, aplicar prazos diferentes por método, nem revogar em massa os tokens de um método que foi desligado.
 
 ## Considered Options
@@ -9,5 +16,5 @@ O serviço passa a suportar vários métodos de autenticação, e o modelo atual
 
 ## Consequences
 
-- O Propósito (`TokenType` no código, hoje `'ACCESS' | 'RECOVER_PASSWORD' | 'REFRESH'`) continua existindo; a Origem é um eixo novo e independente.
-- Token de recuperação de senha não tem Origem possível: ele é emitido sem credencial alguma, a pedido de outro serviço. Isso expõe que a responsabilidade de recuperação de senha não pertence a este serviço e deve migrar para o serviço de usuários — dívida registrada, não resolvida por esta decisão.
+- O Propósito (`TokenType` no código, hoje `'ACCESS' | 'REFRESH'`) continua existindo; a Origem seria um eixo novo e independente.
+- Token de recuperação de senha não tinha Origem possível: era emitido sem credencial alguma, a pedido de outro serviço. Essa contradição expôs que a responsabilidade não pertencia a este serviço — dívida desde resolvida pela [ADR 0002](0002-recuperacao-de-senha-sai-de-escopo.md), que removeu a recuperação de senha do escopo.

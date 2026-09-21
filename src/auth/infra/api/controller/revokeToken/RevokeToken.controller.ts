@@ -7,36 +7,36 @@ import {
 } from '@nestjs/microservices';
 
 import type { AuthenticatedRmqMessage } from '#auth/infra/strategy/AuthenticatedRmqMessage.dto';
-import type { OutputVerifyTokenDto } from '#auth/useCase/verifyToken/VerifyToken.dto';
+import type { OutputRevokeTokenDto } from '#auth/useCase/revokeToken/RevokeToken.dto';
 
-import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
+import { RevokeTokenUseCase } from '#auth/useCase/revokeToken/RevokeToken.useCase';
 
 import { AuthenticateGuard } from '#auth/infra/api/guard/Authenticate.guard';
 import { ExceptionFilterRpc } from '#shared/infra/filter/ExceptionFilter.grpc';
 import { RmqService } from '#shared/modules/rmq/rmq.service';
 
 @Controller()
-export class VerifyTokenController {
+export class RevokeTokenController {
   constructor(
-    private readonly verifyTokenUseCase: VerifyTokenUseCase,
+    private readonly revokeTokenUseCase: RevokeTokenUseCase,
     private readonly rmqService: RmqService,
   ) {}
 
   @UseGuards(AuthenticateGuard)
   @UseFilters(new ExceptionFilterRpc())
-  @MessagePattern('auth.verify_token')
+  @MessagePattern('auth.revoke_token')
   async handle(
     @Payload() data: AuthenticatedRmqMessage,
     @Ctx() context: RmqContext,
-  ): Promise<OutputVerifyTokenDto | never> {
+  ): Promise<OutputRevokeTokenDto | never> {
     try {
-      const { userId } = await this.verifyTokenUseCase.execute({
+      const result = await this.revokeTokenUseCase.execute({
         tokenId: data.user.tokenId,
       });
 
       this.rmqService.ack(context);
 
-      return { userId };
+      return result;
     } catch (error) {
       this.rmqService.nack(context);
 

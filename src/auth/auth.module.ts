@@ -13,8 +13,8 @@ import { RefreshUseCase } from '#auth/useCase/refresh/Refresh.useCase';
 import { VerifyTokenController } from '#auth/infra/api/controller/verifyToken/VerifyToken.controller';
 import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
 
-import { GenerateTokenController } from '#auth/infra/api/controller/generateToken/GenerateToken.controller';
-import { GenerateTokenUseCase } from '#auth/useCase/generateToken/GenerateToken.useCase';
+import { RevokeTokenController } from '#auth/infra/api/controller/revokeToken/RevokeToken.controller';
+import { RevokeTokenUseCase } from '#auth/useCase/revokeToken/RevokeToken.useCase';
 
 import { JwtAccessTokenStrategy } from '#auth/infra/strategy/Jwt.access-token.strategy';
 import { JwtRefreshTokenStrategy } from '#auth/infra/strategy/Jwt.refresh-token.strategy';
@@ -40,7 +40,6 @@ import {
 @Module({
   imports: [
     CustomJwtModule,
-    RmqModule.register('MAIL'),
     RmqModule.register('USER'),
     MongooseModule.forFeature([
       { name: TokenSchema.name, schema: tokenSchema },
@@ -50,14 +49,14 @@ import {
     LoginController,
     RefreshController,
     VerifyTokenController,
-    GenerateTokenController,
+    RevokeTokenController,
   ],
   providers: [
     LoginUseCase,
     RefreshUseCase,
     VerifyTokenUseCase,
+    RevokeTokenUseCase,
     LocalStrategy,
-    GenerateTokenUseCase,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     {

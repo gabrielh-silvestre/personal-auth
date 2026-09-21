@@ -1,4 +1,4 @@
-export type TokenType = 'ACCESS' | 'RECOVER_PASSWORD' | 'REFRESH';
+export type TokenType = 'ACCESS' | 'REFRESH';
 
 export interface IToken {
   get id(): string;

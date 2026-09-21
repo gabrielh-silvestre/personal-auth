@@ -17,11 +17,13 @@ Quem um Token identifica. Pode ser uma pessoa ou um serviço.
 _Avoid_: usuário, user, conta, identidade, principal
 
 **Propósito** (`purpose`):
-Para que um Token serve: acessar, renovar outro token, ou recuperar senha.
+Para que um Token serve: acessar ou renovar outro token.
 _Avoid_: tipo de token, categoria
 
 **Origem** (`origin`):
-O Método de Autenticação que emitiu um Token. Fica gravada no Token, separada do Propósito.
+O Método de Autenticação que emitiu um Token, como eixo separado do Propósito.
+Termo do vocabulário, ainda sem campo correspondente no Token — ver
+[ADR 0001](docs/adr/0001-token-grava-o-metodo-que-o-emitiu.md).
 _Avoid_: fonte, provedor, emissor
 
 ### A autenticação

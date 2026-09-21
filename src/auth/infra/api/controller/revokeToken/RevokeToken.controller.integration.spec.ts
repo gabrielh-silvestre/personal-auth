@@ -4,8 +4,8 @@ import { vi } from 'vitest';
 
 import type { AuthenticatedRmqMessage } from '#auth/infra/strategy/AuthenticatedRmqMessage.dto';
 
-import { VerifyTokenController } from '#auth/infra/api/controller/verifyToken/VerifyToken.controller';
-import { VerifyTokenUseCase } from '#auth/useCase/verifyToken/VerifyToken.useCase';
+import { RevokeTokenController } from '#auth/infra/api/controller/revokeToken/RevokeToken.controller';
+import { RevokeTokenUseCase } from '#auth/useCase/revokeToken/RevokeToken.useCase';
 
 import { DatabaseMemoryAdapter } from '#auth/infra/adapter/database/memory/DatabaseMemory.adapter';
 import { DatabaseGateway } from '#auth/infra/gateway/database/Database.gateway';
@@ -20,17 +20,17 @@ import {
 const [{ id: tokenId }] = TOKENS_MOCK;
 const rmqContext = {} as RmqContext;
 
-describe('Integration test for VerifyToken controller', () => {
-  let verifyTokenController: VerifyTokenController;
+describe('Integration test for RevokeToken controller', () => {
+  let revokeTokenController: RevokeTokenController;
   let rmqService: RmqService;
 
   beforeEach(async () => {
     DatabaseMemoryAdapter.reset(TOKENS_MOCK);
 
     const module = await Test.createTestingModule({
-      controllers: [VerifyTokenController],
+      controllers: [RevokeTokenController],
       providers: [
-        VerifyTokenUseCase,
+        RevokeTokenUseCase,
         {
           provide: DATABASE_ADAPTER,
           useClass: DatabaseMemoryAdapter,
@@ -46,15 +46,15 @@ describe('Integration test for VerifyToken controller', () => {
       ],
     }).compile();
 
-    verifyTokenController = module.get<VerifyTokenController>(
-      VerifyTokenController,
+    revokeTokenController = module.get<RevokeTokenController>(
+      RevokeTokenController,
     );
     rmqService = module.get<RmqService>(RmqService);
   });
 
-  describe('should verify token', () => {
+  describe('should revoke token', () => {
     it('with RMQ message', async () => {
-      const response = await verifyTokenController.handle(
+      const response = await revokeTokenController.handle(
         {
           token: 'x',
           user: { userId: 'user-1', tokenId },
@@ -62,8 +62,7 @@ describe('Integration test for VerifyToken controller', () => {
         rmqContext,
       );
 
-      expect(response).not.toBeNull();
-      expect(response).toStrictEqual({ userId: expect.any(String) });
+      expect(response).toStrictEqual({ revoked: true });
       expect(rmqService.ack).toHaveBeenCalledWith(rmqContext);
     });
   });
@@ -73,7 +72,7 @@ describe('Integration test for VerifyToken controller', () => {
       const invalidTokenId = 'non-existent-token-id';
 
       await expect(
-        verifyTokenController.handle(
+        revokeTokenController.handle(
           {
             token: 'x',
             user: { userId: 'user-1', tokenId: invalidTokenId },
