@@ -24,7 +24,7 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
 
   async create(entity: Token): Promise<void> {
     const foundToken = DatabaseMemoryAdapter.TOKENS.findIndex(
-      ({ userId }) => userId === entity.userId,
+      ({ userId, type }) => userId === entity.userId && type === entity.type,
     );
 
     if (foundToken === -1) {
@@ -48,6 +48,18 @@ export class DatabaseMemoryAdapter implements IDatabaseAdapter {
 
   static reset(tokens: Token[]): void {
     DatabaseMemoryAdapter.TOKENS.length = 0;
-    DatabaseMemoryAdapter.TOKENS.push(...tokens);
+    DatabaseMemoryAdapter.TOKENS.push(
+      ...tokens.map(
+        (token) =>
+          new Token(
+            token.id,
+            token.userId,
+            token.expireTime,
+            token.lastRefresh,
+            token.revoked,
+            token.type,
+          ),
+      ),
+    );
   }
 }

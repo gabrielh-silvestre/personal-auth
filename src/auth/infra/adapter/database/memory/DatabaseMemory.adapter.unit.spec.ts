@@ -84,4 +84,19 @@ describe('Unit test infra in memory Task repository', () => {
 
     expect(foundToken).not.toBeNull();
   });
+
+  it('should not leak mutations on a stored token across resets', async () => {
+    const tokenRepository = new DatabaseMemoryAdapter();
+    // TOKENS_MOCK[1]: other specs in this file mutate TOKENS_MOCK[0] directly,
+    // so a different entry is used to keep this assertion isolated.
+    const { id } = TOKENS_MOCK[1];
+
+    const storedToken = await tokenRepository.findOne({ id });
+    storedToken?.revoke();
+
+    DatabaseMemoryAdapter.reset(TOKENS_MOCK);
+    const resetToken = await tokenRepository.findOne({ id });
+
+    expect(resetToken?.isValid()).toBeTruthy();
+  });
 });

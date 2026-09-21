@@ -27,8 +27,8 @@ Orchestration layer of the `domain → useCase → infra` chain. Each subfolder 
 
 ### Testing Requirements
 - New use case → add a `*.useCase.integration.spec.ts` next to it, wiring `DatabaseGateway` over `DatabaseMemoryAdapter` (see any existing spec for the `beforeEach` boilerplate: `DatabaseMemoryAdapter.reset(TOKENS_MOCK)` then construct gateway + use case).
-- **Do not use `DatabaseMemoryAdapter` to assert Mongo semantics.** Its `create` matches on `userId` alone; Mongo upserts on `userId + type`, so access and refresh overwrite each other in memory and a "new login replaces the previous session" test would pass against the wrong behaviour. `Login.useCase.integration.spec.ts` carries an inline double keyed by `userId:type` for exactly that case — copy it rather than reaching for the memory adapter.
-- `reset(TOKENS_MOCK)` re-pushes the same object references, so it does not undo a mutation like `TOKEN.revoke()`. A test that needs a revoked or expired token builds its own `Token` instead of mutating the shared mock.
+- `DatabaseMemoryAdapter.create` upserts on `userId + type`, the same key as `DatabaseMongooseAdapter.create`, so a "new login replaces the previous session" test runs against the memory adapter directly — query it with `findOne({ userId, type })`. Keep the two keys in sync: whenever the Mongo upsert key changes, change the memory one in the same commit, or a test starts passing against the wrong behaviour.
+- `reset(TOKENS_MOCK)` clones each token, so it undoes a mutation like `TOKEN.revoke()` on a token fetched from the adapter. A test that needs a revoked or expired token still builds its own `Token` rather than mutating `TOKENS_MOCK` directly — that array is shared module state, not reset by `reset()`.
 - `stryker.conf.mjs` (repo root) runs mutation testing over this directory — keep assertions precise (`toStrictEqual`, exact error messages), not just `toBeDefined`.
 
 ### Common Patterns

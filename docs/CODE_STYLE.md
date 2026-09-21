@@ -6,13 +6,13 @@ file as example.
 ## File naming
 
 - Classes: `PascalCase.<layer>.ts` — `src/auth/domain/factory/Token.factory.ts`, `src/auth/useCase/login/Login.useCase.ts`, `src/auth/infra/api/controller/login/Login.controller.ts`.
-- Contracts/ports (`*.interface.ts`): camelCase — `src/auth/infra/adapter/database/database.adapter.interface.ts`, `src/auth/infra/gateway/database/database.gateway.interface.ts`, `src/auth/domain/repository/token.repository.interface.ts`.
+- Contracts/ports (`*.interface.ts`): camelCase — `src/auth/infra/adapter/database/database.adapter.interface.ts`, `src/auth/infra/gateway/user/user.gateway.interface.ts`, `src/auth/domain/repository/token.repository.interface.ts`.
 - Tests: `*.unit.spec.ts` (no I/O) — `src/auth/domain/entity/token.unit.spec.ts` — and `*.integration.spec.ts` (real DI wiring over `DatabaseMemoryAdapter`) — `src/auth/useCase/login/Login.useCase.integration.spec.ts`.
 
 ## Naming: `I` prefix
 
 `I` prefixes a port/contract an implementation is injected against, never a
-DTO. `ITokenRepository`, `IDatabaseAdapter`, `IDatabaseGateway`, `IUserGateway`
+DTO. `ITokenRepository`, `IDatabaseAdapter`, `IUserGateway`
 (all in `src/auth/**/*.interface.ts`) vs. plain `InputLoginDto`/`OutputLoginDto`
 in `src/auth/useCase/login/Login.dto.ts` — DTOs are plain `interface`s with no
 prefix and no `class-validator` decorators.
@@ -25,10 +25,10 @@ prefix and no `class-validator` decorators.
   `@shared`, `@nestjs/*`, or any adapter: its own contract
   (`src/auth/domain/repository/token.repository.interface.ts`) is a standalone
   interface that extends nothing.
-- `useCase/` depends only on `domain/` and the `gateway/*.interface.ts` type
-  from `infra/` (e.g. `Login.useCase.ts` imports the `IDatabaseGateway` type
-  from `#auth/infra/gateway/database/database.gateway.interface`, never the
-  concrete `Database.gateway.ts`).
+- `useCase/` depends only on `domain/` and its repository interface (e.g.
+  `Login.useCase.ts` imports the `ITokenRepository` type from
+  `#auth/domain/repository/token.repository.interface`, never the concrete
+  `Database.gateway.ts`).
 - `infra/` is the only layer where adapters, gateways, controllers, guards,
   strategies and `.proto` files live.
 
@@ -76,8 +76,7 @@ time.
 ## Error handling
 
 - `DomainError` (`src/auth/domain/error/DomainError.ts`) is the only error
-  type `domain/` throws — see `Token.refresh()` in `Token.ts` and
-  `TokenFactory.createTokenFromType` in `Token.factory.ts`.
+  type `domain/` throws — see `Token.refresh()` in `Token.ts:37`.
 - Everywhere else, throw via `ExceptionFactory`
   (`src/shared/modules/exceptions/factory/Exception.factory.ts`), which pairs
   a gRPC status with an HTTP status.
@@ -97,7 +96,7 @@ Private fields with `_` prefix and public getters, mutated only through
 domain methods, never built with `new` outside `TokenFactory` — see
 `src/auth/domain/entity/Token.ts` (`_revoked`, `revoke()`, `isValid()`) and
 `src/auth/domain/factory/Token.factory.ts` (`createAccessToken`,
-`createTokenFromType`).
+`createRefreshToken`).
 
 ## Tests
 
