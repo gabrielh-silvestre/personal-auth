@@ -21,7 +21,7 @@ export class CredentialsGuard extends AuthGuard('local') {
     super(options);
   }
 
-  private convertGrpcCredentialsToHttpBody(context: ExecutionContext): void {
+  private convertRpcCredentialsToHttpBody(context: ExecutionContext): void {
     const { email, password } = context
       .switchToRpc()
       .getData<InputCredentialsDto>();
@@ -39,10 +39,10 @@ export class CredentialsGuard extends AuthGuard('local') {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const isGrpcRequest = context.getType() === 'rpc';
+    const isRpcRequest = context.getType() === 'rpc';
 
-    if (isGrpcRequest) {
-      this.convertGrpcCredentialsToHttpBody(context);
+    if (isRpcRequest) {
+      this.convertRpcCredentialsToHttpBody(context);
     }
 
     return super.canActivate(context);
